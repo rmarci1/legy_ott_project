@@ -3,8 +3,10 @@ import React from 'react'
 
 const login = () => {
   return (
-    <SafeAreaView>
-      <Text className=''>login</Text>
+    <SafeAreaView className='h-full'>
+      <View className='min-h-60'>
+        <Text className=''></Text>
+      </View>
     </SafeAreaView>
   )
 }

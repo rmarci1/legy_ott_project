@@ -1,5 +1,5 @@
 import {Image, ImageBackground, SafeAreaView, StatusBar, Text, TouchableOpacity, View } from 'react-native'
-import React, { useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import "../global.css"
 import images from "@/constants/images"
 import CustomButton from '@/components/CustomButton'
@@ -34,7 +34,6 @@ const renderItem = (item) => {
   )
 }
 const index = () => {
-  const [index, setIndex] = useState(0);
   const swiperRef = useRef(null);
   return (
     <SafeAreaView className='h-full'>
@@ -43,11 +42,11 @@ const index = () => {
         <View className='flex-1 justify-center items-center mt-5'>
             <Swiper
               ref={swiperRef}
-              autoplay={true}
-              onIndexChanged={(index) => setIndex(index)}
+              autoplay={false}
+              autoplayTimeout={5}
               dot={<Image source={images.dot} resizeMode='contain' className='mr-4'/>}
               activeDot={<Image source={images.active_dot} resizeMode='contain' className='mr-4'/>}
-              index={index}
+              scrollEnabled={true}
               className=''
             >
               {list.map((item) => renderItem(item))}
@@ -56,14 +55,14 @@ const index = () => {
             <Text className='font-rregular text-lg text-white text-center mt-3 mx-6'>Csatlakozz több mint 10000 felhasználóhóz mint hirdető vagy önkéntesként</Text>
             <View className='w-[85%]'>
             <CustomButton
-              handlePress={() => router.navigate("/(auth)/signup")}
+              handlePress={() => router.navigate("/signup")}
               title="Fiók készítése"
               containerStyles="mt-14"
             />
             </View>
             <View className='flex-row mt-5 mb-20'>
             <Text className='font-rregular text-white'>Már van fiókod?</Text>
-            <TouchableOpacity className='font-rbold' onPress={() => router.navigate("/(auth)/login")}><Text className='text-white font-rbold'>Jelentkezz be!</Text></TouchableOpacity>
+            <TouchableOpacity className='font-rbold' onPress={() => router.navigate("/login")}><Text className='text-white font-rbold'>Jelentkezz be!</Text></TouchableOpacity>
             </View>
             </View>
       </ImageBackground>
