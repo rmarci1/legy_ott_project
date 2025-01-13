@@ -57,7 +57,7 @@ const index = () => {
             <CustomButton
               handlePress={() => router.navigate("/signup")}
               title="Fiók készítése"
-              containerStyles="mt-14"
+              containerStyles="mt-14 bg-white"
             />
             </View>
             <View className='flex-row mt-5 mb-20'>

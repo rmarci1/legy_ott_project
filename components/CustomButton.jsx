@@ -6,10 +6,10 @@ const CustomButton = ({handlePress,title,containerStyles,textStyles,isLoading}) 
     <TouchableOpacity
         onPress={handlePress}
         activeOpacity={0.7}
-        className={`${containerStyles} bg-white rounded-3xl min-h-[60px] w-full justify-center items-center ${isLoading ? 'opacity-50' : ''}`}
+        className={`${containerStyles} rounded-3xl min-h-[60px] w-full justify-center items-center ${isLoading ? 'opacity-50' : ''}`}
         disabled={isLoading}
     >
-        <Text className={`text-black text-xl font-bold${textStyles}`}>{title}</Text>
+        <Text className={`text-xl font-bold ${textStyles}`}>{title}</Text>
     </TouchableOpacity>
   )
 }
