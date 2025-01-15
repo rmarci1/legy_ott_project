@@ -10,7 +10,6 @@ const list = [
   {id: 2, title: "Bővítsd meg az önkénteseid számát egyszerűen, átlátható módon", mainPicture: "expand"},
   {id: 3, title: "Szerezz új akár életre szóló kapcsolatokat, és válj egy közösség részévé", mainPicture: "communication"}
 ];
-
 const logos = (item) => {
   switch(item){
     case "communication" :
@@ -62,7 +61,7 @@ const index = () => {
             </View>
             <View className='flex-row mt-5 mb-20'>
             <Text className='font-rregular text-white'>Már van fiókod?</Text>
-            <TouchableOpacity className='font-rbold' onPress={() => router.navigate("/login")}><Text className='text-white font-rbold'>Jelentkezz be!</Text></TouchableOpacity>
+            <TouchableOpacity className='font-rbold' onPress={() => router.navigate("/welcome")}><Text className='text-white font-rbold'>Jelentkezz be!</Text></TouchableOpacity>
             </View>
             </View>
       </ImageBackground>
