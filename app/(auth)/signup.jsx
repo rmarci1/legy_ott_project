@@ -1,11 +1,12 @@
-import { View, Text, SafeAreaView, TouchableOpacity, Image, Alert } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, SafeAreaView, TouchableOpacity, Image, Alert,Animated, Easing } from 'react-native'
+
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import Formfield from '@/components/Formfield'
 import CustomButton from '@/components/CustomButton';
 import images from '@/constants/images';
 import { router } from 'expo-router';
 import { useGlobalContext } from '@/context/GlobalProvider';
-import {createUser} from '@/lib/appwrite'
+
 const signup = () => {
   const {setFormPart} = useGlobalContext();
 
@@ -15,7 +16,35 @@ const signup = () => {
     confirmPassword : ''
   });
   const [isSubmitting,setIsSubmitting] = useState(false);
-
+  const [message,setMessage] = useState('');
+  const [progress,setProgress] = useState(0);
+  const getActiveColor = (type) => {
+    if (type === "Erős") return "#3FBB60"
+    else if (type === "Közepes") return "#FE804D"
+    else return "#FF0054";
+  }
+  const handlePassword = (passwordValue) => {
+    let strengthChecks = {
+      length : 0,
+      hasUpperCase: false,
+      hasLowerCase: false,
+      hasDigit: false,
+      hasSpecialChar: false
+    }
+    strengthChecks.length = passwordValue.length >= 8 ? true : false;
+    strengthChecks.hasUpperCase = /[A-Z]+/.test(passwordValue);
+    strengthChecks.hasLowerCase = /[a-z]+/.test(passwordValue);
+    strengthChecks.hasDigit = /[0-9]+/.test(passwordValue);
+    strengthChecks.hasSpecialChar= /[^A-Za-z0-9]+/.test(passwordValue);
+    console.log(strengthChecks.hasSpecialChar);
+    let verifiedList = Object.values(strengthChecks).filter((value) => value)
+    let strength =
+      verifiedList.length === 5 ? "Erős"
+      : verifiedList.length >= 2 ? "Közepes" : "Gyenge";
+    setProgress(verifiedList.length);
+    setMessage(strength);
+    setForm({...form, password : passwordValue})
+  }
   const submit = () => {
     if(!form.email || !form.password || !form.password){
       Alert.alert("Hiba","Nem töltötted ki az összes adatot")
@@ -37,6 +66,26 @@ const signup = () => {
       setIsSubmitting(false);
     }
   }
+  const animatedValue = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    console.log(progress / 5)
+    Animated.timing(animatedValue, {
+      toValue: progress / 5,
+      duration: 500,
+      easing: Easing.ease,
+      useNativeDriver: false,
+    }).start();
+  }, [progress]);
+
+  const animatedStyle = useMemo(() => {
+    return {
+      width: animatedValue.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['0%', '100%'],
+      }),
+      backgroundColor: getActiveColor(message)
+    };
+  }, [animatedValue,message]);
   return (
     <SafeAreaView className='h-full'>
       <View className='w-full min-h-[85vh] flex-1 justify-center items-center'>
@@ -51,9 +100,17 @@ const signup = () => {
         <Formfield
           placeholder="Jelszó"
           value={form.password}
-          handleChangeText={(e) => setForm({...form, password : e})}
+          handleChangeText={(e) => {handlePassword(e)}}
           otherStyles="w-[85%] mt-10"
         />
+        <View className='w-[80%] h-[0.25rem] rounded-md relative overflow-hidden bg-[#fbfbfb]'>
+          <Animated.View style={animatedStyle} className={`h-full w-[80%]`}>
+
+          </Animated.View>
+        </View>
+        {form.password.length !==0 && 
+          <Text className='mt-3 font-psemibold' style={{color:getActiveColor(message)}}>A jelszód {message}</Text>
+        }
         <Formfield
           placeholder="Jelszó megerősítése"
           value={form.confirmPassword}
