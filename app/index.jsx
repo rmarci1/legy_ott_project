@@ -61,7 +61,7 @@ const index = () => {
             </View>
             <View className='flex-row mt-5 mb-20'>
             <Text className='font-rregular text-white'>Már van fiókod?</Text>
-            <TouchableOpacity className='font-rbold' onPress={() => router.navigate("/welcome")}><Text className='text-white font-rbold'>Jelentkezz be!</Text></TouchableOpacity>
+            <TouchableOpacity className='font-rbold' onPress={() => router.navigate("/(tabs)/home")}><Text className='text-white font-rbold'>Jelentkezz be!</Text></TouchableOpacity>
             </View>
             </View>
       </ImageBackground>
