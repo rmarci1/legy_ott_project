@@ -12,16 +12,6 @@ export class ProfilesService {
 
   async create(createProfileDto: CreateProfileDto) {
     let converted = await convertImg('profile.jpg')
-    // const dtoTest: CreateProfileDto = {
-    //   name: 'Test Name',
-    //   username: 'TestUser',
-    //   email: 'test@example.com',
-    //   password: 'password123',
-    //   advertiser: false,
-    //   profileImg: converted
-    // };
-    // console.log('Manually created DTO:', dtoTest);
-    console.log('received DTO:', createProfileDto)
     createProfileDto.profileImg = converted;
     await this.db.profile.create({
       data: createProfileDto
