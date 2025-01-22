@@ -12,3 +12,48 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model job{
+  id Int @id @default(autoincrement())
+  name String
+  date DateTime
+  description String
+    
+  max_attending Int
+  address String
+
+  profiles jobProfile[]
+}
+
+model profile{
+  id Int @id @default(autoincrement())
+  name String
+  username String @unique
+  email String @unique
+  profileImg Bytes
+  password String
+  advertiser Boolean @default(false)
+
+  reviews review[]
+  jobs jobProfile[]
+}
+
+model review{
+  reviewed profile @relation(fields: [reviewed_un], references: [username], onDelete: Cascade) 
+  reviewed_un String
+  reviewer_un String
+  review Int
+  desc String
+
+  @@id([reviewed_un])
+}
+
+model jobProfile {
+  profile profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId Int
+
+  job job @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  jobId Int
+
+  @@id([profileId, jobId])
+}
