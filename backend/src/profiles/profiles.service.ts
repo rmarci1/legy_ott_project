@@ -29,8 +29,8 @@ export class ProfilesService {
   )
   }
 
-  findAll() {
-    return this.db.profile.findMany();
+  async findAll() {
+    return await this.db.profile.findMany();
   }
 
   async findOne(id: number) {
