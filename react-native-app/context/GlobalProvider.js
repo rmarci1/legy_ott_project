@@ -5,7 +5,7 @@ const GlobalContext = createContext()
 export const useGlobalContext = () => useContext(GlobalContext)
 
 const GlobalProvider = ({children}) => {
-    const [formPart,setFormPart] = useState(null);
+    const [formPart,setFormPart] = useState(null);  
     return (
         <GlobalContext.Provider
             value = {{

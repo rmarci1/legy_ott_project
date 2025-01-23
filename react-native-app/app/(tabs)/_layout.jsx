@@ -5,7 +5,7 @@ import { router, Tabs } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 const TabIcon = ({color,name,focused,containerStyles}) =>{
     return (
-        <View className="items-center justify-center gap-2 w-12 h-12 absolute top-1/2">
+        <View className="items-center justify-center gap-2 w-12 h-12 relative top-1/3">
             {
               name === "Home" && (
                 <Entypo name="home" size={26} color={color} />
@@ -27,9 +27,7 @@ const TabIcon = ({color,name,focused,containerStyles}) =>{
               )
             }
             
-            <Text className={`${focused? "font-psemibold": "font-pregular"} text-xs`} style={{color:color}}>
-                  {name}
-            </Text>
+
         </View>
     )
   }
@@ -42,14 +40,14 @@ const _layout = () => {
                 tabBarActiveTintColor : '#60a5f6',
                 tabBarInactiveTintColor: 'white',
                 tabBarStyle: {
-                    backgroundColor: '#161622',
+                    backgroundColor: '#1e1b4b',
                     borderTopWidth: 1,
                     borderTopColor: '#232522',
-                    height: 80,
+                    height: 60,
                     width: "90%",
                     borderRadius: 90,
                     alignSelf: 'center',
-                    bottom: 15
+                    bottom: 25
                 }
             }}
         >
@@ -87,9 +85,9 @@ const _layout = () => {
             title : 'Create',
             headerShown : false,
             tabBarIcon: () => (
-                <View className="justify-center items-center bg-gray-800">
+                <View className="justify-center items-center">
                     <View
-                        className="w-14 h-14 bg-blue-500 absolute bottom-1/2 items-center justify-center"
+                        className="w-16 h-16 bg-red-500 relative top-1/4 items-center justify-center"
                         style={{
                         transform: [{ rotate: '45deg' }],
                         }}

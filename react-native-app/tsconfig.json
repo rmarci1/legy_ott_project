@@ -16,5 +16,5 @@
     "./app/**/*.jsx",
     "nativewind-env.d.ts",
     "./components/**/*.jsx"
-  ]
+,   "lib/api.js"  ]
 }

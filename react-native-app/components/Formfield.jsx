@@ -1,11 +1,11 @@
-import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
-import React, { useState } from 'react';
+import { StyleSheet, TextInput, TouchableOpacity,View } from 'react-native';
+import React, { useRef, useState } from 'react';
 import { AntDesign, Entypo } from '@expo/vector-icons';
 
 const Formfield = ({ title, otherStyles, value, placeholder, handleChangeText }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-
+  
   return (
     <View className={`space-y-2 ${otherStyles}`}>
       <View
@@ -13,9 +13,8 @@ const Formfield = ({ title, otherStyles, value, placeholder, handleChangeText })
           isFocused ? 'border-[#546ECC]' : 'border-gray-200'
         } flex-row`}
       >
-        {/* TextInput on the left */}
         <TextInput
-          className="flex-1 text-black" // Take full remaining width
+          className="flex-1 text-black"
           value={value}
           placeholder={placeholder}
           placeholderTextColor="#626262"

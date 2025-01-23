@@ -5,9 +5,10 @@ import Swiper from 'react-native-swiper'
 import CustomButton from '@/components/CustomButton'
 import { useGlobalContext } from '@/context/GlobalProvider'
 import AntDesign from '@expo/vector-icons/AntDesign';
-
+import {register} from '@/lib/api'
+import { router } from 'expo-router'
 const welcome = () => {
-  const {formpart} = useGlobalContext();
+  const {formPart} = useGlobalContext();
   const [isSubmitting,setIsSubmitting] = useState(false);
   const [changed,setChanged] = useState(false);
   const [form,setForm] = useState({
@@ -34,14 +35,14 @@ const welcome = () => {
     setFinalName(s);
     setIsModalVisible(true);
   }
-  const submit = () => {
-
+  const submit = async () => {
     try{
       setIsSubmitting(true);
-      
+      await register(form.name,form.username,formPart.password,formPart.email);
+      router.navigate('/(tabs)/home');
     }
     catch(error){
-      throw new Error();
+      throw new Error(error);
     }
     finally{
       setIsSubmitting(false);
@@ -60,7 +61,7 @@ const welcome = () => {
         onIndexChanged={(index) => setActiveIndex(index)}
       >
         <View key={0} className="items-center justify-center flex-1">
-          <Text className="text-3xl text-[#1F41BB] font-pregular mb-4">Mi a neved?</Text>
+          <Text className="text-3xl text-primary font-pregular mb-4">Mi a neved?</Text>
           <Formfield 
             placeholder="Teljes név" 
             otherStyles="w-[80%]" 
@@ -73,7 +74,7 @@ const welcome = () => {
           <View className='h-[15%]'></View>
         </View>
         <View key={1} className="items-center justify-center flex-1">
-          <Text className="text-2xl text-[#1F41BB] font-pregular mb-4 tex-center">Mi legyen a felhasználóneved?</Text>
+          <Text className="text-2xl text-primary font-pregular mb-4 tex-center">Mi legyen a felhasználóneved?</Text>
           <Formfield 
             placeholder={form.username} 
             otherStyles="w-[80%]" 
@@ -97,7 +98,7 @@ const welcome = () => {
           <CustomButton
             title="Tovább"
             textStyles="text-white"
-            containerStyles="bg-[#1F41BB] mt-5"
+            containerStyles="bg-primary mt-5"
             handlePress={checking}
           />
         </View>
@@ -110,7 +111,7 @@ const welcome = () => {
         visible={isModalVisible}
         onRequestClose={toggleModal}
       >
-        <View className='h-[55%] bg-[#1F41BB] absolute bottom-0 w-full items-center'>
+        <View className='h-[55%] bg-primary absolute bottom-0 w-full items-center'>
             <View className='w-20 h-20 bg-white rounded-full justify-center items-center mt-6'>
               <AntDesign name="check" size={30} color="lime" />
             </View>

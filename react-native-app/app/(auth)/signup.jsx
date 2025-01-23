@@ -6,9 +6,10 @@ import CustomButton from '@/components/CustomButton';
 import images from '@/constants/images';
 import { router } from 'expo-router';
 import { useGlobalContext } from '@/context/GlobalProvider';
+import { registerpart1 } from '@/lib/api';
 
 const signup = () => {
-  const {setFormPart} = useGlobalContext();
+  const {formpart,setFormPart} = useGlobalContext();
 
   const [form,setForm] = useState({
     email : '',
@@ -36,31 +37,24 @@ const signup = () => {
     strengthChecks.hasLowerCase = /[a-z]+/.test(passwordValue);
     strengthChecks.hasDigit = /[0-9]+/.test(passwordValue);
     strengthChecks.hasSpecialChar= /[^A-Za-z0-9]+/.test(passwordValue);
-    console.log(strengthChecks.hasSpecialChar);
     let verifiedList = Object.values(strengthChecks).filter((value) => value)
     let strength =
       verifiedList.length === 5 ? "Erős"
-      : verifiedList.length >= 2 ? "Közepes" : "Gyenge";
+      : verifiedList.length >= 3 ? "Közepes" : "Gyenge";
     setProgress(verifiedList.length);
     setMessage(strength);
     setForm({...form, password : passwordValue})
   }
-  const submit = () => {
-    if(!form.email || !form.password || !form.password){
-      Alert.alert("Hiba","Nem töltötted ki az összes adatot")
-      return;
-    }
-    if(form.password !== form.confirmPassword){
-      Alert.alert("Hiba","A jelszók nem egyeznek meg")
-      return;
-    }
+  const submit = async () => {
     try{
+      await registerpart1(form.email,form.password,form.confirmPassword);
       setIsSubmitting(true);
       setFormPart(form);
+      console.log("asd")
       router.push('/welcome');
     }
     catch(error){
-      throw new Error(error)
+      throw new Error(error);
     }
     finally{
       setIsSubmitting(false);
@@ -68,7 +62,6 @@ const signup = () => {
   }
   const animatedValue = useRef(new Animated.Value(0)).current;
   useEffect(() => {
-    console.log(progress / 5)
     Animated.timing(animatedValue, {
       toValue: progress / 5,
       duration: 500,
@@ -89,7 +82,7 @@ const signup = () => {
   return (
     <SafeAreaView className='h-full'>
       <View className='w-full min-h-[85vh] flex-1 justify-center items-center'>
-        <Text className='font-pbold color-[#1F41BB] text-3xl mt-8'>Regisztráció</Text>
+        <Text className='font-pbold color-primary text-3xl mt-8'>Regisztráció</Text>
         <Text className='font-pmedium text-xl mt-4 text-center w-[85%]'>Csinálj egy fiókot hogy felvedeszd az új lehetőségeidet!</Text>
         <Formfield
           placeholder="Email"
@@ -120,7 +113,7 @@ const signup = () => {
         <View className='w-[85%]'> 
           <CustomButton 
             title="Regisztráció"
-            containerStyles="mt-10 bg-[#1F41BB] drop-shadow-lg"
+            containerStyles="mt-10 bg-primary drop-shadow-lg"
             textStyles="text-white"
             handlePress={submit}
           />
@@ -130,7 +123,7 @@ const signup = () => {
         >
           <Text className='font-psemibold text-[#494949] mt-10'>Már van fiókom</Text>
         </TouchableOpacity>
-        <Text className='text-[#1F41BB] font-psemibold mt-20'>----------- Vagy folytasd -----------</Text>
+        <Text className='text-primary font-psemibold mt-20'>----------- Vagy folytasd -----------</Text>
         <TouchableOpacity
           className='flex-row items-center justify-center mt-8 bg-gray-200 h-[56px] w-[85%] rounded-2xl'
         > 
