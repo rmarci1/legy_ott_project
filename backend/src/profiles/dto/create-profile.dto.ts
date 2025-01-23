@@ -1,30 +1,32 @@
 import { Transform } from "class-transformer";
-import { IsBoolean, IsNotEmpty, IsString, Min, MinLength } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsString, IsStrongPassword, Min, MinLength } from "class-validator";
+
+
+const message = "Kötelező kitölteni!";
 
 export class CreateProfileDto {
-    @IsString()
-  @IsNotEmpty()
+  @IsString()
+  @IsNotEmpty({message: message})
   name: string;
 
-  @IsNotEmpty()
+  @IsNotEmpty({message: message})
   @IsString()
   username: string;
 
-  @IsNotEmpty()
+  @IsNotEmpty({message: message})
   @IsString()
   email: string;
 
   @Transform(({ value }) => blobToBuffer(value))
   profileImg: Buffer;
   
-  @IsNotEmpty()
+  @IsNotEmpty({message: message})
   @IsString()
-  @MinLength(8, { message: 'A jelszónak minimum 8 karakternek kell lennie' })
+  @IsStrongPassword({}, {message: "A jelszónak rendelkeznie kell minimum: 1 nagy betűvel, 1 kis betűvel, 1 számmal, 1 speciális karakterrel"})
   password: string;
 
-  @IsNotEmpty()
   @IsBoolean()
-  advertiser: boolean;
+  advertiser: boolean = false;
 }
 
 async function blobToBuffer(blob: Blob): Promise<Buffer> {
