@@ -6,6 +6,7 @@ import { JobsModule } from './jobs/jobs.module';
 import { PrismaService } from './prisma.service';
 import * as session from 'express-session';
 import { LoggerMiddleware } from './logger.middleware';
+import { ProfilesService } from './profiles/profiles.service';
 
 @Module({
   imports: [ProfilesModule, JobsModule],

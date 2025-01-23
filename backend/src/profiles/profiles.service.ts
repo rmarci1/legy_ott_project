@@ -61,14 +61,4 @@ export class ProfilesService {
       throw new error("Error:", err)
     }
   }
-
-  async handleImage() {
-      try {
-        const base64String = await convertImg('profile.jpg');
-        console.log(convertImg('profile.jpg'))
-        return base64String
-      } catch (err) {
-        console.error(err);
-      }
-  }
 }
