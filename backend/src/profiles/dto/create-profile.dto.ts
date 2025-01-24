@@ -2,25 +2,25 @@ import { Transform } from "class-transformer";
 import { IsBoolean, IsNotEmpty, IsString, IsStrongPassword, Min, MinLength } from "class-validator";
 
 
-const message = "Kötelező kitölteni!";
+const message = "Kötelező kitölteni ";
 
 export class CreateProfileDto {
   @IsString()
-  @IsNotEmpty({message: message})
+  @IsNotEmpty({message: message + "a név mezőt"})
   name: string;
 
-  @IsNotEmpty({message: message})
+  @IsNotEmpty({message: message+ "a felhasználó mezőt!"})
   @IsString()
   username: string;
 
-  @IsNotEmpty({message: message})
+  @IsNotEmpty({message: message + " az email mezőt"})
   @IsString()
   email: string;
 
   @Transform(({ value }) => blobToBuffer(value))
   profileImg: Buffer;
   
-  @IsNotEmpty({message: message})
+  @IsNotEmpty({message: message+ " a jelszó mezőt"})
   @IsString()
   @IsStrongPassword({}, {message: "A jelszónak rendelkeznie kell minimum: 1 nagy betűvel, 1 kis betűvel, 1 számmal, 1 speciális karakterrel"})
   password: string;

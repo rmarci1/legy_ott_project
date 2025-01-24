@@ -6,23 +6,23 @@ import * as bcrypt from 'bcrypt';
 import convertImg from './fileConverter/convert';
 import { validateProfile } from './dto/validateProfile.dto';
 import { PassThrough } from 'stream';
+import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AppService {
   constructor( private readonly db: PrismaService){}
 
 
-  async login(CreateProfileDto: CreateProfileDto, session: any){
-
+  async login(LoginDto: LoginDto, session: any){
     let isPasswordValid;
-    let loginMode;
-    
-    const profileWithEmail = await this.db.profile.findUnique({
-      where: {email: CreateProfileDto.email}
-    })
-
-    const profileWithUsername = await this.db.profile.findUnique({
-      where: {username: CreateProfileDto.username}
+    let loginMode: "email" | "username";
+    let profileWithEmail;
+    let profileWithUsername;
+    LoginDto.email?
+     profileWithEmail = await this.db.profile.findUnique({where: {email: LoginDto.email}})
+     :
+     profileWithUsername = await this.db.profile.findUnique({
+      where: {username: LoginDto.username}
     })
 
     if (!profileWithUsername && !profileWithEmail) {
@@ -33,12 +33,12 @@ export class AppService {
     }
 
     if(profileWithUsername){
-      isPasswordValid = await bcrypt.compare(CreateProfileDto.password, profileWithUsername.password);
+      isPasswordValid = await bcrypt.compare(LoginDto.password, profileWithUsername.password);
       loginMode = "username"
       
     }
     else {
-      isPasswordValid = await bcrypt.compare(CreateProfileDto.password, profileWithEmail.password);
+      isPasswordValid = await bcrypt.compare(LoginDto.password, profileWithEmail.password);
       loginMode = "email"
     }
 
@@ -49,21 +49,26 @@ export class AppService {
       );
     }
 
-    loginMode == "email"? session.profile = {
+    loginMode == "email"
+  ? (session.profile = {
       username: profileWithEmail.username,
       password: profileWithEmail.password,
       email: profileWithEmail.email,
       name: profileWithEmail.name,
-      advertiser: profileWithEmail.advertiser
-    }: session.profile = {
+      advertiser: profileWithEmail.advertiser,
+    })
+  : (session.profile = {
       username: profileWithUsername.username,
       password: profileWithUsername.password,
       email: profileWithUsername.email,
       name: profileWithUsername.name,
-      advertiser: profileWithUsername.advertiser
-    } ;
+      advertiser: profileWithUsername.advertiser,
+    });
+    await session.save();
+    console.log('Session profile after login:', session.profile);
 
-    return { message: 'Login successful', user: session.user };
+
+    return { message: 'Login successful', profile: session.profile };
   }
 
   async register(CreateProfileDto: CreateProfileDto, session: any){
@@ -103,6 +108,8 @@ export class AppService {
       email: (await newProfile).email,
       advertiser: (await newProfile).advertiser
     };
+
+    return {profile: session.profile}
   }
 
   async reg1(validateProfile:validateProfile){
@@ -120,11 +127,19 @@ export class AppService {
     }
     if(validateProfile.password != validateProfile.passwordAgain){
       throw new HttpException("A két jelszónak egyeznie kell", HttpStatus.BAD_REQUEST);
-    }
+    } 
 
+  }
 
-    
-
+  async getProfilePic(session: any){
+    return this.db.profile.findUnique({
+      where:{
+        email: session.profile.email
+      },
+      select:{
+        profileImg: true
+      }
+    })
   }
 
 
