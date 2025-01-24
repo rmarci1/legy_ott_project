@@ -12,11 +12,6 @@ export class AppService {
   constructor( private readonly db: PrismaService){}
 
 
-  getHello(): string {
-    return 'Hello World!';
-  }
-
-
   async login(CreateProfileDto: CreateProfileDto, session: any){
 
     let isPasswordValid;
@@ -54,13 +49,13 @@ export class AppService {
       );
     }
 
-    loginMode == "email"? session.user = {
+    loginMode == "email"? session.profile = {
       username: profileWithEmail.username,
       password: profileWithEmail.password,
       email: profileWithEmail.email,
       name: profileWithEmail.name,
       advertiser: profileWithEmail.advertiser
-    }: session.user = {
+    }: session.profile = {
       username: profileWithUsername.username,
       password: profileWithUsername.password,
       email: profileWithUsername.email,
@@ -81,7 +76,6 @@ export class AppService {
     if(profileWithUsername){
       throw new HttpException("A felhasználónév már foglalt!", HttpStatus.BAD_REQUEST);
     }
-0
     if(!/^[a-z|0-9|A-Z]*([_][a-z|0-9|A-Z]+)*([.][a-z|0-9|A-Z]+)*([.][a-z|0-9|A-Z]+)*(([_][a-z|0-9|A-Z]+)*)?@[a-z][a-z|0-9|A-Z]*\.([a-z][a-z|0-9|A-Z]*(\.[a-z][a-z|0-9|A-Z]*)?)$/.test(CreateProfileDto.email)){
       throw new HttpException("Nem megfelelő formátumú az email cím", HttpStatus.BAD_REQUEST);
     }
@@ -102,7 +96,7 @@ export class AppService {
       }
     })
 
-    session.user = {
+    session.profile = {
       username: (await newProfile).username,
       password: (await newProfile).password,
       name: (await newProfile).name,
