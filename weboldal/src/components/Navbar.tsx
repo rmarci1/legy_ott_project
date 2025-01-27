@@ -1,5 +1,4 @@
 import { AiOutlinePlus } from "react-icons/ai";
-import { FaArchive, FaPlus, FaUser } from "react-icons/fa";
 import { FaRegCircleUser } from "react-icons/fa6";
 import { IoArchiveOutline, IoHomeOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
