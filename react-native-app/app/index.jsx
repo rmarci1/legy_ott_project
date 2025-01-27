@@ -4,7 +4,8 @@ import "../global.css"
 import images from "@/constants/images"
 import CustomButton from '@/components/CustomButton'
 import Swiper from "react-native-swiper"
-import { router } from 'expo-router'
+import { Redirect, router } from 'expo-router'
+import { useGlobalContext } from '@/context/GlobalProvider'
 const list = [
   {id: 1, title: "Itt megtalálhatod a kívánt munkádat és nagyszerű élményekkel gazdagodhatsz közben", mainPicture: "growing"},
   {id: 2, title: "Bővítsd meg az önkénteseid számát egyszerűen, átlátható módon", mainPicture: "expand"},
@@ -33,6 +34,8 @@ const renderItem = (item) => {
   )
 }
 const index = () => {
+  const {isLoggedIn,user,isLoading} = useGlobalContext();
+  if(!isLoading && isLoggedIn && user) return <Redirect href="/(tabs)/home"/>
   const swiperRef = useRef(null);
   return (
     <SafeAreaView className='h-full'>
@@ -61,7 +64,7 @@ const index = () => {
             </View>
             <View className='flex-row mt-5 mb-20'>
             <Text className='font-rregular text-white'>Már van fiókod?</Text>
-            <TouchableOpacity className='font-rbold' onPress={() => router.navigate("/(tabs)/home")}><Text className='text-white font-rbold'>Jelentkezz be!</Text></TouchableOpacity>
+            <TouchableOpacity className='font-rbold' onPress={() => router.navigate("/login")}><Text className='text-white font-rbold'>Jelentkezz be!</Text></TouchableOpacity>
             </View>
             </View>
       </ImageBackground>

@@ -134,7 +134,7 @@ const _layout = () => {
         />
         
         </Tabs>
-        <StatusBar backgroundColor='#161622' style='light'/>
+        <StatusBar style='dark'/>
     </>
   )
 }

@@ -4,16 +4,36 @@ import Formfield from '@/components/Formfield'
 import CustomButton from '@/components/CustomButton';
 import images from '@/constants/images';
 import { router } from 'expo-router';
-import { pflogin } from '@/lib/api';
+import { blob, getUser, pflogin } from '@/lib/api';
+import { useGlobalContext } from '@/context/GlobalProvider';
 
 const login = () => {
+  const {setIsLoading,setIsloggedIn,setUser} = useGlobalContext();
   const [form,setForm] = useState({
-    email : '',
+    email : '', 
     password : ''
   });
   const submit = async () => {
     try{
       await pflogin(form.email,form.password);
+      await getUser().then((res)=>{
+        setIsLoading(true);
+        if(res){
+            setIsloggedIn(true);
+            setUser(res);
+        }
+        else{
+            setIsloggedIn(false);
+            setUser(null);
+        }
+    })
+    .catch((error) => {
+        console.log(error)
+    })
+    .finally(() => {
+        setIsLoading(false);
+    })
+      router.push('/(tabs)/home');
     }
     catch(error){
       throw new Error(error);
@@ -25,10 +45,10 @@ const login = () => {
         <Text className='font-pbold color-primary text-3xl'>Bejelentkezés</Text>
         <Text className='font-psemibold text-xl mt-10'>Üdvözlünk jelentkezz be!</Text>
         <Formfield
-          placeholder="Email"
+          placeholder="Email/Felhasználónév"
           value={form.email}
           handleChangeText={(e) => setForm({...form, email : e})}
-          otherStyles="w-[85%] mt-20"
+          otherStyles="w-[85%] mt-20" 
         />
         <Formfield
           placeholder="Jelszó"
