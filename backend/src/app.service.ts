@@ -132,14 +132,17 @@ export class AppService {
   }
 
   async getProfilePic(session: any){
-    return this.db.profile.findUnique({
+    const image = this.db.profile.findUnique({
       where:{
-        email: session.profile.email
+        //email: session.profile.email
+        id: 1
       },
       select:{
         profileImg: true
       }
     })
+
+    return image
   }
 
 

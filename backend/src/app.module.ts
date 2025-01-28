@@ -23,7 +23,8 @@ export class AppModule {
           saveUninitialized: false,
           cookie: { 
             secure: false,
-            sameSite: "lax"
+            sameSite: "none",
+            httpOnly: true
           },
         }),
         (req, res, next) => {
