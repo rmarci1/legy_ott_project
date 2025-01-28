@@ -4,14 +4,21 @@ import { CreateProfileDto } from './profiles/dto/create-profile.dto';
 import { Request, Response } from 'express';
 import { validateProfile } from './dto/validateProfile.dto';
 import { AuthGuard } from './Auth-Guard';
+import { LoginDto } from './dto/login.dto';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Post("/login")
-  async login(@Body() CreateProfileDto: CreateProfileDto, @Req() req: any){
-    return await this.appService.login(CreateProfileDto, req.session);
+  async login(@Body() LoginDto: LoginDto, @Req() req: any){
+    return await this.appService.login(LoginDto, req.session);
+  }
+
+  @Get("/profilePic")
+  @UseGuards(AuthGuard)
+  async getProfilePic(@Req() req: any){
+    return await this.appService.getProfilePic(req.session);
   }
 
   @Post("/reg1")
@@ -39,7 +46,8 @@ export class AppController {
 
   @Post("/check-auth")
   @UseGuards(AuthGuard)
-  async check(@Req() req: Request){
+  check(@Req() req: Request){
+    console.log('Session profile in check-auth:', req.session.profile);
     return { profile: req.session.profile };
   }
 
