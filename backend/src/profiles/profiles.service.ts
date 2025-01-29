@@ -1,19 +1,22 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { PrismaService } from 'src/prisma.service';
 import { error } from 'console';
-import convertImg from 'src/fileConverter/convert';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class ProfilesService {
 
-  constructor(private readonly db: PrismaService){}
+  constructor(private readonly db: PrismaService, private readonly cloudinary: CloudinaryService){}
 
   async create(createProfileDto: CreateProfileDto) {
-    let converted = await convertImg('profile.jpg')
-    createProfileDto.profileImg = converted;
-    await this.db.profile.create({
+    const upload =  await this.cloudinary.uploadImage().catch((err) => {
+      throw new Error("error:" + err.message)
+    })
+    createProfileDto.profileImg = upload.url;
+    console.log(createProfileDto.profileImg)
+    return await this.db.profile.create({
       data: createProfileDto
     }
   )
