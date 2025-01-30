@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router";
+import {register} from '../../api'
 
 export default function Register(){
 
@@ -41,6 +42,7 @@ export default function Register(){
     const handleRegister = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
         try{
+            await register(name, userName,email, password, password2)
 
             navigate("/login")
         }
