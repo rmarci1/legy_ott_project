@@ -1,30 +1,50 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router"
+import {pflogin} from '../../api'
 
 
 export default function Login(){
+    const [emailUsername, setEmailUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    let loginMode = "";
     const navigate = useNavigate();
 
-    const [showPassword, setShowPassword] = useState(false);
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
     
-        const togglePasswordVisibility = () => {
-            setShowPassword(!showPassword);
-        };
+    const handleLogin = async(e: { preventDefault: () => void; })=>{
+        e.preventDefault();
+        try{
+            if(emailUsername.includes("@")){
+                loginMode ="email";
+            }
+            else{
+                loginMode = "username";
+            }
+            await pflogin(emailUsername, password, loginMode)
+            navigate("/home")
+        }
+        catch(error){
+            alert(error);
+        }
+    }
 
 
     return <>
         <div className="justify-center flex">
         <div className=" w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-indigo-950 dark:border-gray-700">
-            <form className="space-y-6" action="#">
+            <form className="space-y-6" onSubmit={handleLogin}>
                 <h5 className="text-xl font-medium text-gray-900 dark:text-white">Bejelentkezés</h5>
                 <div>
                     <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email címed</label>
-                    <input type="email" name="email" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="pelda@gmail.com" required />
+                    <input type="text" name="email" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="pelda@gmail.com" value={emailUsername} onChange={(e) =>{setEmailUsername(e.target.value)}} required />
                 </div>
                 <div className="relative flex-row">
                     <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Jelszavad</label>
-                    <input type={showPassword ? 'text' : 'password'} name="password" id="password" placeholder="••••••••" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />
+                    <input type={showPassword ? 'text' : 'password'} name="password" id="password" placeholder="••••••••" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" value={password} onChange={(e) =>{setPassword(e.target.value)}} required />
                     <span onClick={togglePasswordVisibility} className="absolute inset-y-12 right-2 flex items-center cursor-pointer text-gray-600 dark:text-gray-400">
                         {showPassword ? <FaEyeSlash size={30} /> : <FaEye size={30} />}
                     </span>
