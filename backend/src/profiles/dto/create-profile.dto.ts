@@ -17,8 +17,8 @@ export class CreateProfileDto {
   @IsString()
   email: string;
 
-  @Transform(({ value }) => blobToBuffer(value))
-  profileImg: Buffer;
+  //@IsString()
+  profileImg: string;
   
   @IsNotEmpty({message: message+ " a jelszó mezőt"})
   @IsString()

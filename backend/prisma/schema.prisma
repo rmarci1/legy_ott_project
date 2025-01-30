@@ -17,8 +17,8 @@ model job{
   id Int @id @default(autoincrement())
   name String
   date DateTime
+  img String
   description String
-    
   max_attending Int
   address String
 
@@ -30,7 +30,7 @@ model profile{
   name String
   username String @unique
   email String @unique
-  profileImg Bytes
+  profileImg String
   password String
   advertiser Boolean @default(false)
 

@@ -7,10 +7,11 @@ import convertImg from './fileConverter/convert';
 import { validateProfile } from './dto/validateProfile.dto';
 import { PassThrough } from 'stream';
 import { LoginDto } from './dto/login.dto';
+import { CloudinaryService } from './cloudinary/cloudinary.service';
 
 @Injectable()
 export class AppService {
-  constructor( private readonly db: PrismaService){}
+  constructor( private readonly db: PrismaService, private readonly cloudinary: CloudinaryService, private readonly ps: ProfilesService){}
 
 
   async login(LoginDto: LoginDto, session: any){
@@ -91,15 +92,8 @@ export class AppService {
       throw new HttpException("Nem megfelelő a felhasználó név formátuma.", HttpStatus.BAD_REQUEST);
     }
 
-    let converted = await convertImg('profile.jpg')
-    CreateProfileDto.profileImg = converted;
-    const newProfile = await this.db.profile.create({
-      data:{
-        ...CreateProfileDto,
-        password: hashedPassword,
-        profileImg: converted
-      }
-    })
+    CreateProfileDto.password = hashedPassword;
+    const newProfile = await this.ps.create(CreateProfileDto);
 
     session.profile = {
       username: (await newProfile).username,
@@ -134,13 +128,13 @@ export class AppService {
   async getProfilePic(session: any){
     const image = this.db.profile.findUnique({
       where:{
-        //email: session.profile.email
-        id: 1
+        email: session.profile.email
       },
       select:{
         profileImg: true
       }
     })
+
 
     return image
   }

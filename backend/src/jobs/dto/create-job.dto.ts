@@ -17,8 +17,8 @@ export class CreateJobDto {
     description: string;
 
     @IsNotEmpty()
-    @Transform(({ value }) => blobToBuffer(value))
-    img: Buffer;
+    @IsString()
+    img: string;
 
     @IsNotEmpty()
     @IsNumber()

@@ -16,7 +16,7 @@ export class JobsService {
         console.log(createJobDto)
         console.log('received DTO:', createJobDto)
         try{
-          createJobDto.img = converted;
+          createJobDto.img = "";
           await this.db.job.create({
             data: createJobDto
           })
