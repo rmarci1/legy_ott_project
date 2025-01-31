@@ -1,15 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { UploadApiErrorResponse, UploadApiResponse, v2 } from 'cloudinary';
-import toStream = require('buffer-to-stream');
-import { join } from 'path';
-import { createReadStream } from 'fs';
+import { createReadStream, ReadStream } from 'fs';
 import path = require('path');
-import { CreateProfileDto } from 'src/profiles/dto/create-profile.dto';
 @Injectable()
 
 export class CloudinaryService {
   async uploadImage(
-    file?: Express.Multer.File
+    file?: ReadStream
   ): Promise<UploadApiResponse | UploadApiErrorResponse> {
     if(file){
         return new Promise((resolve, reject) => {
@@ -18,7 +15,7 @@ export class CloudinaryService {
             resolve(result);
           });
         
-          toStream(file.buffer).pipe(upload);
+          file.pipe(upload);
         });
     }
     else{
@@ -29,9 +26,18 @@ export class CloudinaryService {
             });
             const imagePath = path.join(__dirname, '../../public', 'img', 'profile.jpg');
             const fileStream = createReadStream(imagePath);
-          
             fileStream.pipe(upload);
           });
     }
+  }
+
+
+  async destroyImage(
+    publicId: string
+  ){
+    v2.uploader.destroy(publicId, function(error,result) {
+      console.log(result, error) })
+      .then(resp => console.log(resp))
+      .catch(_err=> console.log("Something went wrong, please try again later."));
   }
 }

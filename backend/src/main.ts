@@ -10,8 +10,9 @@ async function bootstrap() {
   
   const allowedOrigins = [
     'http://localhost:5173',  
+    'http://localhost:3000',  
     'http://192.168.11.82:3000',   
-    'http://192.168.11.142:8081',        
+    'http://192.168.11.142:8081'       
   ];
 
 
@@ -28,6 +29,12 @@ async function bootstrap() {
     preflightContinue: false,
     optionsSuccessStatus: 204,
   });
+
+  app.use((req, res, next) => {
+    console.log("Session middleware:", req.session);
+    next();
+  });
+
 
   app.useGlobalPipes(new ValidationPipe());
 

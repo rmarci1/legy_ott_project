@@ -1,9 +1,11 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
-import { PrismaService } from 'src/prisma.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { error } from 'console';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { defaultProfilePicUrl } from 'src/constants';
+import { extractPublicId } from 'cloudinary-build-url';
 
 @Injectable()
 export class ProfilesService {
@@ -11,10 +13,7 @@ export class ProfilesService {
   constructor(private readonly db: PrismaService, private readonly cloudinary: CloudinaryService){}
 
   async create(createProfileDto: CreateProfileDto) {
-    const upload =  await this.cloudinary.uploadImage().catch((err) => {
-      throw new Error("error:" + err.message)
-    })
-    createProfileDto.profileImg = upload.url;
+    createProfileDto.profileImg = defaultProfilePicUrl;
     console.log(createProfileDto.profileImg)
     return await this.db.profile.create({
       data: createProfileDto
@@ -26,37 +25,53 @@ export class ProfilesService {
     return await this.db.profile.findMany();
   }
 
-  async findOne(id: number) {
+  async findOne(username: string) {
     try{
       return await this.db.profile.findUnique({
         where:{
-          id
+          username
         }
       });
     }
     catch(err){
-      throw new NotFoundException("Nem létezik ilyen id-val profil" + id);
+      throw new NotFoundException("Nem létezik ilyen profil: " + username);
     }
   }
 
-  async update(id: number, updateProfileDto: UpdateProfileDto) {
+  async update(username: string, updateProfileDto: UpdateProfileDto) {
     try{
+      if(updateProfileDto.newProfilePic){
+        const profile = await this.db.profile.findUnique({
+          where: {username},  
+          select: {
+            profileImg: true
+          }
+        })
+        if(updateProfileDto.profileImg != defaultProfilePicUrl){
+          const publicId = extractPublicId(profile.profileImg);
+          await this.cloudinary.destroyImage(publicId);
+        }
+
+        const newPicUrl = await this.cloudinary.uploadImage(updateProfileDto.newProfilePic)
+        
+        updateProfileDto.profileImg = newPicUrl.url;
+      }
       return await this.db.profile.update({
         where:{
-          id 
+          username
         },
         data: updateProfileDto
       });
     }catch(err){
-      throw new error("Error:", err);
+      throw new Error("Error:" + err);
     }
   }
 
-  async remove(id: number) {
+  async remove(username: string) {
     try{
       return await this.db.profile.delete({
         where:{
-          id
+          username
         }
       });
     }

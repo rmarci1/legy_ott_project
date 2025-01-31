@@ -1,5 +1,5 @@
 import { Transform } from "class-transformer";
-import { IsBoolean, IsNotEmpty, IsString, IsStrongPassword, Min, MinLength } from "class-validator";
+import { IsBoolean, IsEmail, IsNotEmpty, IsString, IsStrongPassword, Min, MinLength } from "class-validator";
 
 
 const message = "Kötelező kitölteni ";
@@ -14,10 +14,9 @@ export class CreateProfileDto {
   username: string;
 
   @IsNotEmpty({message: message + " az email mezőt"})
-  @IsString()
+  @IsEmail()
   email: string;
 
-  //@IsString()
   profileImg: string;
   
   @IsNotEmpty({message: message+ " a jelszó mezőt"})

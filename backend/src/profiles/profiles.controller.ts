@@ -17,18 +17,18 @@ export class ProfilesController {
     return this.profilesService.findAll();
   }
 
-  @Get(':id')
-  findOneId(@Param('id') id: string) {
-    return this.profilesService.findOne(+id);
+  @Get(':username')
+  findOneId(@Param('username') username: string) {
+    return this.profilesService.findOne(username);
   }
   
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProfileDto: UpdateProfileDto) {
-    return this.profilesService.update(+id, updateProfileDto);
+  @Patch(':username')
+  async update(@Param('username') username: string, @Body() updateProfileDto: UpdateProfileDto) {
+    return await this.profilesService.update(username, updateProfileDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.profilesService.remove(+id);
+  @Delete(':username')
+  remove(@Param('username') username: string) {
+    return this.profilesService.remove(username);
   }
 }
