@@ -33,6 +33,7 @@ const home = () => {
           <View className='flex-row mt-2'>
             <Image
               source={images.google}
+              resizeMode='contain'
               className='w-11 h-11 mt-1 border rounded-md border-orange-100 bg-orange-100'
             />
             <View className='ml-2'>

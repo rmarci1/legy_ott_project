@@ -7,4 +7,5 @@ import dot from "../assets/images/dot.png";
 import expand from "../assets/images/expand.png"
 import google from "../assets/images/google.png"
 import test from "../assets/images/test.png"
+
 export default { welcomebg, growing, communication, logo,dot,active_dot,expand,google,test};
