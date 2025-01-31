@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Cloudinary } from './cloudinary';
 import { v2 } from 'cloudinary';
-import { CLOUDINARY } from './constants';
+import { CLOUDINARY } from '../constants';
 
 describe('Cloudinary', () => {
   let provider: Cloudinary;

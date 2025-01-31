@@ -3,7 +3,7 @@ import { AppService } from './app.service';
 import { CreateProfileDto } from './profiles/dto/create-profile.dto';
 import { Request, Response } from 'express';
 import { validateProfile } from './dto/validateProfile.dto';
-import { AuthGuard } from './Auth-Guard';
+import { AuthGuard } from './Auth/Auth-Guard';
 import { LoginDto } from './dto/login.dto';
 
 @Controller()
@@ -12,6 +12,7 @@ export class AppController {
 
   @Post("/login")
   async login(@Body() LoginDto: LoginDto, @Req() req: any){
+    console.log(req.body)
     return await this.appService.login(LoginDto, req.session);
   }
 
@@ -57,7 +58,7 @@ export class AppController {
   @Post("/check-auth")
   @UseGuards(AuthGuard)
   check(@Req() req: Request){
-    console.log('Session profile in check-auth:', req.session.profile);
+    // return res.cookie()
     return { profile: req.session.profile };
   }
 

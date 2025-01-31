@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateProfileDto } from './profiles/dto/create-profile.dto';
-import { PrismaService } from './prisma.service';
+import { PrismaService } from './prisma/prisma.service';
 import { ProfilesService } from './profiles/profiles.service';
 import * as bcrypt from 'bcrypt';
 import convertImg from './fileConverter/convert';
@@ -15,7 +15,7 @@ export class AppService {
 
 
   async login(LoginDto: LoginDto, session: any){
-    let isPasswordValid;
+    let isPasswordValid : boolean;
     let loginMode: "email" | "username";
     let profileWithEmail;
     let profileWithUsername;
@@ -65,8 +65,7 @@ export class AppService {
       name: profileWithUsername.name,
       advertiser: profileWithUsername.advertiser,
     });
-    await session.save();
-    console.log('Session profile after login:', session.profile);
+    //console.log('Session profile after login:', session.profile);
 
 
     return { message: 'Login successful', profile: session.profile };
@@ -81,9 +80,6 @@ export class AppService {
 
     if(profileWithUsername){
       throw new HttpException("A felhasználónév már foglalt!", HttpStatus.BAD_REQUEST);
-    }
-    if(!/^[a-z|0-9|A-Z]*([_][a-z|0-9|A-Z]+)*([.][a-z|0-9|A-Z]+)*([.][a-z|0-9|A-Z]+)*(([_][a-z|0-9|A-Z]+)*)?@[a-z][a-z|0-9|A-Z]*\.([a-z][a-z|0-9|A-Z]*(\.[a-z][a-z|0-9|A-Z]*)?)$/.test(CreateProfileDto.email)){
-      throw new HttpException("Nem megfelelő formátumú az email cím", HttpStatus.BAD_REQUEST);
     }
     if(!/^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{2,}$/.test(CreateProfileDto.name)){
       throw new HttpException("Nem megfelelő a név formátuma. Helyes példa: Jakab Zoltán", HttpStatus.BAD_REQUEST)
