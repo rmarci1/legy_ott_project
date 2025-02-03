@@ -1,10 +1,9 @@
-import { View, Text, Image, ImageBackground, TouchableOpacity, ScrollView, StatusBar, Modal, Animated, Easing, Dimensions } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
-import { SafeAreaView, useSafeAreaFrame } from 'react-native-safe-area-context'
+import { View, Text, Image,TouchableOpacity,  ScrollView, Animated} from 'react-native'
+import React, { useRef, useState } from 'react'
 import { useGlobalContext } from '@/context/GlobalProvider'
 import images from '@/constants/images'
-import { GetProfilePic } from '@/lib/api'
 import { AntDesign } from '@expo/vector-icons'
+import { StatusBar } from 'expo-status-bar'
 
 const profile = () => {
   const {user} = useGlobalContext();
@@ -12,7 +11,6 @@ const profile = () => {
   const [showMore,setshowMore] = useState(false);
   const [isExpand,setIsExpand] = useState(false); 
 
-  const windowHeight = Dimensions.get('window').height
   const [maradektext,setMaradekText] = useState("töltöm az időmet. Ha épp nem valami izgalmas projektbe mélyedek, akkor valószínűleg egy jó könyvvel, zenével vagy egy csésze kávéval találkozol velem.\nImádok utazni, felfedezni új helyeket, és megismerni más kultúrákat."+
   "Mindig nyitott vagyok egy jó beszélgetésre, szóval ha van egy jó sztorid vagy egy érdekes ötleted, oszd meg velem!")
  /* const [imageUri, setImageUri] = useState(null);
@@ -26,8 +24,8 @@ const profile = () => {
       throw new Error(error);
     }
   }*/
-  const slideAnim = useState(new Animated.Value(300))[0];
-  const imageSlide = useRef(new Animated.Value(0.25)).current;
+  const slideAnim = useState(new Animated.Value(400))[0];
+  const imageSlide = useRef(new Animated.Value(0.3)).current;
 
   const toggleImage = () =>{
     if(!isExpand){
@@ -39,7 +37,7 @@ const profile = () => {
     }
     else{
       Animated.timing(imageSlide,{
-        toValue: 0.5,
+        toValue: 0.6,
         duration: 800,
         useNativeDriver: false,
       }).start();
@@ -49,7 +47,7 @@ const profile = () => {
   const toggleSlide = () => {
     if (visible) {
       Animated.timing(slideAnim, {
-        toValue: 300,
+        toValue: 400,
         duration: 800,
         useNativeDriver: true,
       }).start();
@@ -64,8 +62,8 @@ const profile = () => {
   }
   return (
     <View className='h-full relative'>
-    <ScrollView className='flex-1 border'>
-      <StatusBar translucent backgroundColor='transparent' barStyle="light-content"/>
+    <ScrollView className='flex-1'>
+      <StatusBar translucent backgroundColor='transparent'/>
         <TouchableOpacity
           onPress={toggleImage}
           activeOpacity={0.9}
@@ -79,7 +77,7 @@ const profile = () => {
               <Image
                 source={images.test}
                 resizeMode='cover'
-                className='w-full'
+                className='w-full border'
               />
           </Animated.View>
         </TouchableOpacity>
@@ -116,7 +114,7 @@ const profile = () => {
                   </TouchableOpacity>
               </View>
               {
-                visible && <Animated.View
+                true && <Animated.View
                   className=" bg-primary rounded-xl mt-4"
                   style={{
                     transform: [{ translateY : slideAnim}]
