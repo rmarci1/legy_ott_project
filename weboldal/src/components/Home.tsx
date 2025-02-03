@@ -9,8 +9,8 @@ export default function Home(){
   const handleButton = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     try {
-      console.log(await getUser()); // Make sure getUser() is an async function
-      setText("megnyomva"); // Update state to trigger re-render
+      console.log(await getUser()); 
+      setText("megnyomva");
     } catch (error) {
       alert(error);
     }
