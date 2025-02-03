@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router"
-import {pflogin} from '../../api'
+import {getUser, pflogin} from '../../api'
 
 
 export default function Login(){
@@ -16,6 +16,7 @@ export default function Login(){
     };
     
     const handleLogin = async(e: { preventDefault: () => void; })=>{
+        console.log(emailUsername,password,loginMode)
         e.preventDefault();
         try{
             if(emailUsername.includes("@")){
@@ -25,6 +26,7 @@ export default function Login(){
                 loginMode = "username";
             }
             await pflogin(emailUsername, password, loginMode)
+            await getUser()
             navigate("/home")
         }
         catch(error){
