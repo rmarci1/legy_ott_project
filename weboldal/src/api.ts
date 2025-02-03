@@ -1,3 +1,4 @@
+
 const API_URL = 'http://192.168.11.82:3000';
 
 interface RegisterResponse {
@@ -55,23 +56,30 @@ export const pflogin = async (
   loginMode: string
 ): Promise<LoginResponse> => {
   try {
-    let response: Response;
+    let response: any;
     const email = login;
     const username = login;
 
-    (loginMode == "email")? response = await fetch(`${API_URL}/login`, {
+    response = await fetch(`${API_URL}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-      credentials: 'include',
-    }): response = await fetch(`${API_URL}/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
+      body: loginMode == "email" ? JSON.stringify({ email, password }) : JSON.stringify({ username, password }),
       credentials: 'include',
     })
 
-    const data: LoginResponse & ErrorResponse = await response.json();
+      console.log(password)
+
+    //   response = await axios.post(`http://192.168.11.82:3000/login`,
+    //   {
+    //       "email": email,
+    //       "password": password  
+    //   },
+    //   {
+    //     withCredentials: true
+    //   }
+    // )
+
+    const data = await response.json();
 
     if (!response.ok) {
       throw new Error(
@@ -92,6 +100,7 @@ export const getUser = async (): Promise<RegisterResponse> => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
+      
     });
 
     const data: RegisterResponse & ErrorResponse = await response.json();
@@ -107,17 +116,29 @@ export const getUser = async (): Promise<RegisterResponse> => {
   }
 };
 
-export const blob = async (): Promise<Blob> => {
+export const getProfilePic = async (): Promise<String> => {
   try {
     const response = await fetch(`${API_URL}/profilePic`, {
       method: 'GET',
       credentials: 'include',
     });
 
-    const blobData: Blob = await response.blob();
-
-    return blobData;
+    return response.json();
   } catch (error: any) {
     throw new Error(error.message);
   }
 };
+
+// export const UpdateProfilePic = async (profilePic: File) =>{
+//   const 
+
+  
+
+//   const response = await fetch(`${API_URL}/profiles/kovacs.laci`, {
+//     method: 'PATCH',
+//     credentials: "include",
+//     headers: { 'Content-Type': 'application/octet-stream' },
+//     body: JSON.stringify({ UpdateProfilePic:  }),
+//   })
+
+
