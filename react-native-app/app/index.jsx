@@ -34,8 +34,8 @@ const renderItem = (item) => {
   )
 }
 const index = () => {
-  const {isLoggedIn,user,isLoading} = useGlobalContext();
-  if(!isLoading && isLoggedIn && user) return <Redirect href="/(tabs)/home"/>
+  const {isLoggedIn,user,isLoading,isJobsIn} = useGlobalContext();
+  if(!isLoading && isLoggedIn && user && isJobsIn) return <Redirect href="/(tabs)/home"/>
   const swiperRef = useRef(null);
   return (
     <SafeAreaView className='h-full'>

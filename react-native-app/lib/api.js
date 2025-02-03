@@ -94,3 +94,21 @@ export const GetProfilePic = async (profile) => {
         throw new Error(error.message)
     }
 }
+export const getJobs = async () => {
+    try{
+        const response = await fetch(`${API_URL}/jobs`,{
+            method: 'GET',
+            headers: {'Content-Type': 'application/json'},
+            credentials:'include'
+        });
+        const data = response.json();
+        if(!response.ok){
+            throw new Error(data.message);
+        }
+        return data;
+    }
+    catch(error){
+        console.log(error);
+        throw new Error(error);
+    }
+}

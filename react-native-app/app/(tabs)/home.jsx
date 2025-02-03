@@ -1,18 +1,23 @@
-import { View, Text, TouchableOpacity, TouchableWithoutFeedback, Keyboard, Image, FlatList, Modal } from 'react-native'
+import { View, Text, TouchableOpacity, TouchableWithoutFeedback, Keyboard, Image, FlatList, Modal, ScrollView, StyleSheet, ImageBackground } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import SearchInput from '@/components/SearchInput'
 import { AntDesign, Ionicons } from '@expo/vector-icons'
 import images from '@/constants/images'
-import { blob, getUser, updateProfile } from '@/lib/api'
+import {getUser} from '@/lib/api'
 import { useGlobalContext } from '@/context/GlobalProvider'
 import { StatusBar } from 'expo-status-bar'
 import { LinearGradient } from 'expo-linear-gradient'
 import JobDisplay from '@/components/JobDisplay'
+import CustomButton from '@/components/CustomButton'
+import { BlurView } from "@react-native-community/blur";
 const home = () => {
-  const {user} = useGlobalContext();
+  const {user,jobs} = useGlobalContext();
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [whichButton,setWhichButton] = useState("");
+  const [whichButton,setWhichButton] = useState("leírás");
+  const [currentJob,setCurrentJob] = useState(null);
+  const [readMore,setReadMore] = useState(false);
+  const [showMore,setShowMore] = useState(false);
   const submit = async () => {
     try {
         await getUser();
@@ -33,9 +38,34 @@ const home = () => {
       <StatusBar style='dark'/>
       <View className='h-min-[65vh] w-[90%]'>
         <FlatList
-          renderItem={() =>{
-
-          }}
+          data={jobs}
+          keyExtractor={(item,index) => index.toString()}
+          renderItem={({item}) => (
+            <View>
+              <TouchableOpacity
+                onPress={() => {
+                  let curr = item.description.length;
+                  if(curr > 100){
+                    setReadMore(true);
+                  }
+                  setCurrentJob(item);
+                  toggleModal();
+                }}
+                activeOpacity={0.5}
+                className=''
+              >
+                <JobDisplay
+                  name="Gipsz Jakab"
+                  title={item.name}
+                  date={item.date.split('T')[0]}
+                  limit={item.max_attending}
+                  image={images.google}
+                  imageStyles="w-20 h-20 bg-orange-100"
+                  containerStyles="border border-primary mt-6"
+                />
+              </TouchableOpacity>
+            </View>
+          )}
           ListHeaderComponent={() => (
             <View>
               <Text className='font-pmedium mt-5'>Szia, <Text className='font-pbold'>{user.name}</Text></Text>
@@ -52,21 +82,6 @@ const home = () => {
           </View>
           )}
         />
-        <TouchableOpacity
-          onPress={toggleModal}
-          activeOpacity={0.5}
-        >
-          <JobDisplay
-            name="Gipsz Jakab"
-            title="Visual Designer"
-            date="2024.02.10"
-            limit={5}
-            image={images.google}
-            imageStyles="w-20 h-20 bg-orange-100"
-            containerStyles="border border-primary mt-6"
-          />
-        </TouchableOpacity>
-
       </View>
       <Modal
         animationType='slide'
@@ -74,69 +89,100 @@ const home = () => {
         visible={isModalVisible}
         onRequestClose={toggleModal}
       >
-        <View className='items-center justify-center'>
-          <LinearGradient
-            colors={['#1a1a2e', '#16213e', '#0f3460']}
-            start={{x:0, y:0.5}}
-            end={{x:1, y:1}}
-            className='w-[95%] h-[98%] opacity-95'
-          >
-          <View className="rounded-2xl">
-              <View>
-                <View className='mt-3 border rounded-3xl px-2 justify-center items-center'>
-                  <View className='flex-row mt-2 w-[95%]'>
-                    <View className='w-16 h-16 rounded-full items-center justify-center bg-white'>
-                      <Image
-                        source={images.google}
-                        resizeMode='cover'
-                        className='w-10 h-10 rounded-full'
-                      />
-                    </View>
-                    <View className='ml-2'>
-                      <Text className='font-pregular text-green-400 text-sm'>Gipsz Jakab</Text>
-                      <Text className='font-pbold text-lg text-white'>Visual Designer</Text>
-                        <Text className='font-light text-sm text-white'>2024.02.10 × Max: 5fő</Text>
-                    </View>
-                  </View>
-                  <View className='w-[90%]'>
-                    <View className='h-16 mt-4 rounded-full bg-white opacity-60 items-center justify-center'>
-                      <View className='flex-row justify-between items-center w-[95%]'>
-                        <TouchableOpacity
-                          onPress={() => setWhichButton("leírás")}
-                          className={`justify-center items-center w-[33%] h-full rounded-3xl ${whichButton == "leírás" && "bg-white opacity-80"}`}
-                        >
-                          <Text className='text-white font-pregular'>Leírás</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          onPress={() => setWhichButton("áttekintés")}
-                          className={`justify-center items-center w-[33%] h-full rounded-3xl ${whichButton == "áttekintés" && "bg-white opacity-80"}`}
-                        >
-                          <Text className='text-white font-pregular'>Leírás</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          onPress={() => setWhichButton("értékelés")}
-                          className={`justify-center items-center w-[33%] h-full rounded-3xl ${whichButton == "értékelés" && "bg-white opacity-80"}`}
-                        >
-                          <Text className='text-white font-pregular'>Leírás</Text>
-                        </TouchableOpacity>
+        <ScrollView className='h-full'>
+            <View className='items-center justify-center min-h-[98%]'>
+              <LinearGradient
+                colors={['#1a1a2e', '#16213e', '#0f3460']}
+                start={{x:0, y:0.5}}
+                end={{x:1, y:1}}
+                className='w-[95%] h-full'
+              >
+                <View className="rounded-2xl">
+                    <View>
+                      <View className='mt-3 rounded-3xl px-2 justify-center items-center'>
+                        <View className='w-[95%]'>
+                          <JobDisplay
+                            name="Gipsz Jakab"
+                            title={currentJob?.name}
+                            date={currentJob?.date.split('T')[0]}
+                            limit={currentJob?.max_attending}
+                            image={images.google}
+                            imageStyles="w-16 h-16 bg-white"
+                            nameStyle="text-green-400 text-sm"
+                            titleStyle="text-white"
+                            dateStyle="text-white"
+                          />
+                        </View>
+                        <View className='w-[90%]'>
+                          <View className='h-16 mt-4 rounded-full bg-white opacity-60 items-center justify-center'>
+                            <View className='flex-row justify-between items-center w-[95%]'>
+                              <TouchableOpacity
+                                onPress={() => setWhichButton("leírás")}
+                                className={`justify-center items-center w-[33%] h-full rounded-3xl ${whichButton == "leírás" && "bg-white opacity-80"}`}
+                              >
+                                <Text className='text-white font-pregular'>Leírás</Text>
+                              </TouchableOpacity>
+                              <TouchableOpacity
+                                onPress={() => setWhichButton("áttekintés")}
+                                className={`justify-center items-center w-[33%] h-full rounded-3xl ${whichButton == "áttekintés" && "bg-white opacity-80"}`}
+                              >
+                                <Text className='text-white font-pregular'>Teszt</Text>
+                              </TouchableOpacity>
+                              <TouchableOpacity
+                                onPress={() => setWhichButton("értékelés")}
+                                className={`justify-center items-center w-[33%] h-full rounded-3xl ${whichButton == "értékelés" && "bg-white opacity-80"}`}
+                              >
+                                <Text className='text-white font-pregular'>Értékelés</Text>
+                              </TouchableOpacity>
+                            </View>
+                          </View>
+                          <View className='my-8'>
+                            <Text className='font-white font-pbold text-white'>Feladat Leírása</Text>
+                          </View>
+                          <View>
+                            <Text className='font-white font-light text-white'>
+                              {!showMore? currentJob?.description.substring(0,100)+"..." : currentJob?.description}
+                            </Text>      
+                            {readMore && (
+                              <TouchableOpacity
+                                onPress={() => setShowMore(!showMore)}
+                                className=' border-white'
+                              >
+                                <Text className='font-pbold text-orange-400'>{showMore? "Kevesebb" : "Olvass többet"}</Text>
+                            </TouchableOpacity>
+                            )}                
+                          </View>
+                        </View>
                       </View>
-                    </View>
-                  </View>
+                      <TouchableOpacity
+                        onPress={toggleModal}
+                        className='absolute right-4 top-4 h-10 w-10 bg-[#1a1a2e] opacity-95 rounded-3xl items-center justify-center'
+                      >
+                        <AntDesign name="close" size={20} color="white" className='' />
+                      </TouchableOpacity>
+                    </View>        
                 </View>
-                <TouchableOpacity
-                  onPress={toggleModal}
-                  className='absolute right-4 top-4 h-10 w-10 bg-[#1a1a2e] opacity-95 rounded-3xl items-center justify-center'
-                >
-                  <AntDesign name="close" size={20} color="white" className='' />
-                </TouchableOpacity>
-              </View>        
-          </View>
-          </LinearGradient>
-        </View>      
+                <View className='relative flex-1 justify-end'>
+                  <View className='w-full p-5 self-center bg-gray-50'>
+                    <CustomButton
+                      title="Jelentkezés"
+                      textStyles="text-white"
+                      containerStyles="bg-primary w-[95%]"
+                      />
+                  </View>
+                </View> 
+              </LinearGradient>        
+            </View>   
+        </ScrollView>
       </Modal>
     </SafeAreaView>
     </TouchableWithoutFeedback>
   )
 }
-
+const styles = StyleSheet.create({
+  overlay:{
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.5)"
+  }
+})
 export default home
