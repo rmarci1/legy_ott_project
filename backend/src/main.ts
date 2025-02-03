@@ -10,32 +10,38 @@ async function bootstrap() {
   
   const allowedOrigins = [
     'http://localhost:5173',  
+    'http://localhost:3000',  
     'http://192.168.11.82:3000',   
-    'http://192.168.11.142:8081',        
-
+    'http://192.168.11.142:8081'       
   ];
 
 
   app.enableCors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (e.g., mobile apps, Postman, etc.)
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
         callback(new Error('Not allowed by CORS'));
       }
     },
-    credentials: true, // Allow credentials (cookies, tokens, etc.)
+    credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     preflightContinue: false,
     optionsSuccessStatus: 204,
   });
+
+  app.use((req, res, next) => {
+    console.log("Session middleware:", req.session);
+    next();
+  });
+
 
   app.useGlobalPipes(new ValidationPipe());
 
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.setViewEngine('ejs');
+  
   
   await app.listen(3000, '0.0.0.0');
 }

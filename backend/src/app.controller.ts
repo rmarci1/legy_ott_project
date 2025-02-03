@@ -3,7 +3,7 @@ import { AppService } from './app.service';
 import { CreateProfileDto } from './profiles/dto/create-profile.dto';
 import { Request, Response } from 'express';
 import { validateProfile } from './dto/validateProfile.dto';
-import { AuthGuard } from './Auth-Guard';
+import { AuthGuard } from './Auth/Auth-Guard';
 import { LoginDto } from './dto/login.dto';
 
 @Controller()
@@ -12,13 +12,24 @@ export class AppController {
 
   @Post("/login")
   async login(@Body() LoginDto: LoginDto, @Req() req: any){
+    console.log(req.body)
     return await this.appService.login(LoginDto, req.session);
   }
 
   @Get("/profilePic")
-  @UseGuards(AuthGuard)
-  async getProfilePic(@Req() req: any){
-    return await this.appService.getProfilePic(req.session);
+  //@UseGuards(AuthGuard)
+  async getProfilePic(@Req() req: any, @Res() res: Response){
+    const image = await this.appService.getProfilePic(req.session);
+    if (image && image.profileImg) {
+      res.setHeader('Content-Type', 'image/png');
+      res.setHeader('Content-Disposition', 'inline; filename="profilePic.png"');
+    
+      res.end(image.profileImg); 
+
+    } else {
+      res.status(404).send('Profile image not found');
+    }
+
   }
 
   @Post("/reg1")
@@ -47,7 +58,7 @@ export class AppController {
   @Post("/check-auth")
   @UseGuards(AuthGuard)
   check(@Req() req: Request){
-    console.log('Session profile in check-auth:', req.session.profile);
+    // return res.cookie()
     return { profile: req.session.profile };
   }
 
