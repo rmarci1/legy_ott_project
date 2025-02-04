@@ -41,13 +41,12 @@ const _layout = () => {
                 tabBarInactiveTintColor: 'white',
                 tabBarStyle: {
                     backgroundColor: '#1e1b4b',
-                    borderTopWidth: 1,
-                    borderTopColor: '#232522',
                     height: 60,
                     width: "90%",
                     borderRadius: 90,
                     alignSelf: 'center',
-                    bottom: 25
+                    marginBottom: 25,
+                    alignItems:'center'
                 }
             }}
         >

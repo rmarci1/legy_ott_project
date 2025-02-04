@@ -74,7 +74,7 @@ const welcome = () => {
           <View className='h-[15%]'></View>
         </View>
         <View key={1} className="items-center justify-center flex-1">
-          <Text className="text-2xl text-primary font-pregular mb-4 tex-center">Mi legyen a felhasználóneved?</Text>
+          <Text className="text-2xl text-primary font-pregular mb-4 text-center">Mi legyen a felhasználóneved?</Text>
           <Formfield 
             placeholder={form.username} 
             otherStyles="w-[80%]" 

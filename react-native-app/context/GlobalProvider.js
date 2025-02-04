@@ -1,4 +1,4 @@
-import { getUser} from "@/lib/api";
+import { getJobs, getUser} from "@/lib/api";
 import {createContext, useContext, useEffect, useState} from "react"
 
 const GlobalContext = createContext()
@@ -10,13 +10,15 @@ const GlobalProvider = ({children}) => {
     const [isLoggedIn,setIsloggedIn] = useState(null);
     const [user,setUser] = useState(null);
     const [isLoading,setIsLoading] = useState(false);
+    const [jobs,setJobs] = useState(null);
+    const [isJobsIn,setIsJobsIn] = useState(false);
     useEffect(()=>{
         getUser()
         .then((res)=>{
             setIsLoading(true);
             if(res){
                 setIsloggedIn(true);
-                setUser(res);
+                setUser(res.profile);
             }
             else{
                 setIsloggedIn(false);
@@ -25,6 +27,20 @@ const GlobalProvider = ({children}) => {
         })
         .catch((error) => {
             console.log(error)
+        })
+        getJobs()
+        .then((res) => {
+            if(res){
+                setJobs(res);
+                setIsJobsIn(true);
+            }
+            else{
+                setJobs(null);
+                setIsJobsIn(false);
+            }
+        })
+        .catch((error) => {
+            console.log(error);
         })
         .finally(() => {
             setIsLoading(false);
@@ -40,7 +56,11 @@ const GlobalProvider = ({children}) => {
                 user,
                 setUser,
                 isLoading,
-                setIsLoading
+                setIsLoading,
+                jobs,
+                setJobs,
+                isJobsIn,
+                setIsJobsIn,
             }}
         >
             {children}

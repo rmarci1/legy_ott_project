@@ -7,7 +7,12 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "#1F41BB"
+        primary: "#1F41BB",
+        gradient: {
+          start: '#1a1a2e',
+          middle: '#16213e',
+          end: '#0f3460',
+        },
       },
       fontFamily:{
         pthin: ["Poppins-Thin", "sans-serif"],

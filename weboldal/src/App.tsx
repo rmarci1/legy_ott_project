@@ -5,6 +5,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './components/Home';
 import Login from './components/LoginRegister/Login';
 import Register from './components/LoginRegister/Register';
+import Profile from './components/Profile';
+import { AuthProvider } from './components/Context/AuthContext';
 
 function App() {
   useEffect(() => {
@@ -22,13 +24,16 @@ function App() {
       <BrowserRouter >
         <div className="flex h-screen font-poppins">
           <Navbar/>
-          <div className='flex-grow p-4 place-content-center'>
-            <Routes>
-              <Route path="/home" element={<Home />}/>
-              <Route path='/login' element={<Login /> } />
-              <Route path='/register' element={<Register />} />
-            </Routes>
-          </div>
+            <AuthProvider>
+              <div className='flex-grow p-4'>
+                <Routes>
+                  <Route path="/home" element={<Home />}/>
+                  <Route path='/login' element={<Login /> } />
+                  <Route path='/register' element={<Register />} />
+                  <Route path='/profile' element={<Profile />} />
+                </Routes>
+              </div>
+            </AuthProvider>
         </div>
       </BrowserRouter>
     </>

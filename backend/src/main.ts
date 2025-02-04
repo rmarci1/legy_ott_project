@@ -29,6 +29,12 @@ async function bootstrap() {
     optionsSuccessStatus: 204,
   });
 
+  app.use((req, res, next) => {
+    console.log("Session middleware:", req.session);
+    next();
+  });
+
+
   app.useGlobalPipes(new ValidationPipe());
 
   app.useStaticAssets(join(__dirname, '..', 'public'));

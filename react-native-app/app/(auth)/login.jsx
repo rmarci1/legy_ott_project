@@ -14,31 +14,27 @@ const login = () => {
     password : ''
   });
   const submit = async () => {
-    try{
       await pflogin(form.email,form.password);
       await getUser().then((res)=>{
         setIsLoading(true);
         if(res){
             setIsloggedIn(true);
-            setUser(res);
+            setUser(res.profile);
         }
         else{
             setIsloggedIn(false);
             setUser(null);
         }
-    })
-    .catch((error) => {
+      })
+      .catch((error) => {
         console.log(error)
-    })
-    .finally(() => {
+        throw new Error(error.message);
+      })
+      .finally(() => {
         setIsLoading(false);
-    })
+      })
       router.push('/(tabs)/home');
     }
-    catch(error){
-      throw new Error(error);
-    }
-  }
   return (
     <SafeAreaView className='h-full'>
       <View className='w-full min-h-[85vh] flex-1 justify-center items-center'>
