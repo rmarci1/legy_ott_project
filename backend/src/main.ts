@@ -8,10 +8,10 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useBodyParser('json');
   
+  
   const allowedOrigins = [
-    'http://localhost:5173',  
-    'http://192.168.11.82:3000',   
-    'http://192.168.11.142:8081',        
+    'http://localhost:5173',  //local webpage
+    'http://192.168.11.142:8081', //     
   ];
 
 
