@@ -18,16 +18,6 @@ export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(
-        session({
-          secret: 'secretkey',
-          resave: false,
-          saveUninitialized: false,
-          cookie: { 
-            secure: false,
-            sameSite: "none",
-            httpOnly: true,
-          },
-        }),
         (req, res, next) => {
           console.log("Session middleware:", req.session);
           next();

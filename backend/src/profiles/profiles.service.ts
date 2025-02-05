@@ -6,6 +6,8 @@ import { error } from 'console';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { defaultProfilePicUrl } from 'src/constants';
 import { extractPublicId } from 'cloudinary-build-url';
+import { Readable } from 'stream';
+import * as fs from 'fs';
 
 @Injectable()
 export class ProfilesService {
@@ -41,6 +43,8 @@ export class ProfilesService {
   async update(username: string, updateProfileDto: UpdateProfileDto) {
     try{
       if(updateProfileDto.newProfilePic){
+        console.log(updateProfileDto.newProfilePic)
+        const readStream = Readable.from(updateProfileDto.newProfilePic)
         const profile = await this.db.profile.findUnique({
           where: {username},  
           select: {
@@ -51,9 +55,7 @@ export class ProfilesService {
           const publicId = extractPublicId(profile.profileImg);
           await this.cloudinary.destroyImage(publicId);
         }
-
-        const newPicUrl = await this.cloudinary.uploadImage(updateProfileDto.newProfilePic)
-        
+        const newPicUrl = await this.cloudinary.uploadImage(readStream);
         updateProfileDto.profileImg = newPicUrl.url;
       }
       return await this.db.profile.update({

@@ -1,14 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import convertImg from 'src/fileConverter/convert';
 import { error } from 'console';
+import { ProfilesService } from 'src/profiles/profiles.service';
+import { Job } from './entities/job.entity';
 
 @Injectable()
 export class JobsService {
 
-  constructor(private readonly db: PrismaService){}
+  constructor(private readonly db: PrismaService, private readonly ps: ProfilesService){}
 
 
   async create(createJobDto: CreateJobDto) {
@@ -40,6 +42,62 @@ export class JobsService {
       throw new error("error:", err)
     }
   }
+
+  async findArchived(username: string){
+
+    try{
+      const user = await this.db.profile.findUnique({where:{username}, select: {id: true}});
+      const today = new Date();
+
+      const jobs: Job[] = await this.db.jobProfile.findMany({
+        where: {
+          AND: [
+            {profileId: user.id},
+            {job: {
+              date: {lt: today}
+            }}
+          ]
+        }
+      })
+
+      return jobs;
+    }
+    catch(error){
+      throw new Error("Error: " + error)
+    }
+
+  }
+
+  async findAllAvailable(){
+    const today = new Date();
+    const jobs = this.db.jobProfile.findMany({
+      select: {
+        job: true
+      }, 
+      //TODO: where clause
+    })
+  }
+
+  async findAdvertisments(username: string){
+    try{
+      const today = new Date();
+      const jobs = await this.db.job.findMany({
+        where: {
+          AND: [
+            {from: username},
+            {date: {gte: today}}
+          ]
+        }
+      })
+
+      return jobs;
+    }
+    catch(error){
+      throw new Error("Error: " + error);
+    }
+  }
+
+  //TODO: find jobs that the user wants to attend
 
   async update(id: number, updateJobDto: UpdateJobDto) {
     try{

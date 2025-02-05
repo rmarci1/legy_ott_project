@@ -22,6 +22,19 @@ export class JobsController {
     return this.jobsService.findOne(+id);
   }
 
+  @Get('/archived:username')
+  findArchived(@Param('username') username: string){
+    return this.jobsService.findArchived(username);
+  }
+
+  //Not done
+  @Get('/available')
+  findAvailable(){
+    return this.jobsService.findAllAvailable();
+  }
+
+  
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto) {
     return this.jobsService.update(+id, updateJobDto);

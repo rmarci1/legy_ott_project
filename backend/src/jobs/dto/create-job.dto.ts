@@ -24,6 +24,10 @@ export class CreateJobDto {
     @IsNumber()
     @Min(0)
     max_attending: number;
+
+    @IsString()
+    @IsNotEmpty()
+    from: string;
     
     @IsNotEmpty()
     @IsString()
