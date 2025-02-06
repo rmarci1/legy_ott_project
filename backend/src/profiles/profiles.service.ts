@@ -1,10 +1,10 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { error } from 'console';
-import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
-import { defaultProfilePicUrl } from 'src/constants';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import { defaultProfilePicUrl } from '../constants';
 import { extractPublicId } from 'cloudinary-build-url';
 import { Readable } from 'stream';
 import * as fs from 'fs';

@@ -1,22 +1,20 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProfilesController } from './profiles.controller';
 import { ProfilesService } from './profiles.service';
-import { PrismaService } from '../../src/prisma/prisma.service';
-import { CloudinaryService } from '../../src/cloudinary/cloudinary.service';
+import { PrismaService } from '../prisma/prisma.service';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 describe('ProfilesController', () => {
   let controller: ProfilesController;
-  let service: Partial<ProfilesService>;
-  let profile: any = [{name: "Laci", username: "laci.laci", email: "lacilaci@gmail.com", password: "123456Ab@", profileImg:"", advertiser: false}]; 
-  
+  let service: ProfilesService;
+  let profiles: any = [{name: "Laci", username: "laci.laci", email: "lacilaci@gmail.com", password: "123456Ab@", profileImg:"", advertiser: false}]; 
+  let profile: any = {name: "Laci", username: "laci.laci", email: "lacilaci@gmail.com", password: "123456Ab@", profileImg:"", advertiser: false}
+
   beforeEach(async () => {
-    service = {
-      findAll: jest.fn().mockReturnValue(profile)
-    }
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ProfilesController],
-      providers: [{provide: ProfilesService, useValue: service}, CloudinaryService, PrismaService],
+      providers: [ProfilesService, PrismaService, CloudinaryService],
     }).compile();
 
     controller = module.get<ProfilesController>(ProfilesController);
@@ -27,6 +25,15 @@ describe('ProfilesController', () => {
   });
 
   it('should find all profiles', () =>{
-    expect(controller.findAll()).toEqual(profile);
+    jest.spyOn(service, "findAll").mockResolvedValue(profiles);
+    expect(controller.findAll()).toEqual(profiles);
   })
+
+  // it('should return one profile', () =>{
+  //   expect(controller.findOne(profile.username)).toEqual(profile);
+  // })
+
+  // it('should throw an error when username is not found', () =>{
+
+  // })
 });

@@ -43,8 +43,8 @@ export class JobsService {
     }
   }
 
+  //max_capacity
   async findArchived(username: string){
-
     try{
       const user = await this.db.profile.findUnique({where:{username}, select: {id: true}});
       const today = new Date();
@@ -70,12 +70,22 @@ export class JobsService {
 
   async findAllAvailable(){
     const today = new Date();
-    const jobs = this.db.jobProfile.findMany({
-      select: {
-        job: true
-      }, 
-      //TODO: where clause
-    })
+    try{
+      const jobs = await this.db.job.findMany({
+        where: {
+          AND: [
+            {max_attending: {gt: this.db.job.fields.max_attending}},
+            {date: {gte: today}}
+          ]
+        }
+      })
+
+      return jobs;
+    }
+    catch(error){
+      throw new Error("Error: " + error);
+    }
+    
   }
 
   async findAdvertisments(username: string){
