@@ -19,6 +19,7 @@ model job{
   date DateTime
   img String
   description String
+  from String
   max_attending Int
   address String
 

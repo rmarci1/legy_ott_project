@@ -7,6 +7,7 @@ declare module 'express-session' {
       username: string;
       email: string;
       password: string;
+      profileImg: string;
     };
     destroy: (callback: (err: any) => void) => void; 
   }

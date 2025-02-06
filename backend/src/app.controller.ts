@@ -16,22 +16,6 @@ export class AppController {
     return await this.appService.login(LoginDto, req.session);
   }
 
-  @Get("/profilePic")
-  //@UseGuards(AuthGuard)
-  async getProfilePic(@Req() req: any, @Res() res: Response){
-    const image = await this.appService.getProfilePic(req.session);
-    if (image && image.profileImg) {
-      res.setHeader('Content-Type', 'image/png');
-      res.setHeader('Content-Disposition', 'inline; filename="profilePic.png"');
-    
-      res.end(image.profileImg); 
-
-    } else {
-      res.status(404).send('Profile image not found');
-    }
-
-  }
-
   @Post("/reg1")
   async reg1(@Body() validateProfileDto: validateProfile, @Res() res:Response){
       const halfProfile = await this.appService.reg1(validateProfileDto);
@@ -58,7 +42,6 @@ export class AppController {
   @Post("/check-auth")
   @UseGuards(AuthGuard)
   check(@Req() req: Request){
-    // return res.cookie()
     return { profile: req.session.profile };
   }
 

@@ -57,6 +57,7 @@ export class AppService {
       email: profileWithEmail.email,
       name: profileWithEmail.name,
       advertiser: profileWithEmail.advertiser,
+      profileImg: profileWithEmail.profileImg
     })
   : (session.profile = {
       username: profileWithUsername.username,
@@ -64,6 +65,7 @@ export class AppService {
       email: profileWithUsername.email,
       name: profileWithUsername.name,
       advertiser: profileWithUsername.advertiser,
+      profileImg: profileWithUsername.profileImg
     });
     //console.log('Session profile after login:', session.profile);
 
