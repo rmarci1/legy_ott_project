@@ -34,6 +34,7 @@ const TabIcon = ({color,name,focused,containerStyles}) =>{
 const _layout = () => {
   return (
     <>  
+    <StatusBar style='auto'/>
         <Tabs
             screenOptions={{
                 tabBarShowLabel: false,
@@ -131,9 +132,7 @@ const _layout = () => {
             ),
         }}
         />
-        
         </Tabs>
-        <StatusBar style='dark'/>
     </>
   )
 }

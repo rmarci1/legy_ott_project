@@ -28,7 +28,7 @@ const profile = () => {
   const imageSlide = useRef(new Animated.Value(0.3)).current;
 
   const toggleImage = () =>{
-    if(!isExpand){
+    if(isExpand){
       Animated.timing(imageSlide, {
         toValue: 0.3,
         duration: 800,
@@ -63,7 +63,7 @@ const profile = () => {
   return (
     <View className='h-full relative'>
     <ScrollView className='flex-1'>
-      <StatusBar translucent backgroundColor='transparent'/>
+    {/*<StatusBar translucent backgroundColor='transparent'/>*/}
         <TouchableOpacity
           onPress={toggleImage}
           activeOpacity={0.9}

@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import SearchInput from '@/components/SearchInput'
 import { AntDesign, Ionicons } from '@expo/vector-icons'
 import images from '@/constants/images'
-import {getUser} from '@/lib/api'
+import {CreateProfilePic, GetProfilePic, getUser} from '@/lib/api'
 import { useGlobalContext } from '@/context/GlobalProvider'
 import { StatusBar } from 'expo-status-bar'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -20,7 +20,7 @@ const home = () => {
   const [showMore,setShowMore] = useState(false);
   const submit = async () => {
     try {
-        await getUser();
+        await CreateProfilePic(user.username);
     }
     catch(error){
       console.log(error);
