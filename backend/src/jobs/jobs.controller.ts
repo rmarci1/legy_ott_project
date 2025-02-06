@@ -27,13 +27,20 @@ export class JobsController {
     return this.jobsService.findArchived(username);
   }
 
-  //Not done
-  @Get('/available')
-  findAvailable(){
-    return this.jobsService.findAllAvailable();
+  @Get('/ads:username')
+  findAdvertisements(@Param('username') username: string){
+    return this.jobsService.findAdvertisments(username);
   }
 
-  
+  @Get('/available:username')
+  findAvailable(@Param('username') username: string){
+    return this.jobsService.findAllAvailable(username);
+  }
+
+  @Get('/selected:username')
+  findSelected(@Param('username') username: string){
+    return this.jobsService.userSelectedJobs(username);
+  }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto) {

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, Post, Render, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
 import { CreateProfileDto } from './profiles/dto/create-profile.dto';
 import { Request, Response } from 'express';
