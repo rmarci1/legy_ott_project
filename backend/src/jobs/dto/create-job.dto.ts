@@ -4,6 +4,10 @@ import * as fs from 'fs';
 
 export class CreateJobDto {
 
+    @IsNumber()
+    @IsNotEmpty()
+    id: number;
+
     @IsNotEmpty()
     @IsString()
     name: string;
@@ -24,6 +28,12 @@ export class CreateJobDto {
     @IsNumber()
     @Min(0)
     max_attending: number;
+
+    @IsNumber()
+    @IsNotEmpty()
+    @Min(0)
+    current_attending: number = 0;
+
 
     @IsString()
     @IsNotEmpty()

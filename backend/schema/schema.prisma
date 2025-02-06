@@ -21,6 +21,7 @@ model job{
   description String
   from String
   max_attending Int
+  current_attending Int
   address String
 
   profiles jobProfile[]

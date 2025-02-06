@@ -18,7 +18,7 @@ export class ProfilesController {
   }
 
   @Get(':username')
-  findOneId(@Param('username') username: string) {
+  findOne(@Param('username') username: string) {
     return this.profilesService.findOne(username);
   }
   
