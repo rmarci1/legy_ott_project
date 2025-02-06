@@ -36,7 +36,7 @@ export class ProfilesService {
       });
     }
     catch(err){
-      throw new NotFoundException("Nem létezik ilyen profil: " + username);
+      throw new NotFoundException("Nem létezik ilyen profil");
     }
   }
 
@@ -78,7 +78,7 @@ export class ProfilesService {
       });
     }
     catch(err){
-      throw new error("Error:", err)
+      throw new Error("Nem létezik ilyen profil")
     }
   }
 }
