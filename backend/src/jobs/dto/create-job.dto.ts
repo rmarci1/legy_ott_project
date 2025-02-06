@@ -5,7 +5,6 @@ import * as fs from 'fs';
 export class CreateJobDto {
 
     @IsNumber()
-    @IsNotEmpty()
     id: number;
 
     @IsNotEmpty()

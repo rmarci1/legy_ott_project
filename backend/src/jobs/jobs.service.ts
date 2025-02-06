@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
-import convertImg from 'src/fileConverter/convert';
+import { PrismaService } from '../prisma/prisma.service';
+import convertImg from '../fileConverter/convert';
 import { error } from 'console';
-import { ProfilesService } from 'src/profiles/profiles.service';
+import { ProfilesService } from '../profiles/profiles.service';
 import { Job } from './entities/job.entity';
 
 @Injectable()
@@ -39,7 +39,7 @@ export class JobsService {
         }
       });
     }catch(err){
-      throw new error("error:", err)
+      throw new Error("error:"+ err)
     }
   }
 
