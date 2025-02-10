@@ -38,7 +38,8 @@ const welcome = () => {
   const submit = async () => {
     try{
       setIsSubmitting(true);
-      await register(form.name,form.username,formPart.password,formPart.email);
+      const res = register(form.name,form.username,formPart.password,formPart.email);
+      console.log(res);
       router.navigate('/(tabs)/home');
     }
     catch(error){

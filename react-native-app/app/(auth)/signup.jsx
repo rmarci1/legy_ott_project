@@ -16,6 +16,7 @@ const signup = () => {
     password : '',
     confirmPassword : ''
   });
+  const [currentProblem,setCurrentProblem] = useState("");
   const [isSubmitting,setIsSubmitting] = useState(false);
   const [message,setMessage] = useState('');
   const [progress,setProgress] = useState(0);
@@ -37,10 +38,15 @@ const signup = () => {
     strengthChecks.hasLowerCase = /[a-z]+/.test(passwordValue);
     strengthChecks.hasDigit = /[0-9]+/.test(passwordValue);
     strengthChecks.hasSpecialChar= /[^A-Za-z0-9]+/.test(passwordValue);
+  
     let verifiedList = Object.values(strengthChecks).filter((value) => value)
     let strength =
       verifiedList.length === 5 ? "Erős"
       : verifiedList.length >= 3 ? "Közepes" : "Gyenge";
+    setCurrentProblem(strengthChecks.length? "Minimum 8 hosszúságúnak kell lennie a jelszónak" : strengthChecks.hasUpperCase? "Kell lennie 1 nagybetűnek a jelszóban" : 
+      strengthChecks.hasLowerCase? "Kell lennie 1 kisbetűnek a jelszóban" : strengthChecks.hasDigit? "Kell lennie 1 számnak a jelszóban" : strengthChecks.hasSpecialCha? 
+      "Kell lennie egy speciális karakternek a jelszóban pl(%/@)" : ""
+    );
     setProgress(verifiedList.length);
     setMessage(strength);
     setForm({...form, password : passwordValue})
@@ -48,13 +54,19 @@ const signup = () => {
   const submit = async () => {
     try{
       await registerpart1(form.email,form.password,form.confirmPassword);
+      if(progress != 5){
+        console.log(currentProblem);
+        Alert.alert("Hiba", currentProblem);
+        return;
+      }
+      
       setIsSubmitting(true);
       setFormPart(form);
       console.log("asd")
       router.push('/welcome');
     }
     catch(error){
-      throw new Error(error);
+      Alert.alert("Hiba",error.message);
     }
     finally{
       setIsSubmitting(false);

@@ -1,12 +1,11 @@
 import { View, Text, Image,TouchableOpacity,  ScrollView, Animated} from 'react-native'
 import React, { useRef, useState } from 'react'
 import { useGlobalContext } from '@/context/GlobalProvider'
-import images from '@/constants/images'
-import { AntDesign } from '@expo/vector-icons'
-import { StatusBar } from 'expo-status-bar'
+import { AntDesign, Feather } from '@expo/vector-icons'
+import * as ImagePicker from 'expo-image-picker';
 
 const profile = () => {
-  const {user} = useGlobalContext();
+  const {user,setUser} = useGlobalContext();
   const [visible, setVisible] = useState(false);
   const [showMore,setshowMore] = useState(false);
   const [isExpand,setIsExpand] = useState(false); 
@@ -60,6 +59,18 @@ const profile = () => {
     }
     setVisible(!visible);
   }
+  const openPicker = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: 'images',
+          allowsEditing: true,
+          aspect: [2,3],
+          quality : 0.3,
+        })
+    if (!result.canceled) {
+      console.log(result);
+      setUser({...user, profileImg : result.assets[0].uri});
+    }
+  }
   return (
     <View className='h-full relative'>
     <ScrollView className='flex-1'>
@@ -75,11 +86,17 @@ const profile = () => {
               }), 
             }}>
               <Image
-                source={images.test}
+                source={{uri : user.profileImg}}
                 resizeMode='cover'
-                className='w-full border'
+                className='w-full h-full'
               />
           </Animated.View>
+        <TouchableOpacity
+          onPress={openPicker}
+          className='absolute top-[15%] right-4 flex-row border p-2 items-center'
+        >
+          <Feather name="upload" size={20} color="black" />
+        </TouchableOpacity>
         </TouchableOpacity>
           <View className={`w-full h-full bg-white items-center`}>
             <View className='w-[90%] mt-4'>

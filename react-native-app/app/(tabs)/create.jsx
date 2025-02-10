@@ -1,26 +1,36 @@
-import { View, Text, ScrollView, TouchableOpacity, Alert, Image, TextInput, TouchableWithoutFeedback, Keyboard } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, Alert, Image, TextInput, TouchableWithoutFeedback, Keyboard, Modal } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Formfield from '@/components/Formfield'
-import { Entypo, Feather } from '@expo/vector-icons'
+import { Entypo, Feather, Octicons } from '@expo/vector-icons'
 import { router } from 'expo-router'
 import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system'
 import { CreateProfilePic } from '@/lib/api'
 import { useGlobalContext } from '@/context/GlobalProvider'
+import CustomButton from '@/components/CustomButton'
+import ShowJob from '@/components/ShowJob'
 
 const create = () => {
   const {user} = useGlobalContext();
+  const [whichButton,setWhichButton] = useState("leírás");
+  const [readMore,setReadMore] = useState(false);
+  const [showMore,setShowMore] = useState(false);
   const [form,setForm] = useState({
-    title: "",
-    max : 1,
+    name: "",
+    max_attending : 1,
     date : new Date(),
-    location : "",
+    address : "",
     description : "",
-    image : null
+    img : null
   })
   const [selection, setSelection] = useState({ start: 0, end: 0});
+  const [isModalVisible,setIsModalVisible] = useState(false);
+
+  const toggleModal = () => {
+    setIsModalVisible(!isModalVisible);
+  }
   const handleConfirm = (selectedDate) => {
     setForm({...form,date : selectedDate});
   }
@@ -32,9 +42,23 @@ const create = () => {
       quality : 0.3,
     })
     if (!result.canceled) {
-      console.log("happen");
-      setForm({...form, image : result.assets[0].uri})  ;
+      setForm({...form, img : result.assets[0].uri})  ;
     }
+  }
+  const converting = (part) => {
+    console.log(selection);
+    const selected = selection.start !== selection.end;
+    let str = form.description;
+    let convert = "";
+    if(selected){
+      convert = (selection.start != 0  ? str.substring(0,selection.start) : "") + part + str.slice(selection.start,selection.end) +
+      part + (selection.end != form.description.length - 1 ? str.slice(selection.end) : "");
+    }
+    else{
+      convert = part + (selection.start != 0 ? str.slice(0,selection.start) : "") + part + str.slice(selection.start);
+    }
+    setSelection({start: selection.start + 2, end:selection.end + 2});
+    setForm({...form, description: convert})
   }
   const submit = async () => {
     try{
@@ -47,7 +71,7 @@ const create = () => {
   }
   return (
     <SafeAreaView className='h-full'>
-      <ScrollView className=''>
+      <ScrollView keyboardShouldPersistTaps="handled">
         <View className='w-[90%] self-center justify-center min-h-[65vh]'>
           <View className='flex-row mt-10'>
             <TouchableOpacity
@@ -61,8 +85,8 @@ const create = () => {
           </View>
           <Text className='text-xl font-semibold mt-3 ml-2'>Cím</Text>
           <Formfield
-            value={form.title}
-            handleChangeText={(e) => setForm({...form, title:form.title})}
+            value={form.name}
+            handleChangeText={(e) => setForm({...form, name: e})}
             otherStyles="mt-2"
           />
           <Text className='text-xl font-semibold mt-3 ml-2'>Nap</Text>
@@ -89,8 +113,8 @@ const create = () => {
           <View className='flex-row mt-4'>
               <View className='w-[20%]'>
                 <Formfield
-                  value={form.max}
-                  handleChangeText={(e) => setForm({...form, max: e})}
+                  value={form.max_attending}
+                  handleChangeText={(e) => setForm({...form, max_attending: e})}
                   keyboardType={true}
                   inputType={true}
                 />
@@ -100,63 +124,64 @@ const create = () => {
               </View>
               <View className='w-[70%]'>
                 <Formfield
-                  value={form.location}
-                  handleChangeText={(e) => setForm({...form, location: e})}
+                  value={form.address}
+                  handleChangeText={(e) => setForm({...form, address: e})}
                 />
               </View>
           </View>
           <Text className='text-center font-psemibold text-xl mt-4'>Leírás</Text>
-          <View className='border-b border-gray-300'/>
+          <View className='border-b border-gray-300 mt-4'/>
           <View className='flex-row my-4'>        
-              <TouchableOpacity
-                onPress={() =>{
-                  const selected = selection.start !== selection.end
-                  let str = form.description;
-                  let convert = "";
-                  if(selected){
-                    convert = (selection.start != 0  ? str.substring(0,selection.start) : "") + "**" + str.slice(selection.start,selection.end) +
-                    "**" + (selection.end != form.description.length - 1 ? str.slice(selection.end) : "");
-                  }
-                  else{
-                    convert = "**" + form.description + "**"
-                  }
-                  console.log((selection.start != 0  ? str.substring(0,selection.start) : "") + "**" + str.slice(selection.start,selection.end)+ "**");
-                  setForm({...form, description: convert})
-                  }
-                }
+              <TouchableOpacity 
+                onPress={() => converting("**")}
+                className='ml-2'
               >
                   <Feather name="bold" size={24} color="black" />
               </TouchableOpacity>
-              <TouchableOpacity>
-                  <Text></Text>
+              <TouchableOpacity 
+                onPress={() => converting("*")}
+                className='ml-4' 
+              >
+                <Feather name="italic" size={24} color="black" />
               </TouchableOpacity>
-              <TouchableOpacity>
-                  <Text></Text>
+              <TouchableOpacity
+                onPress={() => {
+                  const firstNewlineBefore = form.description.lastIndexOf('\n',selection-1);
+                  let str = form.description;
+                  let convert = "";
+                  if(firstNewlineBefore !== -1){
+                      convert = str.slice(0,firstNewlineBefore+1) + '# ' + str.slice(firstNewlineBefore+1);
+                  }
+                  else{
+                    convert = '# ' + form.description
+                  }
+                  setForm({...form,description:convert})
+                }}
+                className='ml-6'
+              >
+                <Octicons name="heading" size={24} color="black" />
               </TouchableOpacity>
           </View>
           <View className='border-b border-gray-300'/>
-          <View className='h-[30%] bg-gray-500 rounded-xl mt-4 border-2'>
-            <TouchableWithoutFeedback
-              onPress={Keyboard.dismiss}
-            >
+          <View className='bg-gray-500 h-[150px] rounded-xl mt-5 border-2'>
               <TextInput
                 className='flex-1 text-white'
                 value={form.description}
                 onChangeText={(e) => setForm({...form,description : e})}
-                textAlignVertical='top'
-                
-                onSelectionChange={({ nativeEvent : {selection}}) => setSelection(selection)}
+                textAlignVertical='top'          
+                onSelectionChange={({ nativeEvent : {selection}}) => {
+                  setSelection(selection)
+                }}
                 multiline
               />
-            </TouchableWithoutFeedback>
           </View>
           <TouchableOpacity
             onPress={openPicker}
             className='mt-6'
           > 
-            {form.image? (
+            {form.img? (
               <Image
-                source={{uri : form.image}}
+                source={{uri : form.img}}
                 resizeMode='cover'
                 className='w-full h-64 rounded-2xl'
               />
@@ -175,8 +200,36 @@ const create = () => {
           >
             <Text>Gyere</Text>
           </TouchableOpacity>*/}
+          <CustomButton
+            handlePress={() => {
+              if(form.description.length > 100){
+                setReadMore(true);
+              }
+              toggleModal();
+            }}
+            title="Előnézet"
+            containerStyles="bg-primary my-5"
+            textStyles="text-white"
+          />
         </View>
       </ScrollView>
+      <Modal
+        animationType='slide'
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={toggleModal}
+      >
+        <ShowJob
+          currentJob={form}
+          toggleModal={() => toggleModal()}
+          whichButton={whichButton}
+          handleWhichButton={(button) => setWhichButton(button)}
+          handleShowMore={() => setShowMore(!showMore)}
+          readMore={readMore}
+          showMore={showMore}
+          title="Véglegesítés"
+        />
+      </Modal>
     </SafeAreaView>
   )
 }
