@@ -144,6 +144,87 @@ export class JobsService {
     }
   }
 
+  async attend(id: number, username: string){
+    try{
+      const numberOfPeople: number = await this.db.job.findUnique({
+        select: {
+          current_attending: true,
+        },
+        where: {
+          id,
+        },
+      }).then((res) => {
+        return res.current_attending + 1;
+      }) ;
+
+      this.db.jobProfile.create({
+        data: {
+          jobId: id,
+          profileId:await this.db.profile.findUnique({
+            where: { username },
+            select: { id: true }
+          }).then((res) =>{
+            return res.id
+          })
+        }
+      })
+
+      return await this.db.job.update({
+        where: {
+          id
+        },
+        data: {
+          current_attending: numberOfPeople
+        }
+      })
+    }
+    catch {
+      throw new Error('Nem sikerült a jelentkezés')
+    }
+  }
+
+  async forfeitJob(id: number, username: string){
+    try{
+      const numberOfPeople : number = await this.db.job.findUnique({
+        where: {
+          id
+        },
+        select: {
+          current_attending: true
+        }
+      }).then((res)=>{
+        return res.current_attending;
+      }) - 1;
+
+      this.db.jobProfile.delete({
+        where: {
+          profileId_jobId: {
+            profileId: await this.db.profile.findUnique({
+              where: { username },
+              select: { id: true }
+            }).then((res) =>{
+              return res.id
+            }),
+            jobId: id
+          }
+        }
+      })
+
+      return this.db.job.update({
+        where: {
+          id
+        },
+        data: {
+          current_attending: numberOfPeople
+        }
+      })
+    }
+    catch {
+      throw new Error('Nem sikerült a jelentkezés törlése');
+    }
+
+  }
+
   async update(id: number, updateJobDto: UpdateJobDto) {
     try{
       return await this.db.job.update({

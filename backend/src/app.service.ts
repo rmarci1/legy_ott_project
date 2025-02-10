@@ -3,9 +3,7 @@ import { CreateProfileDto } from './profiles/dto/create-profile.dto';
 import { PrismaService } from './prisma/prisma.service';
 import { ProfilesService } from './profiles/profiles.service';
 import * as bcrypt from 'bcrypt';
-import convertImg from './fileConverter/convert';
 import { validateProfile } from './dto/validateProfile.dto';
-import { PassThrough } from 'stream';
 import { LoginDto } from './dto/login.dto';
 import { CloudinaryService } from './cloudinary/cloudinary.service';
 
@@ -67,9 +65,6 @@ export class AppService {
       advertiser: profileWithUsername.advertiser,
       profileImg: profileWithUsername.profileImg
     });
-    //console.log('Session profile after login:', session.profile);
-
-
     return { message: 'Login successful', profile: session.profile };
   }
 
@@ -106,8 +101,6 @@ export class AppService {
 
   async reg1(validateProfile:validateProfile){
 
-    let passError;
-
     const profileWithEmail = await this.db.profile.findUnique({
       where: {email: validateProfile.email}
     });
@@ -115,7 +108,7 @@ export class AppService {
       throw new HttpException("Már létezik profil ezzel az email-címmel!", HttpStatus.BAD_REQUEST);
     }
     if(validateProfile.password.length < 8){
-      passError+= "A jelszónak meg kell lennie 8 karakternek"
+      throw new HttpException("A jelszónak meg kell lennie 8 karakternek", HttpStatus.BAD_REQUEST);
     }
     if(validateProfile.password != validateProfile.passwordAgain){
       throw new HttpException("A két jelszónak egyeznie kell", HttpStatus.BAD_REQUEST);

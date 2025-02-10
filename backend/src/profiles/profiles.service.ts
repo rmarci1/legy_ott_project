@@ -1,13 +1,11 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { error } from 'console';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { defaultProfilePicUrl } from '../constants';
 import { extractPublicId } from 'cloudinary-build-url';
 import { Readable } from 'stream';
-import * as fs from 'fs';
 
 @Injectable()
 export class ProfilesService {
@@ -17,14 +15,14 @@ export class ProfilesService {
   async create(createProfileDto: CreateProfileDto) {
     createProfileDto.profileImg = defaultProfilePicUrl;
     console.log(createProfileDto.profileImg)
-    return await this.db.profile.create({
-      data: createProfileDto
-    }
-  )
+    return this.db.profile.create({
+        data: createProfileDto
+      }
+    );
   }
 
   async findAll() {
-    return await this.db.profile.findMany();
+    return this.db.profile.findMany();
   }
 
   async findOne(username: string) {
@@ -35,7 +33,7 @@ export class ProfilesService {
         }
       });
     }
-    catch(err){
+    catch{
       throw new NotFoundException("Nem létezik ilyen profil");
     }
   }
@@ -77,7 +75,7 @@ export class ProfilesService {
         }
       });
     }
-    catch(err){
+    catch{
       throw new Error("Nem létezik ilyen profil")
     }
   }

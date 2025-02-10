@@ -4,13 +4,13 @@ import { AppService } from './app.service';
 import { ProfilesModule } from './profiles/profiles.module';
 import { JobsModule } from './jobs/jobs.module';
 import { PrismaService } from './prisma/prisma.service';
-import * as session from 'express-session';
 import { LoggerMiddleware } from './logger/logger.middleware';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { ProfilesService } from './profiles/profiles.service';
+import { ReviewsModule } from './reviews/reviews.module';
 
 @Module({
-  imports: [ProfilesModule, JobsModule, CloudinaryModule],
+  imports: [ProfilesModule, JobsModule, CloudinaryModule, ReviewsModule],
   controllers: [AppController],
   providers: [AppService, PrismaService, ProfilesService],
 })

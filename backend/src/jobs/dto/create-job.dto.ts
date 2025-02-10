@@ -1,52 +1,83 @@
-import { Transform } from "class-transformer";
 import { IsDate, IsNotEmpty, IsNumber, IsString, Min } from "class-validator";
-import * as fs from 'fs';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateJobDto {
 
+    @ApiProperty({
+      description: 'Id of job',
+      type: 'number',
+      required: false,
+      uniqueItems: true
+    })
     @IsNumber()
     id: number;
 
+    @ApiProperty({
+      description: 'Name of the job',
+      type: 'string'
+    })
     @IsNotEmpty()
     @IsString()
     name: string;
 
+    @ApiProperty({
+      description: 'Date of the job: The day it is happening',
+      type: Date
+    })
     @IsNotEmpty()
     @IsDate()
     date: Date;
 
+    @ApiProperty({
+      description: 'More detailed description of the job',
+      type: 'string'
+    })
     @IsNotEmpty()
     @IsString()
     description: string;
 
+    @ApiProperty({
+      description: 'URL of the jobs image',
+      type: 'string'
+    })
     @IsNotEmpty()
     @IsString()
     img: string;
 
+    @ApiProperty({
+      description: 'Maximum number of people that can attend',
+      type: 'number',
+      minimum: 1
+    })
     @IsNotEmpty()
     @IsNumber()
-    @Min(0)
+    @Min(1)
     max_attending: number;
 
+    @ApiProperty({
+      description: 'Current number of people that want to attend',
+      type: 'number',
+      minimum: 0
+    })
     @IsNumber()
     @IsNotEmpty()
     @Min(0)
     current_attending: number = 0;
 
 
+    @ApiProperty({
+      description: 'The advertisers username',
+      type: 'string'
+    })
     @IsString()
     @IsNotEmpty()
     from: string;
-    
+
+    @ApiProperty({
+      description: 'The address where the job is happening',
+      type: 'string'
+    })
     @IsNotEmpty()
     @IsString()
     address: string;
 }
-
-async function blobToBuffer(blob: Blob): Promise<Buffer> {
-    if (blob instanceof Blob) {
-        const arrayBuffer = await blob.arrayBuffer();
-        return Buffer.from(new Uint8Array(arrayBuffer));
-    }
-    throw new Error('Nem megfelelő formátumú a kép.');
- }

@@ -2,52 +2,97 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { JobsService } from './jobs.service';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
+import { ApiOperation } from '@nestjs/swagger';
 
 @Controller('jobs')
 export class JobsController {
   constructor(private readonly jobsService: JobsService) {}
 
+  @ApiOperation({
+    summary: 'Creates a job'
+  })
   @Post() 
   create(@Body() createJobDto: CreateJobDto) {
     return this.jobsService.create(createJobDto);
   }
 
+  @ApiOperation({
+    summary: 'Returns all of the jobs'
+  })
   @Get()
   findAll() {
     return this.jobsService.findAll();
   }
 
-  @Get(':id')
+  @ApiOperation({
+    summary: 'Returns job by id'
+  })
+  @Get('/:id')
   findOne(@Param('id') id: string) {
     return this.jobsService.findOne(+id);
   }
 
-  @Get('/archived:username')
+  @ApiOperation({
+    summary: 'Returns users already attended jobs'
+  })
+  @Get('/archived/:username')
   findArchived(@Param('username') username: string){
     return this.jobsService.findArchived(username);
   }
 
-  @Get('/ads:username')
+  @ApiOperation({
+    summary: 'Returns jobs advertised by the user'
+  })
+  @Get('/ads/:username')
   findAdvertisements(@Param('username') username: string){
     return this.jobsService.findAdvertisments(username);
   }
 
-  @Get('/available:username')
+  @ApiOperation({
+    summary: 'Returns jobs that are available for the user'
+  })
+  @Get('/available/:username')
   findAvailable(@Param('username') username: string){
     return this.jobsService.findAllAvailable(username);
   }
 
-  @Get('/selected:username')
+  @ApiOperation({
+    summary: 'Returns jobs that the user wants to attend'
+  })
+  @Get('/selected/:username')
   findSelected(@Param('username') username: string){
     return this.jobsService.userSelectedJobs(username);
   }
 
-  @Patch(':id')
+  @ApiOperation({
+    summary: 'Adds a new attendee(by username) to the job(by id)'
+  })
+  @Patch('/attend/:id/:username')
+  attend(@Param('id') id: string, @Param('username') username: string) {
+    return this.jobsService.attend(+id, username);
+  }
+
+  @ApiOperation({
+    summary: 'Removes an attendee(by username) from the job(by id)'
+  })
+  @Patch('/forfeitPlace/:id/:username')
+  forfeitJob(@Param('id') id: string, @Param('username') username: string){
+    return this.jobsService.forfeitJob(+id, username);
+  }
+
+
+  @ApiOperation({
+    summary: 'Alter job by id'
+  })
+  @Patch('/:id')
   update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto) {
     return this.jobsService.update(+id, updateJobDto);
   }
 
-  @Delete(':id')
+  @ApiOperation({
+    summary: 'Delete job by id'
+  })
+  @Delete('/:id')
   remove(@Param('id') id: string) {
     return this.jobsService.remove(+id);
   }
