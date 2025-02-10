@@ -4,8 +4,10 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { ValidationPipe } from '@nestjs/common';
 import * as session from 'express-session';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
+  //Backend App
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useBodyParser('json');
 
@@ -45,6 +47,18 @@ async function bootstrap() {
   });
 
   app.useGlobalPipes(new ValidationPipe());
+
+
+  //SWAGGER
+  const config = new DocumentBuilder()
+    .setTitle('My API')
+    .setDescription('API documentation for my NestJS app')
+    .setVersion('1.0')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document);
+
 
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
