@@ -41,13 +41,12 @@ model profile{
 }
 
 model review{
+  id Int @id @default(autoincrement())
   reviewed profile @relation(fields: [reviewed_un], references: [username], onDelete: Cascade) 
   reviewed_un String
   reviewer_un String
   review Int
   desc String
-
-  @@id([reviewed_un])
 }
 
 model jobProfile {
