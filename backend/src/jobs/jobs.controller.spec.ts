@@ -8,8 +8,8 @@ import { CloudinaryService } from '../cloudinary/cloudinary.service';
 describe('JobsController', () => {
   let controller: JobsController;
   let service: JobsService;
-  let jobs = [{id: 1,name: "Prog",date : new Date("2025-02-11 11:21:03.000"), img: '',description: "teszt", from: "budapest", max_attending: 5, current_attending: 3, address : "Budapest"}]
-  let findJob = {id: 1,name: "Prog",date : new Date("2025-02-11 11:21:03.000"), img: '',description: "teszt", from: "budapest", max_attending: 5, current_attending: 3, address : "Budapest"}
+  const jobs = [{id: 1,name: "Prog",date : new Date("2025-02-11 11:21:03.000"), img: '',description: "teszt", from: "budapest", max_attending: 5, current_attending: 3, address : "Budapest"}]
+  const findJob = {id: 1,name: "Prog",date : new Date("2025-02-11 11:21:03.000"), img: '',description: "teszt", from: "budapest", max_attending: 5, current_attending: 3, address : "Budapest"}
  
   beforeEach(async () => {
 
@@ -31,7 +31,7 @@ describe('JobsController', () => {
     expect(controller.findAll()).resolves.toEqual(jobs);
   })
   it('should find a job', () => {
-    let jobId = 1;
+    const jobId = 1;
     jest.spyOn(service,"findOne").mockResolvedValue(findJob);
     expect(controller.findOne(jobId.toString())).resolves.toEqual(findJob);
   });

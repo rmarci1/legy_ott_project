@@ -1,20 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import convertImg from '../fileConverter/convert';
-import { error } from 'console';
-import { ProfilesService } from '../profiles/profiles.service';
 import { Job } from './entities/job.entity';
 
 @Injectable()
 export class JobsService {
 
-  constructor(private readonly db: PrismaService, private readonly ps: ProfilesService){}
+  constructor(private readonly db: PrismaService){}
 
 
   async create(createJobDto: CreateJobDto) {
-    let converted = await convertImg('profile.jpg')
         console.log(createJobDto)
         console.log('received DTO:', createJobDto)
         try{
@@ -23,12 +19,12 @@ export class JobsService {
             data: createJobDto
           })
         }catch(err){
-          throw new error("error:", err)
+          throw new Error("error:" + err)
         }
   }
 
-  async findAll() {
-    return await this.db.job.findMany();
+  findAll() {
+    return  this.db.job.findMany();
   }
 
   async findOne(id: number) {
@@ -43,22 +39,35 @@ export class JobsService {
     }
   }
 
-  //max_capacity
   async findArchived(username: string){
     try{
-      const user = await this.db.profile.findUnique({where:{username}, select: {id: true}});
       const today = new Date();
 
       const jobs: Job[] = await this.db.jobProfile.findMany({
         where: {
           AND: [
-            {profileId: user.id},
-            {job: {
-              date: {lt: today}
-            }}
-          ]
-        }
-      })
+            {
+              profile: {
+                username,
+              },
+            },
+            {
+              OR: [
+                {
+                  job: {
+                    date: { lt: today },
+                  },
+                },
+                {
+                  job:{
+                    max_attending: {lte: this.db.job.fields.current_attending}
+                  }
+                }
+              ],
+            },
+          ],
+        },
+      });
 
       return jobs;
     }
@@ -68,24 +77,23 @@ export class JobsService {
 
   }
 
-  async findAllAvailable(){
+  async findAllAvailable(username: string){
     const today = new Date();
     try{
       const jobs = await this.db.job.findMany({
         where: {
           AND: [
-            {max_attending: {gt: this.db.job.fields.max_attending}},
-            {date: {gte: today}}
+            {max_attending: {gt: this.db.job.fields.current_attending}},
+            {date: {gte: today}},
+            {from: {not: username}}
           ]
         }
       })
-
       return jobs;
     }
     catch(error){
       throw new Error("Error: " + error);
     }
-    
   }
 
   async findAdvertisments(username: string){
@@ -107,7 +115,34 @@ export class JobsService {
     }
   }
 
-  //TODO: find jobs that the user wants to attend
+  async userSelectedJobs(username: string){
+    try{
+      const today = new Date();
+      const jobs = await this.db.jobProfile.findMany({
+        select: {
+          job: true
+        },
+        where: {
+          AND: [
+            {
+              job: {
+                date: { gte: today}
+              }
+            },
+            {
+              profile: {
+                username
+              }
+            }
+          ]
+        }
+      })
+      return jobs;
+    }
+    catch(error){
+      throw new Error("Error: " + error);
+    }
+  }
 
   async update(id: number, updateJobDto: UpdateJobDto) {
     try{
@@ -118,7 +153,7 @@ export class JobsService {
         data: updateJobDto
       });
     }catch(err){
-      throw new error("error:", err)
+      throw new Error("error: " + err)
     }
   }
 
@@ -130,16 +165,7 @@ export class JobsService {
         }
       });
     }catch(err){
-      throw new error("error:", err)
+      throw new Error("error: " + err)
     }
   }
-
-  handleImage() {
-    try {
-      const base64String = convertImg('profile.jpg');
-      return base64String
-    } catch (err) {
-      console.error(err);
-    }
-}
 }
