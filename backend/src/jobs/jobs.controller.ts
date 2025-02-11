@@ -65,6 +65,14 @@ export class JobsController {
   }
 
   @ApiOperation({
+    summary: 'Returns jobs that are saved for later by user(by username)'
+  })
+  @Get('/savedForLater/:username')
+  findSavedForLater(@Param('username') username: string){
+    return this.jobsService.savedForLater(username);
+  }
+
+  @ApiOperation({
     summary: 'Adds a new attendee(by username) to the job(by id)'
   })
   @Patch('/attend/:id/:username')

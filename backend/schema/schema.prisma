@@ -56,5 +56,7 @@ model jobProfile {
   job job @relation(fields: [jobId], references: [id], onDelete: Cascade)
   jobId Int
 
+  saveForLater Boolean
+
   @@id([profileId, jobId])
 }

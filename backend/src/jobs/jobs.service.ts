@@ -3,6 +3,7 @@ import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { Job } from './entities/job.entity';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class JobsService {
@@ -146,6 +147,12 @@ export class JobsService {
 
   async attend(id: number, username: string){
     try{
+      const profileid = await this.db.profile.findUnique({
+        where: { username },
+        select: { id: true }
+      }).then((res) =>{
+        return res.id
+      });
       const numberOfPeople: number = await this.db.job.findUnique({
         select: {
           current_attending: true,
@@ -159,14 +166,13 @@ export class JobsService {
 
       this.db.jobProfile.create({
         data: {
-          jobId: id,
-          profileId:await this.db.profile.findUnique({
-            where: { username },
-            select: { id: true }
-          }).then((res) =>{
-            return res.id
-          })
-        }
+          job:{
+            connect: {id}
+          },
+          profile: {
+            connect: {id: profileid}
+          }
+        } as Prisma.jobProfileCreateInput
       })
 
       return await this.db.job.update({
@@ -222,7 +228,31 @@ export class JobsService {
     catch {
       throw new Error('Nem sikerült a jelentkezés törlése');
     }
+  }
 
+  async savedForLater(username: string){
+    try{
+      return await this.db.jobProfile.findMany({
+        select: {
+          job: true
+        },
+        where: {
+          AND: [
+            {
+              profile: {
+                username
+              }
+            },
+            {
+              saveForLater: {equals: true}
+            }
+          ]
+        }
+      })
+    }
+    catch{
+      throw new Error("Nincs ilyen felhasználó")
+    }
   }
 
   async update(id: number, updateJobDto: UpdateJobDto) {
