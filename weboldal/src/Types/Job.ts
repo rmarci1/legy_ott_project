@@ -4,5 +4,6 @@ export interface Job{
     img: string
     description: string
     max_attending: number
+    current_attending: number
     address: string
 }

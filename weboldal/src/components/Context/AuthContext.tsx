@@ -23,7 +23,7 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
     }
 
     const kijelentkezes = () =>{
-        setUser(null);
+
     }
 
     return (

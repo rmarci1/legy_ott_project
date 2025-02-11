@@ -69,7 +69,23 @@ export class JobsController {
   })
   @Get('/savedForLater/:username')
   findSavedForLater(@Param('username') username: string){
-    return this.jobsService.savedForLater(username);
+    return this.jobsService.findsavedForLater(username);
+  }
+
+  @ApiOperation({
+    summary: 'Changes saveForLater property to true for job(by Id) that the user(by username) wants to save'
+  })
+  @Patch('/saveForLater/:jobId/:username')
+  saveForLater(@Param('username') username: string, @Param('jobId') id: string){
+    return this.jobsService.saveForLater(username, +id);
+  }
+
+  @ApiOperation({
+    summary: 'Changes saveForLater property to false for job(by Id) that the user(by username) wants to remove from saves'
+  })
+  @Patch('/removeSave/:jobId/:username')
+  removeSave(@Param('username') username: string, @Param('jobId') id: string){
+    return this.jobsService.removeSave(username, +id);
   }
 
   @ApiOperation({

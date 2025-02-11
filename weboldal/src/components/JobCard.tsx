@@ -1,6 +1,10 @@
 import { Job } from "../Types/Job";
 
-export default function JobCard(Job: Job){
+interface jobProps{
+    Job: Job
+}
+
+export default function JobCard({Job}: jobProps){
 
     return<>
         <div className="block rounded-lg bg-white shadow-secondary-1 dark:bg-surface-dark">

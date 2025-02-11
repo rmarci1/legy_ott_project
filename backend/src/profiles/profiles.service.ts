@@ -5,7 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { defaultProfilePicUrl } from '../constants';
 import { extractPublicId } from 'cloudinary-build-url';
-import { Readable } from 'stream';
+import {Readable} from 'stream';
 
 @Injectable()
 export class ProfilesService {
@@ -40,22 +40,7 @@ export class ProfilesService {
 
   async update(username: string, updateProfileDto: UpdateProfileDto) {
     try{
-      if(updateProfileDto.newProfilePic){
-        console.log(updateProfileDto.newProfilePic)
-        const readStream = Readable.from(updateProfileDto.newProfilePic)
-        const profile = await this.db.profile.findUnique({
-          where: {username},  
-          select: {
-            profileImg: true
-          }
-        })
-        if(updateProfileDto.profileImg != defaultProfilePicUrl){
-          const publicId = extractPublicId(profile.profileImg);
-          await this.cloudinary.destroyImage(publicId);
-        }
-        const newPicUrl = await this.cloudinary.uploadImage(readStream);
-        updateProfileDto.profileImg = newPicUrl.url;
-      }
+
       return await this.db.profile.update({
         where:{
           username
@@ -64,6 +49,34 @@ export class ProfilesService {
       });
     }catch(err){
       throw new Error("Error:" + err);
+    }
+  }
+
+  async uploadProfilePic(username: string, file: Buffer){
+    try{
+        const readStream = Readable.from(file)
+        const profile = await this.db.profile.findUnique({
+          where: {username},
+          select: {
+            profileImg: true
+          }});
+
+        if(profile.profileImg != defaultProfilePicUrl){
+          const publicId = extractPublicId(profile.profileImg);
+          await this.cloudinary.destroyImage(publicId);
+        }
+        const newPicUrl = await this.cloudinary.uploadImage(readStream);
+        return this.db.profile.update({
+          where: {
+            username
+          },
+          data: {
+            profileImg: newPicUrl.url
+          }
+        });
+      }
+    catch (err) {
+      throw new Error("Error: " + err);
     }
   }
 

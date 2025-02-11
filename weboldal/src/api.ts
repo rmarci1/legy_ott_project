@@ -69,16 +69,6 @@ export const pflogin = async (
 
       console.log(password)
 
-    //   response = await axios.post(`http://192.168.11.82:3000/login`,
-    //   {
-    //       "email": email,
-    //       "password": password  
-    //   },
-    //   {
-    //     withCredentials: true
-    //   }
-    // )
-
     const data = await response.json();
 
     if (!response.ok) {
@@ -100,7 +90,6 @@ export const getUser = async (): Promise<RegisterResponse> => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-      
     });
 
     const data: RegisterResponse & ErrorResponse = await response.json();
@@ -116,7 +105,7 @@ export const getUser = async (): Promise<RegisterResponse> => {
   }
 };
 
-export const getProfilePic = async (): Promise<String> => {
+export const getProfilePic = async (): Promise<string> => {
   try {
     const response = await fetch(`${API_URL}/profilePic`, {
       method: 'GET',
@@ -142,3 +131,16 @@ export const getProfilePic = async (): Promise<String> => {
 //   })
 
 
+export const getAvailableJobs = async (username: string) =>{
+  try{
+    const response = await fetch(`${API_URL}/jobs/available/${username}`, {
+      method: 'GET',
+      credentials: 'include',
+    })
+
+    return response.json();
+  }
+  catch (e: any) {
+    throw new Error(e.message)
+  }
+}

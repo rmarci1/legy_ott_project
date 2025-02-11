@@ -230,7 +230,55 @@ export class JobsService {
     }
   }
 
-  async savedForLater(username: string){
+  async saveForLater(username: string, id: number){
+    try{
+      return await this.db.jobProfile.update({
+        where: {
+          profileId_jobId: {
+            profileId: await this.db.profile.findUnique({
+              where: { username },
+              select: { id: true }
+            }).then((res) =>{
+              return res.id
+            }),
+            jobId: id
+          }
+        },
+        data: {
+          saveForLater: true
+        }
+      })
+    }
+    catch (err) {
+      throw new Error("Error" + err)
+    }
+  }
+
+  async removeSave(username: string, id: number){
+    try {
+      return await this.db.jobProfile.update({
+        where: {
+          profileId_jobId: {
+            profileId: await this.db.profile.findUnique({
+              where: { username },
+              select: { id: true }
+            }).then((res) =>{
+              return res.id
+            }),
+            jobId: id
+          }
+        },
+          data: {
+            saveForLater: false
+          }
+      })
+    }
+    catch (err){
+      throw new Error("Error: " + err)
+    }
+  }
+
+  async findsavedForLater(username: string){
     try{
       return await this.db.jobProfile.findMany({
         select: {
