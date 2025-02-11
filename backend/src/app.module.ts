@@ -8,9 +8,10 @@ import { LoggerMiddleware } from './logger/logger.middleware';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { ProfilesService } from './profiles/profiles.service';
 import { ReviewsModule } from './reviews/reviews.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [ProfilesModule, JobsModule, CloudinaryModule, ReviewsModule],
+  imports: [ProfilesModule, JobsModule, CloudinaryModule, ReviewsModule, ConfigModule.forRoot({isGlobal: true,}),],
   controllers: [AppController],
   providers: [AppService, PrismaService, ProfilesService],
 })

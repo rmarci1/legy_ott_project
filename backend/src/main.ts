@@ -5,15 +5,21 @@ import { join } from 'path';
 import { ValidationPipe } from '@nestjs/common';
 import * as session from 'express-session';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ConfigService } from '@nestjs/config';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 async function bootstrap() {
   //Backend App
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useBodyParser('json');
 
+  const configService = app.get(ConfigService);
+
   app.use(
     session({
-      secret: 'your_secret_key',
+      secret: configService.get<string>('SESSION_KEY'),
       resave: false,
       saveUninitialized: false,
       cookie: {
