@@ -22,7 +22,7 @@ const login = () => {
             setUser(res.profile);
         }
         else{
-            etIsloggedIn(false);
+            setIsloggedIn(false);
             setUser(null);
         }
       })

@@ -1,20 +1,19 @@
-import { View, Text, TouchableOpacity, TouchableWithoutFeedback, Keyboard, Image, FlatList, Modal, ScrollView, StyleSheet, ImageBackground, TextInput } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, TouchableOpacity, TouchableWithoutFeedback, Keyboard,FlatList, Modal, ScrollView,TextInput } from 'react-native'
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import React, {useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import SearchInput from '@/components/SearchInput'
 import { AntDesign, Fontisto, Ionicons } from '@expo/vector-icons'
 import images from '@/constants/images'
-import {CreateProfilePic, GetProfilePic, getUser} from '@/lib/api'
+import {CreateProfilePic} from '@/lib/api'
 import { useGlobalContext } from '@/context/GlobalProvider'
 import { StatusBar } from 'expo-status-bar'
 import { LinearGradient } from 'expo-linear-gradient'
 import JobDisplay from '@/components/JobDisplay'
-import CustomButton from '@/components/CustomButton'
-import { BlurView } from "@react-native-community/blur";
 import ShowJob from '@/components/ShowJob'
+
 const home = () => {
   const {user,jobs} = useGlobalContext();
-  console.log(jobs);
   const [preferences, setPreferences] = useState({
     location : "",
   })
@@ -34,7 +33,6 @@ const home = () => {
     }
   }
   const toggleModal = () => {
-    console.log("first")
     setIsModalVisible(!isModalVisible);
   }
   const toggleFilterModal = () => {
@@ -45,6 +43,7 @@ const home = () => {
         onPress={() => Keyboard.dismiss()}
       >
     <SafeAreaView className='h-full items-center bg-gray-50'>
+      <GestureHandlerRootView className='flex-1'>
       <StatusBar style='dark'/>
       <View className='h-min-[65vh] w-[90%]'>
         <FlatList
@@ -59,6 +58,7 @@ const home = () => {
                     setReadMore(true);
                   }
                   setCurrentJob(item);
+                  console.log("happen");
                   toggleModal();
                 }}
                 activeOpacity={0.5}
@@ -148,6 +148,7 @@ const home = () => {
           </View>
         </ScrollView>
       </Modal>
+    </GestureHandlerRootView>
     </SafeAreaView>
     </TouchableWithoutFeedback>
   )

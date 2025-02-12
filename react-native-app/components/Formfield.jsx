@@ -3,7 +3,7 @@ import React, { useRef, useState } from 'react';
 import { AntDesign, Entypo, Feather } from '@expo/vector-icons';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 
-const Formfield = ({ title, otherStyles, value, placeholder, handleChangeText, date, keyboardType, inputType }) => {
+const Formfield = ({ title, otherStyles, value, placeholder, handleChangeText, date, keyboardType, inputType, multiline }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [showDatePicker,setShowDatePicker] = useState(false)
@@ -25,6 +25,7 @@ const Formfield = ({ title, otherStyles, value, placeholder, handleChangeText, d
           secureTextEntry={(placeholder === 'Jelszó' || placeholder === 'Jelszó megerősítése') && !showPassword}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
+          multiline={multiline? true : false}
         />}
         {(placeholder === 'Jelszó' || placeholder === 'Jelszó megerősítése') && (
           <TouchableOpacity onPress={() => setShowPassword(!showPassword)} className="ml-2">

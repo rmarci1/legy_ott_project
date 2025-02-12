@@ -1,22 +1,23 @@
-import { View, Text, ScrollView, TouchableOpacity, Alert, Image, TextInput, TouchableWithoutFeedback, Keyboard, Modal } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, Alert, Image, TextInput, Modal } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Formfield from '@/components/Formfield'
-import { Entypo, Feather, Octicons } from '@expo/vector-icons'
+import { Entypo, Feather} from '@expo/vector-icons'
 import { router } from 'expo-router'
-import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from 'expo-image-picker';
-import * as FileSystem from 'expo-file-system'
 import { CreateProfilePic } from '@/lib/api'
 import { useGlobalContext } from '@/context/GlobalProvider'
 import CustomButton from '@/components/CustomButton'
 import ShowJob from '@/components/ShowJob'
+import ConvertType from '@/components/ConvertType'
 
 const create = () => {
   const {user} = useGlobalContext();
   const [whichButton,setWhichButton] = useState("leírás");
   const [readMore,setReadMore] = useState(false);
   const [showMore,setShowMore] = useState(false);
+  const [typingTimeout, setTypingTimeout] = useState(null);
+  const [stashed,setStashed] = useState("");
   const [form,setForm] = useState({
     name: "",
     max_attending : 1,
@@ -27,7 +28,7 @@ const create = () => {
   })
   const [selection, setSelection] = useState({ start: 0, end: 0});
   const [isModalVisible,setIsModalVisible] = useState(false);
-
+  const [undoStates, setUndoStates] = useState([""]);
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
   }
@@ -45,25 +46,9 @@ const create = () => {
       setForm({...form, img : result.assets[0].uri})  ;
     }
   }
-  const converting = (part) => {
-    console.log(selection);
-    const selected = selection.start !== selection.end;
-    let str = form.description;
-    let convert = "";
-    if(selected){
-      convert = (selection.start != 0  ? str.substring(0,selection.start) : "") + part + str.slice(selection.start,selection.end) +
-      part + (selection.end != form.description.length - 1 ? str.slice(selection.end) : "");
-    }
-    else{
-      convert = part + (selection.start != 0 ? str.slice(0,selection.start) : "") + part + str.slice(selection.start);
-    }
-    setSelection({start: selection.start + 2, end:selection.end + 2});
-    setForm({...form, description: convert})
-  }
   const submit = async () => {
     try{
-        const base64 = await FileSystem.readAsStringAsync(form.image, {encoding: 'base64'});
-        await CreateProfilePic(user.username,base64);
+        await CreateProfilePic(user.username,form.img);
     }
     catch(error){
       Alert.alert("Hiba",error.message)
@@ -131,43 +116,35 @@ const create = () => {
           </View>
           <Text className='text-center font-psemibold text-xl mt-4'>Leírás</Text>
           <View className='border-b border-gray-300 mt-4'/>
-          <View className='flex-row my-4'>        
-              <TouchableOpacity 
-                onPress={() => converting("**")}
-                className='ml-2'
-              >
-                  <Feather name="bold" size={24} color="black" />
-              </TouchableOpacity>
-              <TouchableOpacity 
-                onPress={() => converting("*")}
-                className='ml-4' 
-              >
-                <Feather name="italic" size={24} color="black" />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  const firstNewlineBefore = form.description.lastIndexOf('\n',selection-1);
-                  let str = form.description;
-                  let convert = "";
-                  if(firstNewlineBefore !== -1){
-                      convert = str.slice(0,firstNewlineBefore+1) + '# ' + str.slice(firstNewlineBefore+1);
-                  }
-                  else{
-                    convert = '# ' + form.description
-                  }
-                  setForm({...form,description:convert})
-                }}
-                className='ml-6'
-              >
-                <Octicons name="heading" size={24} color="black" />
-              </TouchableOpacity>
-          </View>
+              <ConvertType
+                selection={selection}
+                description={form.description}
+                handleForm={(e) =>setForm({...form,description: e})}
+                undoStates={undoStates}
+                handleSelection={(e) => setSelection(e)}
+                handleUndoStates={(e) => setSelection(e)}
+                stashed={stashed}
+                handleStash={(e) => setStashed(e)}
+              />     
           <View className='border-b border-gray-300'/>
           <View className='bg-gray-500 h-[150px] rounded-xl mt-5 border-2'>
               <TextInput
                 className='flex-1 text-white'
                 value={form.description}
-                onChangeText={(e) => setForm({...form,description : e})}
+                onChangeText={(e) => {
+                  setForm({...form,description : e})
+                  if(typingTimeout){
+                    clearTimeout(typingTimeout);
+                  }
+                  const newTimeout = setTimeout(() => {
+                    console.log("Auto-saving:",e)
+                    let temp = undoStates;
+                    if(stashed) temp.push(stashed);
+                    setStashed(e);
+                    setUndoStates(temp);
+                  }, 1000);
+                  setTypingTimeout(newTimeout);
+                }}
                 textAlignVertical='top'          
                 onSelectionChange={({ nativeEvent : {selection}}) => {
                   setSelection(selection)
@@ -200,6 +177,11 @@ const create = () => {
           >
             <Text>Gyere</Text>
           </TouchableOpacity>*/}
+          <TouchableOpacity
+            onPress={submit}
+          >
+            <Text className='text-3xl'>teszt</Text>
+          </TouchableOpacity>
           <CustomButton
             handlePress={() => {
               if(form.description.length > 100){

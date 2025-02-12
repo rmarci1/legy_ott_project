@@ -1,8 +1,14 @@
-import images from "@/constants/images";
-
 //const API_URL = 'http://192.168.11.82:3000' // webváltó host nete;
-const API_URL = 'http://192.168.10.89:3000' // webváltó ethernet;
+//const API_URL = 'http://192.168.10.89:3000' // webváltó ethernet;
 //const API_URL = 'http://192.168.11.142:3000' // webváltó alap wifi;
+const API_URL = 'http://192.168.0.179:3000' // 
+
+import React from 'react'
+import { Cloudinary } from '@cloudinary/url-gen';
+import { auto } from '@cloudinary/url-gen/actions/resize';
+import { autoGravity } from '@cloudinary/url-gen/qualifiers/gravity';
+import { AdvancedImage } from '@cloudinary/react';
+
 export const register = async (name,username, password, email)=> {
     try {
         const response = await fetch(`${API_URL}/register`, {
@@ -97,19 +103,39 @@ export const GetProfilePic = async (profile) => {
         throw new Error(error.message)
     }
 }
-export const CreateProfilePic = async (username,base64) => {
+/*export const CreateProfilePic = async (username,img) => {
     try{
-        const response = await fetch(`${API_URL}/profiles/${username}`,{
-            method: 'PATCH',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({newProfilePic : base64}),
-            credentials:'include'
+        const convert = await fetch(img);
+        console.log(convert);
+        const blob = await convert.blob();
+        const formData = new FormData();
+
+        formData.append('file', blob);
+        
+        console.log("Fetching...");
+
+        const response = await fetch(`${API_URL}/profiles/${username}/uploadProfilePic`,{
+            method: 'POST',
+            headers: {'Content-Type' : 'multipart/form-data'},
+            body: formData,
         });
     }
     catch(error){
+        console.log(error.message);
         throw new Error(error.message)
     }
-}
+}*/
+export const CreateProfilePic = async (kep) => {
+
+  const cld = new Cloudinary({ cloud: { cloudName: 'drg0zbnak' } });
+  const img = cld
+        .image(kep)
+        .format('auto')
+        .quality('auto')
+        .resize(auto().gravity(autoGravity()).width(500).height(500));
+  return (<AdvancedImage cldImg={img}/>);
+
+};
 export const getJobs = async () => {
     try{
         const response = await fetch(`${API_URL}/jobs`,{

@@ -1,17 +1,35 @@
-import { View, Text, Image,TouchableOpacity,  ScrollView, Animated} from 'react-native'
-import React, { useRef, useState } from 'react'
+import { View, Text, Image,TouchableOpacity,  ScrollView, Animated, TextInput} from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
 import { useGlobalContext } from '@/context/GlobalProvider'
 import { AntDesign, Feather } from '@expo/vector-icons'
 import * as ImagePicker from 'expo-image-picker';
+import Formfield from '@/components/Formfield';
+import CustomButton from '@/components/CustomButton';
+import ConvertType from '@/components/ConvertType';
 
 const profile = () => {
   const {user,setUser} = useGlobalContext();
+  useEffect(() => {
+    setUser({...user, leiras: "Egy vidám és kíváncsi ember vagyok, aki mindig keresi az új kihívásokat és élményeket. \n" +
+      "Szeretek kreatívan gondolkodni, új dolgokat tanulni, és persze jókat nevetni.\n\n"+
+      "Ha épp nem valami izgalmas projektbe mélyedek, akkor valószínűleg egy jó könyvvel"+
+      "töltöm az időmet. Ha épp nem valami izgalmas projektbe mélyedek, akkor valószínűleg egy jó könyvvel, zenével vagy egy csésze kávéval találkozol velem.\nImádok utazni, felfedezni új helyeket, és megismerni más kultúrákat."+
+      "Mindig nyitott vagyok egy jó beszélgetésre, szóval ha van egy jó sztorid vagy egy érdekes ötleted, oszd meg velem!"
+    });
+  }, []);
+  const [selection, setSelection] = useState({
+    start: 0,
+    end : 0
+  });
+  const [stashed, setStashed] = useState("");
+  const [undoStates,setUndoStates] = useState([]);
+  const [typingTimeout,setTypingTimeout] = useState(null);
   const [visible, setVisible] = useState(false);
   const [showMore,setshowMore] = useState(false);
   const [isExpand,setIsExpand] = useState(false); 
-
+  const [editing,setEditing] = useState("");
   const [maradektext,setMaradekText] = useState("töltöm az időmet. Ha épp nem valami izgalmas projektbe mélyedek, akkor valószínűleg egy jó könyvvel, zenével vagy egy csésze kávéval találkozol velem.\nImádok utazni, felfedezni új helyeket, és megismerni más kultúrákat."+
-  "Mindig nyitott vagyok egy jó beszélgetésre, szóval ha van egy jó sztorid vagy egy érdekes ötleted, oszd meg velem!")
+  "Mindig nyitott vagyok egy jó beszélgetésre, szóval ha van egy jó sztorid vagy egy érdekes ötleted, oszd meg velem!");
  /* const [imageUri, setImageUri] = useState(null);
   const fetchProfile = async () => {
     try{
@@ -73,7 +91,7 @@ const profile = () => {
   }
   return (
     <View className='h-full relative'>
-    <ScrollView className='flex-1'>
+    <ScrollView className='flex-1' keyboardShouldPersistTaps="handled">
     {/*<StatusBar translucent backgroundColor='transparent'/>*/}
         <TouchableOpacity
           onPress={toggleImage}
@@ -101,22 +119,99 @@ const profile = () => {
           <View className={`w-full h-full bg-white items-center`}>
             <View className='w-[90%] mt-4'>
               <View className='flex-row justify-between'>
-                <View>
-                  <Text className='font-pregular text-xl text-black'>{user.name}</Text>
-                  <Text className='font-plight text-sm'>{user.username}</Text>
+                <View className='w-[80%]'>
+                  {
+                    editing !== "name" ?<View className='flex-row'>
+                    <Text className='font-pregular text-xl text-black'>{user.name}</Text>
+                    <TouchableOpacity onPress={() => setEditing("name")} className='font-pbold text-lg'>
+                      <AntDesign name="edit" size={24} color="black" />
+                    </TouchableOpacity>
+                  </View> : <View className='flex-row items-center'>
+                  <TextInput
+                      className='font-pregular flex-1 text-lg border rounded-xl'
+                      value={user?.name || ""}
+                      onChangeText={(e) => setUser((prevUser) => ({...prevUser, name: e}))}
+                    />
+                    <TouchableOpacity onPress={() => setEditing("")} className='font-pbold text-lg'>
+                      <AntDesign name="edit" size={20} color="gray" />
+                    </TouchableOpacity>
+                  </View>
+                  }
+                  
+                  { editing !== "username" ?
+                  <View className='flex-row'>
+                    <Text className='font-plight text-sm'>{user.username}</Text>
+                    <TouchableOpacity onPress={() => setEditing("username")} className='font-pbold text-lg'>
+                        <AntDesign name="edit" size={16} color="gray" />
+                    </TouchableOpacity>
+                  </View> : <View className='flex-row items-center'>
+                    <TextInput
+                      className='font-plight flex-1 text-sm underline border'
+                      value={user?.username || ""}
+                      onChangeText={(e) => setUser((prevUser) => ({...prevUser, username: e}))}
+                    />
+                    <TouchableOpacity onPress={() => setEditing("")} className='font-pbold text-lg'>
+                      <AntDesign name="edit" size={20} color="green" />
+                    </TouchableOpacity>
+                  </View>
+                  }
                 </View>
                 <Text className='font-pregular text-lg mt-2'><AntDesign name="star" size={16} color="orange" />4</Text>
               </View>
-              <Text className='mt-5 font-pmedium'>{user?.leiras}Egy vidám és kíváncsi ember vagyok, aki mindig keresi az új kihívásokat és élményeket. {'\n'}
-                Szeretek kreatívan gondolkodni, új dolgokat tanulni, és persze jókat nevetni.{'\n\n'}
-                Ha épp nem valami izgalmas projektbe mélyedek, akkor valószínűleg egy jó könyvvel  asdasdasdad
+              {
+                editing !== "description" ? <View><Text className='mt-5 font-pmedium'>{user?.leiras}
                 {showMore && <Text>{maradektext}</Text>}
-              </Text>
-              <TouchableOpacity
+                </Text>
+                {!showMore && <TouchableOpacity onPress={() => setEditing("description")} className='font-pbold text-lg'>
+                  <AntDesign name="edit" size={24} color="black" />
+                </TouchableOpacity>}
+                <TouchableOpacity
                   onPress={() => setshowMore(!showMore)}
                 >
                   <Text className='font-pbold text-amber-600 underline'>{showMore? "Kevesebb" : "Olvass többet"}</Text>
-              </TouchableOpacity>
+                </TouchableOpacity>
+                </View> : 
+                <View>
+                  <View className='border-b border-gray-300 mt-4'/>
+                    <ConvertType
+                      selection={selection}
+                      description={user?.leiras || ""}
+                      handleForm={(e) =>setUser({...user,leiras: e})}
+                      undoStates={undoStates}
+                      handleSelection={(e) => setSelection(e)}
+                      handleUndoStates={(e) => setSelection(e)}
+                      stashed={stashed}
+                      handleStash={(e) => setStashed(e)}
+                    />     
+                  <View className='border-b border-gray-300'/>
+                  <TextInput
+                    className='flex-1 font-pmedium'
+                    value={user?.leiras || ""}
+                    onChangeText={(e) => {
+                      setUser((prevUser) => ({...prevUser, leiras : e}))
+                      if(typingTimeout){
+                        clearTimeout(typingTimeout);
+                      }
+                      const newTimeout = setTimeout(() => {
+                        console.log("Auto-saving:",e)
+                        let temp = undoStates;
+                        if(stashed) temp.push(stashed);
+                        setStashed(e);
+                        setUndoStates(temp);
+                      }, 1000);
+                      setTypingTimeout(newTimeout);
+                    }}
+                    onSelectionChange={({ nativeEvent : {selection}}) => {
+                      setSelection(selection);
+                    }}
+                    multiline
+                  />
+                  <CustomButton
+                    handlePress={() => setEditing("")}
+                    title="Módosítás"
+                  />
+                </View>
+              }
               <View className='flex-row mt-4 justify-between'>
                   <TouchableOpacity
                     className='w-[45%] bg-primary rounded-xl h-[35px] items-center justify-center'

@@ -9,7 +9,7 @@ import { useGlobalContext } from '@/context/GlobalProvider';
 import { registerpart1 } from '@/lib/api';
 
 const signup = () => {
-  const {formpart,setFormPart} = useGlobalContext();
+  const {formpart,setFormPart,user,setUser} = useGlobalContext();
 
   const [form,setForm] = useState({
     email : '',
@@ -53,13 +53,21 @@ const signup = () => {
   }
   const submit = async () => {
     try{
-      await registerpart1(form.email,form.password,form.confirmPassword);
+      await registerpart1(form.email,form.password,form.confirmPassword)
+      .then((res) => {
+        if(res){
+          setUser(res.profile);
+        }
+        else{
+          setUser(null);
+        }
+      });
+      
       if(progress != 5){
         console.log(currentProblem);
         Alert.alert("Hiba", currentProblem);
         return;
       }
-      
       setIsSubmitting(true);
       setFormPart(form);
       console.log("asd")
