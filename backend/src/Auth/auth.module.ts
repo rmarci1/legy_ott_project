@@ -8,13 +8,12 @@ import { JobsModule } from '../jobs/jobs.module';
 import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 import { ReviewsModule } from '../reviews/reviews.module';
 import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from './Authconstants';
 
 @Module({
   imports: [ProfilesModule, JwtModule.register({
     global: true,
-    secret: jwtConstants.secret,
-    signOptions: { expiresIn: '60s' },
+    secret: `${process.env.jwt_secret}`,
+    signOptions: { expiresIn: '0.5s' },
   }) ,JobsModule, CloudinaryModule, ReviewsModule],
   providers: [AuthService, PrismaService, ProfilesService],
   controllers: [AuthController]

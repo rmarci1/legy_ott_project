@@ -9,13 +9,14 @@ import { Prisma } from '@prisma/client';
 import {PrismaError} from "prisma-error-enum";
 import { JwtService } from '@nestjs/jwt';
 import { ProfileInterface } from './dtos/profile.interface';
+import * as jwt from 'jsonwebtoken';
 
 export type ProfileDataWithoutPassword = Omit<ProfileInterface, "password">
 @Injectable()
 export class AuthService {
   constructor( private readonly db: PrismaService, private readonly ps: ProfilesService, private jwtService: JwtService){}
 
-  async login(LoginDto: LoginDto) : Promise<{ access_token: string }>{
+  async login(LoginDto: LoginDto) : Promise<{ access_token: string, refresh_token: string }>{
     let isPasswordValid : boolean;
     let loginMode: "email" | "username";
     let profileWithEmail : ProfileInterface;
@@ -53,12 +54,42 @@ export class AuthService {
     console.log(profile);
     return {
       access_token: await this.jwtService.signAsync(profile, {
-        secret: 'secret',
+        secret: `${process.env.jwt_secret}`,
         expiresIn: '1h'
       }),
+      refresh_token: this.jwtService.sign(profile, {
+        expiresIn: '1d',
+        secret: `${process.env.refresh_secret}`,
+      })
     };
 
   }
+
+  async refresh_token(refreshToken: string): Promise<{access_token: string}>{
+    const decodedToken: ProfileDataWithoutPassword = jwt.decode(refreshToken) as {
+      id: number,
+      username: string,
+      email: string,
+      name: string,
+      advertiser: boolean,
+      profileImg: string
+    }
+    const payload: ProfileDataWithoutPassword = {
+      id: decodedToken.id,
+      username: decodedToken.username,
+      email: decodedToken.email,
+      name: decodedToken.name,
+      advertiser: decodedToken.advertiser,
+      profileImg: decodedToken.profileImg
+    }
+    return {
+      access_token: this.jwtService.sign(payload, {
+        expiresIn: '1d',
+        secret: `${process.env.jwt_secret}`,
+      }),
+    }
+  }
+
 
   hashPassword(newPass: string) : string{
       const hashedPassword: string = bcrypt.hashSync(newPass, bcrypt.genSaltSync())
@@ -86,6 +117,7 @@ export class AuthService {
       }
     }
     catch (error){
+      //TODO: Fix validaton for unique constraint
       if (error instanceof Prisma.PrismaClientKnownRequestError){
         if (error.code === PrismaError.UniqueConstraintViolation &&
           error.meta.target[0] === 'username') {
