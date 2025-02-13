@@ -1,5 +1,4 @@
 import { View, Text, SafeAreaView, TouchableOpacity, Image, Alert,Animated, Easing } from 'react-native'
-
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import Formfield from '@/components/Formfield'
 import CustomButton from '@/components/CustomButton';
@@ -54,14 +53,6 @@ const signup = () => {
   const submit = async () => {
     try{
       await registerpart1(form.email,form.password,form.confirmPassword)
-      .then((res) => {
-        if(res){
-          setUser(res.profile);
-        }
-        else{
-          setUser(null);
-        }
-      });
       
       if(progress != 5){
         console.log(currentProblem);

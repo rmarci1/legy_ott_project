@@ -90,13 +90,20 @@ export class JobsService {
           ]
         }
       })
-      return jobs;
+
+      const savedJobsRaw = await this.findsavedForLater(username);
+      const savedJobs = savedJobsRaw.map(saved => saved.job);
+      console.log(savedJobsRaw.length);
+      const updatedJobs = jobs.map(job => ({
+        ...job,
+        isSaved: savedJobs.some(savedJob => savedJob.id === job.id)
+      }))
+      return updatedJobs;
     }
     catch(error){
       throw new Error("Error: " + error);
     }
   }
-
   async findAdvertisments(username: string){
     try{
       const today = new Date();

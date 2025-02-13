@@ -38,8 +38,15 @@ const welcome = () => {
   const submit = async () => {
     try{
       setIsSubmitting(true);
-      const res = register(form.name,form.username,formPart.password,formPart.email);
-      console.log(res);
+      register(form.name,form.username,formPart.password,formPart.email)
+            .then((res) => {
+              if(res){
+                setUser(res.profile);
+              }
+              else{
+                setUser(null);
+              }
+            });
       router.navigate('/(tabs)/home');
     }
     catch(error){

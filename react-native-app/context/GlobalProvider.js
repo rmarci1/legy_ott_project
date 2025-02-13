@@ -1,4 +1,4 @@
-import { getJobs, getUser} from "@/lib/api";
+import { getJobs, getToken, getUser} from "@/lib/api";
 import {createContext, useContext, useEffect, useState} from "react"
 
 const GlobalContext = createContext()
@@ -12,35 +12,46 @@ const GlobalProvider = ({children}) => {
     const [isLoading,setIsLoading] = useState(false);
     const [jobs,setJobs] = useState(null);
     const [isJobsIn,setIsJobsIn] = useState(false);
-    useEffect(()=>{
-        getUser()
-        .then((res)=>{
-            setIsLoading(true);
+    const [queryReturn,setQueryReturn] = useState(null);
+    const [historys,setHistorys] = useState(null);
+    const [token,setToken] = useState(null);
+    useEffect(() => {
+        getToken()
+        .then((res) => {
             if(res){
-                setIsloggedIn(true);
-                setUser(res.profile);
+                setToken(res);
+                getUser(res)
+                .then((result)=>{
+                    setIsLoading(true);
+                    if(result){
+                        setIsloggedIn(true);
+                        setUser(result.profile);
+                        getJobs(result.profile.username)
+                        .then((jobs) => {
+                            if(jobs){
+                                setJobs(jobs);
+                                setIsJobsIn(true);
+                            }
+                            else{
+                                setJobs(null);
+                                setIsJobsIn(false);
+                            }
+                        })
+                    }
+                    else{
+                        setIsloggedIn(false);
+                        setUser(null);
+                        setJobs(null);
+                        setIsJobsIn(false);
+                    }
+                })
             }
             else{
-                setIsloggedIn(false);
-                setUser(null);
+                setToken(null);
             }
         })
         .catch((error) => {
             console.log(error)
-        })
-        getJobs()
-        .then((res) => {
-            if(res){
-                setJobs(res);
-                setIsJobsIn(true);
-            }
-            else{
-                setJobs(null);
-                setIsJobsIn(false);
-            }
-        })
-        .catch((error) => {
-            console.log(error);
         })
         .finally(() => {
             setIsLoading(false);
@@ -61,6 +72,12 @@ const GlobalProvider = ({children}) => {
                 setJobs,
                 isJobsIn,
                 setIsJobsIn,
+                queryReturn,
+                setQueryReturn,
+                historys,
+                setHistorys,
+                token,
+                setToken
             }}
         >
             {children}

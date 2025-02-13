@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import SearchInput from '@/components/SearchInput'
 import { AntDesign, Fontisto, Ionicons } from '@expo/vector-icons'
 import images from '@/constants/images'
-import {CreateProfilePic} from '@/lib/api'
+import { CreateProfilePic } from '@/lib/api'
 import { useGlobalContext } from '@/context/GlobalProvider'
 import { StatusBar } from 'expo-status-bar'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -17,13 +17,11 @@ const home = () => {
   const [preferences, setPreferences] = useState({
     location : "",
   })
-
+  const [query,setQuery] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isFilterModalVisible,setIsFilterModalVisible] = useState(false);
-  const [whichButton,setWhichButton] = useState("leírás");
   const [currentJob,setCurrentJob] = useState(null);
   const [readMore,setReadMore] = useState(false);
-  const [showMore,setShowMore] = useState(false);
   const submit = async () => {
     try {
         await CreateProfilePic(user.username);
@@ -65,11 +63,13 @@ const home = () => {
                 className=''
               >
                 <JobDisplay
-                  name="Gipsz Jakab"
+                  name={item.from}
                   title={item.name}
                   date={item.date.split('T')[0]}
+                  currLimit={item.current_attending}
                   limit={item.max_attending}
                   image={images.google}
+                  saved={item.isSaved}
                   imageStyles="w-20 h-20 bg-orange-100"
                   containerStyles="border border-primary mt-6"
                 />
@@ -78,10 +78,12 @@ const home = () => {
           )}
           ListHeaderComponent={() => (
             <View>
-              <Text className='font-pmedium mt-5'>Szia, <Text className='font-pbold'>{user.name}</Text></Text>
+              <Text className='font-pmedium mt-5'>Szia, <Text className='font-pbold'>{user.name}!</Text></Text>
               <Text className='mt-2 text-2xl font-psemibold text-primary'>Találj egy Jó lehetőséget</Text>
             <View className='flex-row items-center mt-4'>
-            <SearchInput/>
+            <SearchInput
+              initialQuery={query}
+            />
             <TouchableOpacity
               className='w-14 h-14 bg-primary rounded-xl items-center justify-center ml-4'
               onPress={toggleFilterModal}
@@ -101,12 +103,8 @@ const home = () => {
       >
         <ShowJob
           currentJob={currentJob}
-          showMore={showMore}
           readMore={readMore}
-          whichButton={whichButton}
           toggleModal={() => toggleModal()}
-          handleWhichButton={(button) => setWhichButton(button)}
-          handleShowMore={() => setShowMore(!showMore)}
           title="Jelentkezés"
         />
       </Modal>

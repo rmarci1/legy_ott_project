@@ -3,9 +3,12 @@ import React, { useRef, useState } from 'react'
 import { router, usePathname } from 'expo-router'
 import { AntDesign } from '@expo/vector-icons';
 import { TouchableWithoutFeedback } from 'react-native';
+import { FilterJobsByName } from '@/lib/api';
+import { useGlobalContext } from '@/context/GlobalProvider';
 
 const SearchInput = ({initialQuery}) => {
   const pathname = usePathname();
+  const {user,setQueryReturn} = useGlobalContext();
   const [query,setQuery] = useState(initialQuery || "")
   const [isFocused,setIsFocused] = useState(false);
   return (
@@ -18,16 +21,18 @@ const SearchInput = ({initialQuery}) => {
             value={query}
             placeholder='Keress egy lehetőséget'
             placeholderTextColor="#626262"
-            onChange={(e) => setQuery(e)}
+            onChangeText={(e) => setQuery(e)}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
         />
         <TouchableOpacity
-            onPress={() => {
+            onPress={async () => {
                 if (query === ""){
                     return Alert.alert("Nincs Keresés","Valamit Írj be hogy megtaláljuk neked a legjobb lehetőségeket!")
                 }
-                if(pathname.startsWith("/search")) router.setParams({query})
+                const res = await FilterJobsByName(query,user.username);
+                setQueryReturn(res);
+                if(pathname.startsWith("/search")) router.setParams({res})
                 else router.push(`/search/${query}`)
             }}
         >

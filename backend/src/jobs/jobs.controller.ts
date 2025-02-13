@@ -104,7 +104,6 @@ export class JobsController {
     return this.jobsService.forfeitJob(+id, username);
   }
 
-
   @ApiOperation({
     summary: 'Alter job by id'
   })
@@ -124,7 +123,7 @@ export class JobsController {
     summary: "Filter jobs my name"
   })
   @Post('/filter/name')
-  filter(@Body() body : {name,username}){
-    return this.jobsService.FilterAdvertisementsByName(body);
+  async filter(@Body() body : {name : string,username : string}){
+    return await this.jobsService.FilterAdvertisementsByName(body);
   }
 }

@@ -64,7 +64,7 @@ export default function ConvertText({text}) {
                     console.log(data);
                     return (
                         <Text key={index} style={{ fontWeight: "bold"}}>
-                            {!data[0]? section.slice(2, -2): <ConvertText text={data[1]} cancel={add}/>}
+                            {!data[0]? section.slice(2, -2): <ConvertText text={data[1]}/>}
                         </Text>
                     );         
                 } 
@@ -81,7 +81,7 @@ export default function ConvertText({text}) {
                     console.log(data);
                     return (
                         <Text key={index} style={{ fontStyle: "italic" }}>
-                            {!data[0]? section.slice(1, -1): <ConvertText text={data[1]} cancel={add}/>}
+                            {!data[0]? section.slice(1, -1): <ConvertText text={data[1]}/>}
                         </Text>
                     );
                 }

@@ -1,8 +1,8 @@
 import { View, Text, TouchableOpacity, Image, TouchableWithoutFeedback, Animated, Easing } from 'react-native'
 import React, { useRef, useState } from 'react'
 import { Heart } from "lucide-react-native";
-const JobDisplay = ({image,title,containerStyles,name,date,limit,imageStyles,handlePress,nameStyle,titleStyle,dateStyle}) => {
-  const [isLiked,setIsLiked] = useState(false);
+const JobDisplay = ({image,title,containerStyles,name,date,saved,currLimit,limit,imageStyles,handlePress,nameStyle,titleStyle,dateStyle}) => {
+  const [isLiked,setIsLiked] = useState(saved);
   const animatedValue = useRef(new Animated.Value(0.5)).current;
 
   const handleClick = () => {
@@ -51,7 +51,7 @@ const JobDisplay = ({image,title,containerStyles,name,date,limit,imageStyles,han
                   </TouchableWithoutFeedback>
                 </View>
                 <Text className={`font-pbold text-lg ${titleStyle}`}>{title}</Text>
-                <Text className={`font-pregula text-sm ${dateStyle}`}>{date} × Max: {limit} fő</Text>
+                <Text className={`font-pregula text-base ${dateStyle}`}><Text className='text-blue-400'>{date}</Text> × {currLimit} / {limit} fő</Text>
             </View>
         </View>
     </View>

@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { LinearGradient } from 'expo-linear-gradient'
 import JobDisplay from './JobDisplay'
 import { AntDesign } from '@expo/vector-icons'
@@ -7,7 +7,9 @@ import images from '@/constants/images'
 import CustomButton from './CustomButton'
 import ConvertText from './ConvertText'
 
-const ShowJob = ({currentJob,showMore,whichButton,readMore,toggleModal,handleWhichButton, handlePress, title, handleShowMore}) => {
+const ShowJob = ({currentJob,readMore,toggleModal, handlePress, title}) => {
+  const [whichButton,setWhichButton] = useState("description");
+  const [showMore,setShowMore] = useState(false);
   return (
     <ScrollView className='h-full'>
             <View className='items-center justify-center min-h-[98%]'>
@@ -37,19 +39,19 @@ const ShowJob = ({currentJob,showMore,whichButton,readMore,toggleModal,handleWhi
                           <View className='h-16 mt-4 rounded-full bg-white opacity-60 items-center justify-center'>
                             <View className='flex-row justify-between items-center w-[95%]'>
                               <TouchableOpacity
-                                onPress={() => handleWhichButton("leírás")}
-                                className={`justify-center items-center w-[33%] h-full rounded-3xl ${whichButton == "leírás" && "bg-white opacity-80"}`}
+                                onPress={() => setWhichButton("description")}
+                                className={`justify-center items-center w-[33%] h-full rounded-3xl ${whichButton == "description" && "bg-white opacity-80"}`}
                               >
                                 <Text className='text-white font-pregular'>Leírás</Text>
                               </TouchableOpacity>
                               <TouchableOpacity
-                                onPress={() => handleWhichButton("áttekintés")}
+                                onPress={() => setWhichButton("áttekintés")}
                                 className={`justify-center items-center w-[33%] h-full rounded-3xl ${whichButton == "áttekintés" && "bg-white opacity-80"}`}
                               >
                                 <Text className='text-white font-pregular'>Teszt</Text>
                               </TouchableOpacity>
                               <TouchableOpacity
-                                onPress={() => handleWhichButton("értékelés")}
+                                onPress={() => setWhichButton("értékelés")}
                                 className={`justify-center items-center w-[33%] h-full rounded-3xl ${whichButton == "értékelés" && "bg-white opacity-80"}`}
                               >
                                 <Text className='text-white font-pregular'>Értékelés</Text>
@@ -67,7 +69,7 @@ const ShowJob = ({currentJob,showMore,whichButton,readMore,toggleModal,handleWhi
                             </Text>      
                             {readMore && (
                               <TouchableOpacity
-                                onPress={handleShowMore}
+                                onPress={() => setShowMore(!showMore)}
                                 className=' border-white'
                               >
                                 <Text className='font-pbold text-orange-400'>{showMore? "Kevesebb" : "Olvass többet"}</Text>

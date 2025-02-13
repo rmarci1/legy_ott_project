@@ -4,35 +4,38 @@ import Formfield from '@/components/Formfield'
 import CustomButton from '@/components/CustomButton';
 import images from '@/constants/images';
 import { router } from 'expo-router';
-import { blob, getUser, pflogin } from '@/lib/api';
+import { getUser, pflogin } from '@/lib/api';
 import { useGlobalContext } from '@/context/GlobalProvider';
 
 const login = () => {
-  const {setIsLoading,setIsloggedIn,setUser} = useGlobalContext();
+  const {setIsLoading,setIsloggedIn,setUser,setToken} = useGlobalContext();
   const [form,setForm] = useState({
     email : '', 
     password : ''
   });
   const submit = async () => {
-      await pflogin(form.email,form.password);
-      await getUser().then((res)=>{
-        setIsLoading(true);
-        if(res){
-            setIsloggedIn(true);
-            setUser(res.profile);
-        }
-        else{
-            setIsloggedIn(false);
-            setUser(null);
-        }
-      })
-      .catch((error) => {
-        console.log(error)
-        throw new Error(error.message);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      })
+      await pflogin(form.email,form.password).then((res) => {
+          setToken(res.access_token);
+          getUser(res.access_token)
+          .then((result)=>{
+            setIsLoading(true);
+            if(result){
+                setIsloggedIn(true);
+                setUser(result.profile);
+            }
+            else{
+                setIsloggedIn(false);
+                setUser(null);
+            }
+          })
+          .catch((error) => {
+            console.log(error)
+            throw new Error(error.message);
+          })
+          .finally(() => {
+            setIsLoading(false);
+          })
+      });
       router.push('/(tabs)/home');
     }
   return (

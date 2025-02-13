@@ -13,9 +13,7 @@ import ConvertType from '@/components/ConvertType'
 
 const create = () => {
   const {user} = useGlobalContext();
-  const [whichButton,setWhichButton] = useState("leírás");
   const [readMore,setReadMore] = useState(false);
-  const [showMore,setShowMore] = useState(false);
   const [typingTimeout, setTypingTimeout] = useState(null);
   const [stashed,setStashed] = useState("");
   const [form,setForm] = useState({
@@ -177,11 +175,6 @@ const create = () => {
           >
             <Text>Gyere</Text>
           </TouchableOpacity>*/}
-          <TouchableOpacity
-            onPress={submit}
-          >
-            <Text className='text-3xl'>teszt</Text>
-          </TouchableOpacity>
           <CustomButton
             handlePress={() => {
               if(form.description.length > 100){
@@ -204,11 +197,7 @@ const create = () => {
         <ShowJob
           currentJob={form}
           toggleModal={() => toggleModal()}
-          whichButton={whichButton}
-          handleWhichButton={(button) => setWhichButton(button)}
-          handleShowMore={() => setShowMore(!showMore)}
           readMore={readMore}
-          showMore={showMore}
           title="Véglegesítés"
         />
       </Modal>

@@ -47,7 +47,7 @@ const main = async () => {
         jobs.map((job, index) =>
             prisma.jobProfile.create({
                 data: {
-                    profileId: profiles[index % profiles.length].id,
+                    profileId: profiles[faker.number.int({min:0, max:profiles.length-1})].id,
                     jobId: job.id,
                     saveForLater: faker.datatype.boolean()
                 }
