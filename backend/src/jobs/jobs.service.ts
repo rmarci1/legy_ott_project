@@ -115,7 +115,24 @@ export class JobsService {
       throw new Error("Error: " + error);
     }
   }
-
+  async FilterAdvertisementsByName(body : {name,username}){
+    try{
+      const jobs = await this.db.job.findMany({
+        where : {
+          AND: [
+            {name: {contains: body.name}},
+            {max_attending: {gt: this.db.job.fields.current_attending}},
+            {date: {gte: new Date()}},
+            {from: {not: body.username}}
+          ]
+        }
+      })
+      return jobs;
+    }
+    catch(error){
+      throw new Error("Error: " + error)
+    }
+  }
   async userSelectedJobs(username: string){
     try{
       const today = new Date();

@@ -120,4 +120,11 @@ export class JobsController {
   remove(@Param('id') id: string) {
     return this.jobsService.remove(+id);
   }
+  @ApiOperation({
+    summary: "Filter jobs my name"
+  })
+  @Post('/filter/name')
+  filter(@Body() body : {name,username}){
+    return this.jobsService.FilterAdvertisementsByName(body);
+  }
 }
