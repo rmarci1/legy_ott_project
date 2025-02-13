@@ -1,34 +1,17 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { NestExpressApplication } from '@nestjs/platform-express';
-import { join } from 'path';
 import { ValidationPipe } from '@nestjs/common';
-import * as session from 'express-session';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ConfigService } from '@nestjs/config';
 import * as dotenv from 'dotenv';
+import * as cookieParser from 'cookie-parser';
 
 dotenv.config();
 
 async function bootstrap() {
-  //Backend App
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.useBodyParser('json');
+  const app = await NestFactory.create(AppModule);
 
-  const configService = app.get(ConfigService);
-
-  app.use(
-    session({
-      secret: configService.get<string>('SESSION_KEY'),
-      resave: false,
-      saveUninitialized: false,
-      cookie: {
-        secure: false,
-        httpOnly: true,
-        maxAge: 1000 * 60 * 60 * 24
-      },
-    })
-  );
+  app.use(cookieParser());
+  app.useGlobalPipes(new ValidationPipe());
 
   const allowedOrigins = [
     'http://localhost:5173',
@@ -53,23 +36,18 @@ async function bootstrap() {
     optionsSuccessStatus: 204,
   });
 
-  app.useGlobalPipes(new ValidationPipe());
 
 
   //SWAGGER
   const config = new DocumentBuilder()
-    .setTitle('My API')
-    .setDescription('API documentation for my NestJS app')
+    .setTitle('Légy ott!')
+    .setDescription('API documentation for Légy ott! application')
     .setVersion('1.0')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
 
-
-  app.useStaticAssets(join(__dirname, '..', 'public'));
-  app.setBaseViewsDir(join(__dirname, '..', 'views'));
-  app.setViewEngine('ejs');
 
   await app.listen(3000, '0.0.0.0');
 }
