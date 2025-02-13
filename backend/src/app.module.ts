@@ -20,7 +20,6 @@ export class AppModule {
     consumer
       .apply(
         (req, res, next) => {
-          console.log("Session middleware:", req.session);
           next();
         },
         LoggerMiddleware
