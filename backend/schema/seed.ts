@@ -1,20 +1,22 @@
 import { PrismaClient } from '@prisma/client'
 import { fakerHU as faker } from "@faker-js/faker";
 import { defaultProfilePicUrl } from '../src/constants'
-    
+import * as bcrypt from 'bcrypt';
+
 const prisma = new PrismaClient()
 const main = async () => {
+
     const profiles = await Promise.all(
-        Array.from({ length: 30 }).map(() =>
-            prisma.profile.create({
-                data: {
-                    name: faker.person.fullName(),
-                    username: faker.internet.username(),
-                    email: faker.internet.email(),
-                    password: faker.internet.password({ length: 10, memorable: true, pattern: /[A-Za-z0-9@!]/ }),
-                    profileImg: defaultProfilePicUrl
-                }
-            })
+        Array.from({ length: 30 }).map(async () =>
+          prisma.profile.create({
+            data: {
+              name: faker.person.fullName(),
+              username: faker.internet.username(),
+              email: faker.internet.email(),
+              password: await bcrypt.hash('Asd1234@', 10),
+              profileImg: defaultProfilePicUrl
+            }
+          }, )
         )
     );
     const citys = ["Budapest","Debrecen","Szeged","Győr","Nyíregyháza","Veszprém","Nógrád","Fejér"];

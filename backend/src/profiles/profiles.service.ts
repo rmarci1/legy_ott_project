@@ -14,7 +14,6 @@ export class ProfilesService {
 
   async create(createProfileDto: CreateProfileDto) {
     createProfileDto.profileImg = defaultProfilePicUrl;
-    console.log(createProfileDto.profileImg)
     return this.db.profile.create({
         data: createProfileDto
       }
@@ -66,7 +65,7 @@ export class ProfilesService {
           await this.cloudinary.destroyImage(publicId);
         }
         const newPicUrl = await this.cloudinary.uploadImage(readStream);
-        return this.db.profile.update({
+        const update = this.db.profile.update({
           where: {
             username
           },
@@ -74,6 +73,8 @@ export class ProfilesService {
             profileImg: newPicUrl.url
           }
         });
+        console.log(update)
+        return update;
       }
     catch (err) {
       throw new Error("Error: " + err);

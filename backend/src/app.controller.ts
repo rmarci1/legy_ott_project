@@ -16,7 +16,9 @@ export class AppController {
   })
   @Post("/login")
   async login(@Body() LoginDto: LoginDto, @Req() req: any){
-    console.log(req.body)
+    console.log('Login req:');
+    console.log(req);
+
     return await this.appService.login(LoginDto, req.session);
   }
 
