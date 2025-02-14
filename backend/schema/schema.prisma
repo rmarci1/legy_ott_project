@@ -57,6 +57,6 @@ model jobProfile {
   jobId Int
 
   saveForLater Boolean
-
+  isApplied Boolean
   @@id([profileId, jobId])
 }

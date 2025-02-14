@@ -17,7 +17,6 @@ export const register = async (name,username, password, email)=> {
         });
         const data = await response.json();
         if (!response.ok) {
-            console.log(data.message);
             throw new Error(typeof data.message == "string" ? data.message : data.message[0])
         }
         return data;
@@ -28,7 +27,6 @@ export const register = async (name,username, password, email)=> {
 };
 export const pflogin = async (email,password) => {
     try{
-        console.log(response);
         const response = await fetch(`${API_URL}/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -55,7 +53,6 @@ export const registerpart1 = async (email,password,passwordAgain) => {
             body: JSON.stringify({ email,password,passwordAgain}),
             credentials: 'include'
         })
-        console.log(response.ok);
         const data = await response.json();
         if(!response.ok){
             throw new Error(typeof data.message == "string" ? data.message : data.message[0])
@@ -106,7 +103,6 @@ export const getJobs = async (username) => {
 }
 export const GetProfilePic = async (profile) => {
     try{
-        console.log("Fetching...")
         const response = await fetch(`${API_URL}/profilePic`,{
             method: 'GET',
             headers: {'Content-Type': 'application/json'},
@@ -125,8 +121,6 @@ export const CreateProfilePic = async (username,img) => {
         /*const convert = await fetch(img);
         const blob = await convert.blob();*/
         const formData = new FormData();
-        console.log(username);
-        console.log(img);
         formData.append('file', {uri : img, type: "image/png", name: "upload.img"});
         const xhr = new XMLHttpRequest();
 
@@ -212,6 +206,20 @@ export const createJob = async (job) => {
             body: JSON.stringify({job}),
             credentials: "include"
         })
+    }
+    catch(error){
+        throw new Error(error.message);
+    }
+}
+export const updateSaved = async (update, jobId,profileId, username) => {
+    try{
+        const response = await fetch(`${API_URL}/jobs/updateSave/${jobId}/${profileId}/${username}`,{
+            method : 'PATCH',
+            headers: {'Content-Type' : "application/json"},
+            body: JSON.stringify({update}),
+            credentials: "include"
+        });
+
     }
     catch(error){
         throw new Error(error.message);

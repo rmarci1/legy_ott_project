@@ -1,4 +1,4 @@
-import { getJobs, getToken, getUser} from "@/lib/api";
+import { getJobs, getSaved, getToken, getUser} from "@/lib/api";
 import {createContext, useContext, useEffect, useState} from "react"
 
 const GlobalContext = createContext()
@@ -14,15 +14,16 @@ const GlobalProvider = ({children}) => {
     const [isJobsIn,setIsJobsIn] = useState(false);
     const [queryReturn,setQueryReturn] = useState(null);
     const [historys,setHistorys] = useState(null);
+    const [saved, setSaved] = useState(null);
     const [token,setToken] = useState(null);
     useEffect(() => {
         getToken()
         .then((res) => {
             if(res){
+                setIsLoading(true);
                 setToken(res);
                 getUser(res)
                 .then((result)=>{
-                    setIsLoading(true);
                     if(result){
                         setIsloggedIn(true);
                         setUser(result.profile);
@@ -36,6 +37,15 @@ const GlobalProvider = ({children}) => {
                                 setJobs(null);
                                 setIsJobsIn(false);
                             }
+                        });
+                        getSaved(result.profile.username)
+                        .then((save) => {
+                            if(save){
+                                setSaved(save);
+                            }
+                            else{
+                                setSaved(null);
+                            }
                         })
                     }
                     else{
@@ -45,16 +55,17 @@ const GlobalProvider = ({children}) => {
                         setIsJobsIn(false);
                     }
                 })
+                .catch((error) => {
+                    console.log(error)
+                })
+                .finally(() => {
+                    console.log("happen");
+                    setIsLoading(false);
+                })
             }
             else{
                 setToken(null);
             }
-        })
-        .catch((error) => {
-            console.log(error)
-        })
-        .finally(() => {
-            setIsLoading(false);
         })
     }, [])
     return (
@@ -77,7 +88,9 @@ const GlobalProvider = ({children}) => {
                 historys,
                 setHistorys,
                 token,
-                setToken
+                setToken,
+                saved,
+                setSaved
             }}
         >
             {children}

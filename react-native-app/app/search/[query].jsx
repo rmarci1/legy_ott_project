@@ -39,11 +39,7 @@ const query = () => {
                   className=''
               >
                 <JobDisplay
-                  name={item.from}
-                  title={item.name}
-                  date={item.date.split('T')[0]}
-                  currLimit={item.current_attending}
-                  limit={item.max_attending}
+                  item={item}
                   image={images.google}
                   imageStyles="w-20 h-20 bg-orange-100"
                   containerStyles="border border-primary mt-6"

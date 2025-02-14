@@ -44,14 +44,17 @@ const main = async () => {
     );
 
     await Promise.all(
-        jobs.map((job, index) =>
+        jobs.map((job, index) => {
+            const isSaved = faker.datatype.boolean();
             prisma.jobProfile.create({
                 data: {
                     profileId: profiles[faker.number.int({min:0, max:profiles.length-1})].id,
                     jobId: job.id,
-                    saveForLater: faker.datatype.boolean()
+                    saveForLater: isSaved,
+                    isApplied : isSaved ? faker.datatype.boolean() : true
                 }
             })
+        }
         )
     );
 }

@@ -87,7 +87,10 @@ export class JobsController {
   removeSave(@Param('username') username: string, @Param('jobId') id: string){
     return this.jobsService.removeSave(username, +id);
   }
-
+  @Patch('/updateSave/:jobId/:profileId/:username')
+  updateSave(@Param('username') username: string, @Param('jobId') id: string, @Param('profileId') profileId : string, @Body() body : {update : boolean}){
+    return this.jobsService.updateSave(username, +id, +profileId, body);
+  }
   @ApiOperation({
     summary: 'Adds a new attendee(by username) to the job(by id)'
   })

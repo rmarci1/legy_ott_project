@@ -22,6 +22,7 @@ const login = () => {
             if(result){
                 setIsloggedIn(true);
                 setUser(result.profile);
+                console.log("profile: ",result);
             }
             else{
                 setIsloggedIn(false);
@@ -29,7 +30,6 @@ const login = () => {
             }
           })
           .catch((error) => {
-            console.log(error)
             throw new Error(error.message);
           })
           .finally(() => {
