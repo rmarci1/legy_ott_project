@@ -39,7 +39,6 @@ export class JobsService {
       throw new Error("error:"+ err)
     }
   }
-
   async findArchived(username: string){
     try{
       const today = new Date();
@@ -301,7 +300,6 @@ export class JobsService {
   }
   async updateSave(username: string, id: number, profileId : number, body : {update : boolean}){
     try {
-      console.log("asd");
       const res = await this.db.jobProfile.findUnique({
         where: {
           profileId_jobId: {

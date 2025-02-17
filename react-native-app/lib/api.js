@@ -1,7 +1,7 @@
 //const API_URL = 'http://192.168.11.82:3000' // webváltó host nete;
-const API_URL = 'http://192.168.10.89:3000' // webváltó ethernet;
+//const API_URL = 'http://192.168.10.89:3000' // webváltó ethernet;
 //const API_URL = 'http://192.168.11.142:3000' // webváltó alap wifi;
-
+const API_URL = 'http://192.168.56.1:3000' // temp
 import * as SecureStore from 'expo-secure-store';
 
 export const getToken = async () => {
@@ -223,6 +223,26 @@ export const updateSaved = async (update, jobId,profileId, username) => {
     }
     catch(error){
         throw new Error(error.message);
+    }
+}
+export const getProfileView = async (username) => {
+    try{
+        const response = await fetch(`${API_URL}/view/profile`,{
+            method: 'POST',
+            headers: {'Content-Type': "application/json"},
+            body: JSON.stringify({username}),
+            credentials: 'include'
+        })
+        const data = response.json();
+
+        if (!response.ok) {
+            throw new Error(typeof data.message == "string" ? data.message : data.message[0])
+        }
+        
+        return data;
+    }
+    catch(error){
+        throw new Error(error.message)
     }
 }
 /*export const CreateProfilePic = async (kep) => {

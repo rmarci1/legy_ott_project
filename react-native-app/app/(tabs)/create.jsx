@@ -22,7 +22,8 @@ const create = () => {
     date : new Date(),
     address : "",
     description : "",
-    img : null
+    img : null,
+    from : user.username
   })
   const [selection, setSelection] = useState({ start: 0, end: 0});
   const [isModalVisible,setIsModalVisible] = useState(false);
@@ -135,7 +136,6 @@ const create = () => {
                     clearTimeout(typingTimeout);
                   }
                   const newTimeout = setTimeout(() => {
-                    console.log("Auto-saving:",e)
                     let temp = undoStates;
                     if(stashed) temp.push(stashed);
                     setStashed(e);

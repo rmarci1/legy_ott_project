@@ -1,4 +1,4 @@
-import { IsBoolean, IsEmail, IsNotEmpty, IsString} from "class-validator";
+import { IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsString} from "class-validator";
 import { ApiProperty } from '@nestjs/swagger';
 
 
@@ -51,6 +51,15 @@ export class CreateProfileDto {
   })
   @IsBoolean()
   advertiser: boolean = false;
+
+  @ApiProperty({
+    description: 'Users description',
+    type: 'string',
+    required: false
+  })
+  @IsString()
+  @IsOptional()
+  description?: string = ""
 }
 
 

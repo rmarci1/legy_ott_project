@@ -11,9 +11,10 @@ import { StatusBar } from 'expo-status-bar'
 import { LinearGradient } from 'expo-linear-gradient'
 import JobDisplay from '@/components/JobDisplay'
 import ShowJob from '@/components/ShowJob'
+import { router, usePathname } from 'expo-router';
 
 const home = () => {
-  const {user,jobs,setJobs,saved,setSaved} = useGlobalContext();
+  const {user,jobs,setJobs} = useGlobalContext();
   const [preferences, setPreferences] = useState({
     location : "",
   })
@@ -36,6 +37,12 @@ const home = () => {
   const toggleFilterModal = () => {
     setIsFilterModalVisible(!isFilterModalVisible);
   } 
+  const pathname = usePathname();
+  const handleProfile = () => {
+    toggleModal();
+    if(pathname.startsWith("/profileSearch")) router.setParams({});
+    else router.push(`/profileSearch/${user.username}`);
+  }
   const renderItem = ({item}) => (
     <View key={item}>
               <TouchableOpacity
@@ -101,6 +108,7 @@ const home = () => {
         <ShowJob
           currentJob={currentJob}
           readMore={readMore}
+          handleProfileToJobDisplay={(username) => handleProfile(username)}
           handleJob={(e) => {
             console.log("happen");
             setJobs(e);

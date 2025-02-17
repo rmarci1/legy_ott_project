@@ -16,6 +16,7 @@ const GlobalProvider = ({children}) => {
     const [historys,setHistorys] = useState(null);
     const [saved, setSaved] = useState(null);
     const [token,setToken] = useState(null);
+    
     useEffect(() => {
         getToken()
         .then((res) => {

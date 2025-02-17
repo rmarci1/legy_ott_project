@@ -36,7 +36,25 @@ export class ProfilesService {
       throw new NotFoundException("Nem létezik ilyen profil");
     }
   }
-
+  async findOneProfileView(username: string) {
+    try{
+      return await this.db.profile.findUnique({
+        where:{
+          username
+        },
+        select:{
+          name: true,
+          username: true,
+          reviews: true,
+          description: true,
+          advertiser: true,
+        }
+      });
+    }
+    catch{
+      throw new NotFoundException("Nem létezik ilyen profil");
+    }
+  }
   async update(username: string, updateProfileDto: UpdateProfileDto) {
     try{
 

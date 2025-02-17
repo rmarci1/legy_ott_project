@@ -4,7 +4,7 @@ import Formfield from '@/components/Formfield'
 import CustomButton from '@/components/CustomButton';
 import images from '@/constants/images';
 import { router } from 'expo-router';
-import { getUser, pflogin } from '@/lib/api';
+import { getJobs, getSaved, getUser, pflogin } from '@/lib/api';
 import { useGlobalContext } from '@/context/GlobalProvider';
 
 const login = () => {
@@ -22,7 +22,26 @@ const login = () => {
             if(result){
                 setIsloggedIn(true);
                 setUser(result.profile);
-                console.log("profile: ",result);
+                getJobs(result.profile.username)
+                .then((jobs) => {
+                if(jobs){
+                  setJobs(jobs);
+                  setIsJobsIn(true);
+                }
+                else{
+                  setJobs(null);
+                  setIsJobsIn(false);
+                }
+                });
+                getSaved(result.profile.username)
+                .then((save) => {
+                if(save){
+                  setSaved(save);
+                }
+                else{
+                  setSaved(null);
+                }
+                })
             }
             else{
                 setIsloggedIn(false);

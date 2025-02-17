@@ -13,9 +13,11 @@ const list = () => {
   const [readMore,setReadMore] = useState(false);
   const [currentPage,setCurrentPage] = useState("saved");
   const [isModalVisible, setIsModalVisible] = useState(false);
+  
   useEffect(() => {
     handleClick("saved");
   },[])
+
   const handleClick = async (title) => {
     try{
       const response = title === "saved" ? saved : await getHistorys(user.username);
@@ -31,12 +33,12 @@ const list = () => {
   }
   return (
     <SafeAreaView className=''>
-      <View className='min-h-full bg-blue-300'>
+      <View className='min-h-full'>
       <FlatList
         data={filterJobs}
         keyExtractor={(item,index) => index.toString()}
         renderItem={({item}) => (
-          <View>
+          <View className='w-[90%] self-center'>
             <TouchableOpacity
                 onPress={() => {
                   let curr = item.description.length;

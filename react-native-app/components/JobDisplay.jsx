@@ -3,11 +3,9 @@ import React, { useRef, useState } from 'react'
 import { Heart } from "lucide-react-native";
 import { updateSaved } from '@/lib/api';
 import { useGlobalContext } from '@/context/GlobalProvider';
-const JobDisplay = ({image,containerStyles,item,imageStyles,handleUpdate,nameStyle,titleStyle,dateStyle}) => {
+const JobDisplay = ({image,containerStyles,item,imageStyles,handleUpdate,nameStyle,titleStyle,dateStyle,handleProfile}) => {
   const {saved,setJobs,setSaved,user}= useGlobalContext();
-  //console.log("id: " + item.id + " isLiked: " + isLiked);
   const animatedValue = useRef(new Animated.Value(0.5)).current;
-
   const handleClick = async () => {
      Animated.sequence([
        Animated.timing(animatedValue, {
@@ -26,8 +24,7 @@ const JobDisplay = ({image,containerStyles,item,imageStyles,handleUpdate,nameSty
      await update(!item.isSaved);
     }
     const update = async (isLiked) => {
-         console.log("fif");
-         const response = await updateSaved(isLiked,item.id,user.id,user.username);
+         await updateSaved(isLiked,item.id,user.id,user.username);
          let temp = saved;
          if(!isLiked) temp.pop(item.id)
          else {
@@ -48,7 +45,12 @@ const JobDisplay = ({image,containerStyles,item,imageStyles,handleUpdate,nameSty
             </View>
             <View className='ml-2 w-[75%]'>
                 <View className='flex-row justify-between'>
-                  <Text className={`font-pregular ${nameStyle}`}>{item.from}</Text>
+                  <TouchableOpacity
+                    onPress={handleProfile}
+                    activeOpacity={0.7}
+                  >
+                    <Text className={`font-pregular ${nameStyle}`}>{item.from}</Text>
+                  </TouchableOpacity>
                   <TouchableWithoutFeedback
                     onPress={handleClick}
                   >
@@ -65,7 +67,9 @@ const JobDisplay = ({image,containerStyles,item,imageStyles,handleUpdate,nameSty
                   </TouchableWithoutFeedback>
                 </View>
                 <Text className={`font-pbold text-lg ${titleStyle}`}>{item.name}</Text>
-                <Text className={`font-pregula text-base ${dateStyle}`}><Text className='text-blue-400'>{item.date.split('T')[0]}</Text> × {item.current_attending} / {item.max_attending} fő</Text>
+                <Text className={`font-pregula text-base ${dateStyle}`}><Text className='text-blue-400'>
+                  {typeof item.date === 'object' ? item.date.toISOString().split('T')[0] : item.date.split('T')[0]}</Text> × {item.current_attending} / {item.max_attending} fő
+                  </Text>
             </View>
         </View>
     </View>

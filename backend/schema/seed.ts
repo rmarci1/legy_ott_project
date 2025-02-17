@@ -14,6 +14,7 @@ const main = async () => {
               username: faker.internet.username(),
               email: faker.internet.email(),
               password: await bcrypt.hash('Asd1234@', 10),
+              description: faker.lorem.lines(10),
               profileImg: defaultProfilePicUrl
             }
           }, )
@@ -35,7 +36,7 @@ const main = async () => {
                     current_attending: faker.number.int({ min: 0, max: max_attending }),
                     max_attending: max_attending,
                     date: date,
-                    description: faker.lorem.paragraphs(3),
+                    description: faker.lorem.paragraphs(10),
                     from: profiles[index % profiles.length].username,
                     img: defaultProfilePicUrl
                 }

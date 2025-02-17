@@ -7,7 +7,7 @@ import images from '@/constants/images'
 import CustomButton from './CustomButton'
 import ConvertText from './ConvertText'
 
-const ShowJob = ({currentJob,readMore,toggleModal, handlePress,handleJob, title}) => {
+const ShowJob = ({currentJob,readMore,toggleModal, handlePress, title, handleProfileToJobDisplay}) => {
   const [whichButton,setWhichButton] = useState("description");
   const [showMore,setShowMore] = useState(false);
   return (
@@ -26,7 +26,7 @@ const ShowJob = ({currentJob,readMore,toggleModal, handlePress,handleJob, title}
                           <JobDisplay
                             item={currentJob}
                             image={images.google}
-                            handleJobs={(e) => handleJob(e)}
+                            handleProfile={() => handleProfileToJobDisplay()}
                             imageStyles="w-16 h-16 bg-white"
                             nameStyle="text-green-400 text-sm"
                             titleStyle="text-white"
