@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState} from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router"
 import {getUser, pflogin} from '../../api'
+import {useAuth} from "../Context/AuthContext.tsx";
 
 
 export default function Login(){
@@ -10,6 +11,8 @@ export default function Login(){
     const [showPassword, setShowPassword] = useState(false);
     let loginMode = "";
     const navigate = useNavigate();
+    const {bejelentkezes} = useAuth();
+
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -26,7 +29,10 @@ export default function Login(){
                 loginMode = "username";
             }
             await pflogin(emailUsername, password, loginMode)
-            await getUser()
+            const user = await getUser().then((res)=>{
+                return res.profile
+            })
+            bejelentkezes(user);
             navigate("/home")
         }
         catch(error){

@@ -42,7 +42,7 @@ export default function Register(){
     const handleRegister = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
         try{
-            await register(name, userName,email, password, password2)
+            await register(name,userName,email,password,password2)
 
             navigate("/login")
         }
