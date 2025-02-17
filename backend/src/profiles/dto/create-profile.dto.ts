@@ -57,6 +57,7 @@ export class CreateProfileDto {
     type: 'string',
     required: false
   })
+
   @IsString()
   @IsOptional()
   description?: string = ""

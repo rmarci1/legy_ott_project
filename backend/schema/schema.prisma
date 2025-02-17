@@ -35,7 +35,7 @@ model profile{
   profileImg String
   password String
   advertiser Boolean @default(false)
-  description String
+  description String?
 
   reviews review[]
   jobs jobProfile[]
@@ -47,7 +47,7 @@ model review{
   reviewed_un String
   reviewer_un String
   review Int
-  desc String?
+  desc String
 }
 
 model jobProfile {

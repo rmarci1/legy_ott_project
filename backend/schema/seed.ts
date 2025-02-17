@@ -58,7 +58,21 @@ const main = async () => {
         }
         )
     );
+    const res = await Promise.all(
+        Array.from({length : 50}).map(async () => {
+            await prisma.review.create({
+                data: {
+                    reviewer_un : profiles[faker.number.int({min:0, max:29})].username,
+                    reviewed_un : profiles[faker.number.int({min:0, max:29})].username,
+                    review: faker.number.int({min: 1, max: 5}),
+                    desc: faker.lorem.paragraph(10),
+                }
+            }) 
+        })
+    )
+    console.log(res);
 }
+
 main()
     .catch((e) => {
         console.error(e);

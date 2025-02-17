@@ -26,7 +26,7 @@ const ShowJob = ({currentJob,readMore,toggleModal, handlePress, title, handlePro
                           <JobDisplay
                             item={currentJob}
                             image={images.google}
-                            handleProfile={() => handleProfileToJobDisplay()}
+                            handleProfile={(username) => handleProfileToJobDisplay(username)}
                             imageStyles="w-16 h-16 bg-white"
                             nameStyle="text-green-400 text-sm"
                             titleStyle="text-white"

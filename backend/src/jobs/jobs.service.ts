@@ -345,7 +345,6 @@ export class JobsService {
       throw new Error("Error: " + err)
     }
   }
-
   async findsavedForLater(username: string){
     try{
       const res = await this.db.jobProfile.findMany({
@@ -376,7 +375,6 @@ export class JobsService {
       throw new Error("Nincs ilyen felhasználó")
     }
   }
-
   async update(id: number, updateJobDto: UpdateJobDto) {
     try{
       return await this.db.job.update({
@@ -389,7 +387,6 @@ export class JobsService {
       throw new Error("error: " + err)
     }
   }
-
   async remove(id: number) {
     try{
       return await this.db.job.delete({

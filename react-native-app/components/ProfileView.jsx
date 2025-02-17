@@ -1,8 +1,10 @@
 import { View, Text, Animated, TouchableOpacity, TextInput, Image } from 'react-native'
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState,useEffect } from 'react'
 import CustomButton from './CustomButton'
-import { AntDesign, Feather } from '@expo/vector-icons'
+import { AntDesign, Entypo, Feather } from '@expo/vector-icons'
 import ConvertType from './ConvertType'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { router } from 'expo-router'
 
 const ProfileView = ({isView, user}) => {
   const [selection, setSelection] = useState({
@@ -12,12 +14,16 @@ const ProfileView = ({isView, user}) => {
   const [stashed, setStashed] = useState("");
   const [undoStates,setUndoStates] = useState([]);
   const [typingTimeout,setTypingTimeout] = useState(null);
-  const [visible, setVisible] = useState(false);
   const [showMore,setshowMore] = useState(false);
   const [isExpand,setIsExpand] = useState(false); 
   const [editing,setEditing] = useState("");
-  const [maradektext,setMaradekText] = useState("töltöm az időmet. Ha épp nem valami izgalmas projektbe mélyedek, akkor valószínűleg egy jó könyvvel, zenével vagy egy csésze kávéval találkozol velem.\nImádok utazni, felfedezni új helyeket, és megismerni más kultúrákat."+
-    "Mindig nyitott vagyok egy jó beszélgetésre, szóval ha van egy jó sztorid vagy egy érdekes ötleted, oszd meg velem!");
+  const [readMore,setReadMore] = useState();
+  const [pressed, setPressed] = useState("");
+  useEffect(() => {
+    if(user.description.length > 100){
+      setReadMore(true);
+    }
+  },[])
   const slideAnim = useState(new Animated.Value(400))[0];
   const imageSlide = useRef(new Animated.Value(0.3)).current;
   const toggleImage = () =>{
@@ -37,21 +43,41 @@ const ProfileView = ({isView, user}) => {
     }
     setIsExpand(!isExpand);
   }
-  const toggleSlide = () => {
-    if (visible) {
-      Animated.timing(slideAnim, {
-        toValue: 400,
-        duration: 800,
-        useNativeDriver: true,
-      }).start();
-    } else {
+  const toggleSlide = (curr) => {
+    if (!pressed) {
       Animated.timing(slideAnim, {
         toValue: 0,
         duration: 800,
         useNativeDriver: true,
-      }).start();
+      }).start(() => {
+        setPressed(curr);
+      });
+    } 
+    else{
+      if(curr != pressed){
+          Animated.timing(slideAnim, {
+            toValue: 400,
+            duration: 800,
+            useNativeDriver: true,
+          }).start(() => {
+            setPressed(curr)
+            Animated.timing(slideAnim, {
+              toValue: 0,
+              duration: 800,
+              useNativeDriver: true,
+            }).start();
+          })
+      }
+      else{
+        Animated.timing(slideAnim, {
+          toValue: 400,
+          duration: 800,
+          useNativeDriver: true,
+        }).start(() => {
+          setPressed("");
+        });
+      }
     }
-    setVisible(!visible);
   }
   const openPicker = async () => {
       let result = await ImagePicker.launchImageLibraryAsync({
@@ -83,12 +109,21 @@ const ProfileView = ({isView, user}) => {
                 className='w-full h-full'
               />
           </Animated.View>
-        {!isView && <TouchableOpacity
+        {!isView ? <TouchableOpacity
           onPress={openPicker}
           className='absolute top-[15%] right-4 flex-row border p-2 items-center'
         >
           <Feather name="upload" size={20} color="black" />
-        </TouchableOpacity>}
+        </TouchableOpacity> : 
+        <TouchableOpacity
+          onPress={() => {
+            router.push('/(tabs)/home');
+          }}
+          className='absolute top-[15%] left-6'
+        >
+          <Entypo name="chevron-thin-left" size={24} color="black" />
+        </TouchableOpacity>
+        }
         </TouchableOpacity>
           <View className={`w-full h-full bg-white items-center`}>
             <View className='w-[90%] mt-4'>
@@ -133,17 +168,17 @@ const ProfileView = ({isView, user}) => {
                 <Text className='font-pregular text-lg mt-2'><AntDesign name="star" size={16} color="orange" />4</Text>
               </View>
               {
-                editing !== "description" ? <View><Text className='mt-5 font-pmedium'>{user?.leiras}
-                {showMore && <Text>{maradektext}</Text>}
+                editing !== "description" ? <View><Text className='mt-5 font-pmedium'>{(readMore && !showMore) && user?.description.substring(0,100)}
+                {showMore && <Text>{user?.description}</Text>}
                 </Text>
                 {(!showMore && !isView) && <TouchableOpacity onPress={() => setEditing("description")} className='font-pbold text-lg'>
                   <AntDesign name="edit" size={24} color="black" />
                 </TouchableOpacity>}
-                <TouchableOpacity
+                {readMore && <TouchableOpacity
                   onPress={() => setshowMore(!showMore)}
                 >
                   <Text className='font-pbold text-amber-600 underline'>{showMore? "Kevesebb" : "Olvass többet"}</Text>
-                </TouchableOpacity>
+                </TouchableOpacity>}
                 </View> : 
                 <View>
                   <View className='border-b border-gray-300 mt-4'/>
@@ -189,11 +224,12 @@ const ProfileView = ({isView, user}) => {
               <View className='flex-row mt-4 justify-between'>
                   <TouchableOpacity
                     className='w-[45%] bg-primary rounded-xl h-[35px] items-center justify-center'
-                    onPress={() => toggleSlide()}
+                    onPress={() => toggleSlide("onkentes")}
                   >
                     <Text className='text-white font-pregular'>Önkéntes</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
+                    onPress={() => toggleSlide("hirdeto")}
                     className='w-[45%] bg-orange-400 rounded-xl h-[35px] items-center justify-center'
                   >
                     <Text className='text-white font-pregular'>Hirdető</Text>
@@ -201,7 +237,7 @@ const ProfileView = ({isView, user}) => {
               </View>
               {
                 true && <Animated.View
-                  className=" bg-primary rounded-xl mt-4"
+                  className={`${pressed == "onkentes" ? "bg-primary" : "bg-orange-400"} rounded-xl mt-4`}
                   style={{
                     transform: [{ translateY : slideAnim}]
                   }}

@@ -48,6 +48,7 @@ export class ProfilesService {
           reviews: true,
           description: true,
           advertiser: true,
+          profileImg: true
         }
       });
     }
@@ -111,4 +112,5 @@ export class ProfilesService {
       throw new Error("Nem létezik ilyen profil")
     }
   }
+  
 }

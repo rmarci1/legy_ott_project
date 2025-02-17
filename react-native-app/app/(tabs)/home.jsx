@@ -38,10 +38,10 @@ const home = () => {
     setIsFilterModalVisible(!isFilterModalVisible);
   } 
   const pathname = usePathname();
-  const handleProfile = () => {
+  const handleProfile = (username) => {
     toggleModal();
     if(pathname.startsWith("/profileSearch")) router.setParams({});
-    else router.push(`/profileSearch/${user.username}`);
+    else router.push(`/profileSearch/${username}`);
   }
   const renderItem = ({item}) => (
     <View key={item}>
@@ -108,11 +108,7 @@ const home = () => {
         <ShowJob
           currentJob={currentJob}
           readMore={readMore}
-          handleProfileToJobDisplay={(username) => handleProfile(username)}
-          handleJob={(e) => {
-            console.log("happen");
-            setJobs(e);
-          }}
+          handleProfileToJobDisplay={(username) => handleProfile(username)}      
           toggleModal={() => toggleModal()}
           title="Jelentkezés"
         />
