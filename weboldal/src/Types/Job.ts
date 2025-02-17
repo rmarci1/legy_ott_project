@@ -1,4 +1,5 @@
 export interface Job{
+    id: number
     name: string
     date: Date
     img: string

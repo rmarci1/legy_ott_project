@@ -1,5 +1,5 @@
-
-const API_URL = 'http://192.168.11.82:3000';
+const API_URL = 'http://192.168.11.45:3000';
+let token = '';
 
 interface RegisterResponse {
   message: string;
@@ -28,7 +28,7 @@ export const register = async (
       throw new Error("Nem egyeznek a jelszavak.");
     }
 
-    const response = await fetch(`${API_URL}/register`, {
+    const response = await fetch(`${API_URL}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, username, email, password }),
@@ -60,16 +60,15 @@ export const pflogin = async (
     const email = login;
     const username = login;
 
-    response = await fetch(`${API_URL}/login`, {
+    response = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: loginMode == "email" ? JSON.stringify({ email, password }) : JSON.stringify({ username, password }),
       credentials: 'include',
     })
 
-      console.log(password)
-
     const data = await response.json();
+
 
     if (!response.ok) {
       throw new Error(
@@ -77,6 +76,7 @@ export const pflogin = async (
       );
     }
 
+    token = data.access_token;
     return data;
   } catch (error: any) {
     console.error("2 Fetch error:", error.message);
@@ -86,9 +86,9 @@ export const pflogin = async (
 
 export const getUser = async (): Promise<RegisterResponse> => {
   try {
-    const response = await fetch(`${API_URL}/check-auth`, {
+    const response = await fetch(`${API_URL}/auth/check-auth`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json' , 'Authorization': `Bearer ${token}`},
       credentials: 'include',
     });
 
@@ -142,5 +142,20 @@ export const getAvailableJobs = async (username: string) =>{
   }
   catch (e: any) {
     throw new Error(e.message)
+  }
+}
+
+export const profilePicChange = async (formData: FormData, username: string) => {
+  try{
+    const result = await fetch(`http://localhost:3000/profiles/${username}/uploadProfilePic`,
+        {
+          body: formData,
+          method: "post",
+        });
+
+    return result.json();
+  }
+  catch (e: any){
+    throw new Error(e.message);
   }
 }
