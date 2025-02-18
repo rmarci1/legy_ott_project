@@ -27,7 +27,7 @@ export class ReviewsService {
       });
     }
     catch{
-      throw new Error("Nem létezik ilyen Profil")
+      throw new Error("Nincsenek értékelések ehhez a profilhoz!")
     }
   }
 
@@ -41,7 +41,7 @@ export class ReviewsService {
       });
     }
     catch {
-      throw new Error("Nem létezik ilyen profil");
+      throw new Error("Nem létezik ilyen értékelés");
     }
   }
 
