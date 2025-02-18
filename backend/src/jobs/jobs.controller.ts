@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { JobsService } from './jobs.service';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { ApiOperation } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('jobs')
 export class JobsController {
@@ -113,6 +114,12 @@ export class JobsController {
   @Patch('/:id')
   update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto) {
     return this.jobsService.update(+id, updateJobDto);
+  }
+
+  @Post('/:id/updateJobPic')
+  @UseInterceptors(FileInterceptor('file'))
+  updateJobPic(@UploadedFile() file: Express.Multer.File, @Param('id') id: string){
+    return this.jobsService.updateJobPic(+id, file.buffer);
   }
 
   @ApiOperation({

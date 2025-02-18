@@ -4,11 +4,15 @@ import { UpdateJobDto } from './dto/update-job.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { Job } from './entities/job.entity';
 import { Prisma } from '@prisma/client';
+import { Readable } from 'stream';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import { defaultProfilePicUrl } from '../constants';
+import { extractPublicId } from 'cloudinary-build-url';
 
 @Injectable()
 export class JobsService {
 
-  constructor(private readonly db: PrismaService){}
+  constructor(private readonly db: PrismaService, private readonly cloudinary: CloudinaryService){}
 
 
   async create(createJobDto: CreateJobDto) {
@@ -375,6 +379,37 @@ export class JobsService {
       throw new Error("Nincs ilyen felhasználó")
     }
   }
+
+  async updateJobPic(id: number, file: Buffer){
+    try{
+      const readStream = Readable.from(file)
+      const job = await this.db.job.findUnique({
+        where: {id},
+        select: {
+          img: true
+        }});
+
+      if(job.img != defaultProfilePicUrl){
+        const publicId = extractPublicId(job.img);
+        await this.cloudinary.destroyImage(publicId);
+      }
+
+      const newPicUrl = await this.cloudinary.uploadImage(readStream);
+      const update = this.db.job.update({
+        where: {
+          id
+        },
+        data: {
+          img: newPicUrl.url
+        }
+      });
+      return update;
+    }
+    catch (err) {
+      throw new Error("Error: " + err);
+    }
+  }
+
   async update(id: number, updateJobDto: UpdateJobDto) {
     try{
       return await this.db.job.update({

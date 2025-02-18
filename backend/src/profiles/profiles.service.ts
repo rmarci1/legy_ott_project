@@ -92,7 +92,6 @@ export class ProfilesService {
             profileImg: newPicUrl.url
           }
         });
-        console.log(update)
         return update;
       }
     catch (err) {
