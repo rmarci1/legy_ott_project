@@ -1,15 +1,16 @@
 import { View, Text } from 'react-native'
 import React, { useState } from 'react'
 
-export default function ConvertText({text}) {
+export default function ConvertText({ text, isHeader, value }) {
     let add = false;
     let sections = [];
     if(typeof text == 'string'){
-        sections = text.split(/(\*\*\*.*?\*\*\*|\*\*.*?\*\*|\*.*?\*)/).filter(Boolean);
+        sections= text.split(/(\*\*\*[^\s*].*?[^\s*]\*\*\*|\*\*[^\s*].*?[^\s*]\*\*|\*[^\s*].*?[^\s*]\*|(?<=^#\s*[^#\n]+)\n)/m).filter(Boolean);
     }
     else if(typeof text == 'object'){
         sections = text;
     }
+
     const HashValue = (hash) => {
         if (hash <= 1) {
             return "text-2xl";
@@ -35,6 +36,9 @@ export default function ConvertText({text}) {
         <Text>
         {sections.map((section, index) => {
             if(!add){
+                const contains = section.indexOf("n");
+                if(contains != -1) isHeader = false;
+
                 if (/^\*\*\*.*\*\*\*$/.test(section)) {
                     let data = [];
                     if(index+1<sections.length && section[index+1].includes("*")){
@@ -46,8 +50,8 @@ export default function ConvertText({text}) {
                         add = false;
                     }
                     return (
-                        <Text key={index} style={{ fontWeight: "bold", fontStyle: "italic" }}>
-                            {!data[0]? section.slice(3, -3) : <ConvertText text={data[1]}/>}
+                        <Text key={index} style={{ fontWeight: "bold", fontStyle: "italic"}} className={`${isHeader? HashValue(value) : "text-base"}`}>
+                            {!data[0]? section.slice(3, -3) : <ConvertText text={data[1]} isHeader={isHeader} value={value}/>}
                         </Text>
                     );
                 }
@@ -61,10 +65,9 @@ export default function ConvertText({text}) {
                         data = getNext(section, [2, -2]);
                         add = false;
                     }
-                    console.log(data);
                     return (
-                        <Text key={index} style={{ fontWeight: "bold"}}>
-                            {!data[0]? section.slice(2, -2): <ConvertText text={data[1]}/>}
+                        <Text key={index} style={{ fontWeight: "bold"}} className={`${isHeader? HashValue(value) : "text-base"}`}>
+                            {!data[0]? section.slice(2, -2): <ConvertText text={data[1]} isHeader={isHeader} value={value}/>}
                         </Text>
                     );         
                 } 
@@ -78,25 +81,24 @@ export default function ConvertText({text}) {
                         data = getNext(section, [1, -1]);
                         add = false;
                     }
-                    console.log(data);
                     return (
-                        <Text key={index} style={{ fontStyle: "italic" }}>
-                            {!data[0]? section.slice(1, -1): <ConvertText text={data[1]}/>}
+                        <Text key={index} style={{ fontStyle: "italic" }} className={`${isHeader? HashValue(value) : "text-base"}`}>
+                            {!data[0]? section.slice(1, -1): <ConvertText text={data[1]} isHeader={isHeader} value={value}/>}
                         </Text>
                     );
                 }
                 else if (section.includes("# ")) {
                     const hashCount = section.split("#").length - 1;
                     const index = section.indexOf(/\n/);
-                    const str = section.slice(0, index) + section.slice(index + 1);
-                    console.log(str);
+                    isHeader = true;
+                    value = hashCount;
                     return (
                         <Text key={index} className={`font-psemibold ${HashValue(hashCount)}`}>
                             {section.replace(/#+/, "").trim()}
                         </Text>
                     );
                 }
-                return <Text key={index}>{section}</Text>;
+                return <Text key={index} className={`${isHeader? HashValue(value) : "text-base"}`}>{section}</Text>;
             }
 
         })}

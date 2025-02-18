@@ -39,7 +39,6 @@ export class JobsService {
       throw new Error("error:"+ err)
     }
   }
-
   async findArchived(username: string){
     try{
       const today = new Date();
@@ -92,11 +91,9 @@ export class JobsService {
       })
 
       const savedJobsRaw = await this.findsavedForLater(username);
-      const savedJobs = savedJobsRaw.map(saved => saved.job);
-      console.log(savedJobsRaw.length);
       const updatedJobs = jobs.map(job => ({
         ...job,
-        isSaved: savedJobs.some(savedJob => savedJob.id === job.id)
+        isSaved: savedJobsRaw.some(savedJob => savedJob.id === job.id)
       }))
       return updatedJobs;
     }
@@ -301,10 +298,56 @@ export class JobsService {
       throw new Error("Error: " + err)
     }
   }
-
+  async updateSave(username: string, id: number, profileId : number, body : {update : boolean}){
+    try {
+      const res = await this.db.jobProfile.findUnique({
+        where: {
+          profileId_jobId: {
+            profileId: await this.db.profile.findUnique({
+              where: { username },
+              select: { id: true }
+            }).then((res) =>{
+              return res.id
+            }),
+            jobId: id
+          }
+        }
+      });
+      if(!res){
+        return await this.db.jobProfile.create({
+          data : {
+            jobId : id,
+            profileId : profileId,
+            saveForLater : true,
+            isApplied: false
+          }
+        })
+      }
+      return await this.db.jobProfile.update({
+        where: {
+          profileId_jobId: {
+            profileId: await this.db.profile.findUnique({
+              where: { username },
+              select: { id: true }
+            }).then((res) =>{
+              return res.id
+            }),
+            jobId: id
+          }
+        },
+        data: {
+          saveForLater: body.update
+        }
+      });
+      return res;
+    }
+    catch (err){
+      throw new Error("Error: " + err)
+    }
+  }
   async findsavedForLater(username: string){
     try{
-      return await this.db.jobProfile.findMany({
+      const res = await this.db.jobProfile.findMany({
         select: {
           job: true
         },
@@ -321,12 +364,17 @@ export class JobsService {
           ]
         }
       })
+      const update = res.map((res) => res.job)
+      const updatedJobs = update.map((curr) => ({
+        ...curr,
+        isSaved: true
+      }));
+      return updatedJobs;
     }
     catch{
       throw new Error("Nincs ilyen felhasználó")
     }
   }
-
   async update(id: number, updateJobDto: UpdateJobDto) {
     try{
       return await this.db.job.update({
@@ -339,7 +387,6 @@ export class JobsService {
       throw new Error("error: " + err)
     }
   }
-
   async remove(id: number) {
     try{
       return await this.db.job.delete({

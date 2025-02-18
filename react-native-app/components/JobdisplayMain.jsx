@@ -75,4 +75,5 @@ const JobDisplay = ({image,containerStyles,item,imageStyles,handleUpdate,nameSty
     </View>
   )
 }
+
 export default JobDisplay

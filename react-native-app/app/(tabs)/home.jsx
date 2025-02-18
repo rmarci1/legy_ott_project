@@ -1,19 +1,20 @@
 import { View, Text, TouchableOpacity, TouchableWithoutFeedback, Keyboard,FlatList, Modal, ScrollView,TextInput } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import React, {useState } from 'react'
+import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import SearchInput from '@/components/SearchInput'
 import { AntDesign, Fontisto, Ionicons } from '@expo/vector-icons'
 import images from '@/constants/images'
-import { CreateProfilePic } from '@/lib/api'
+import { CreateProfilePic, updateSaved } from '@/lib/api'
 import { useGlobalContext } from '@/context/GlobalProvider'
 import { StatusBar } from 'expo-status-bar'
 import { LinearGradient } from 'expo-linear-gradient'
 import JobDisplay from '@/components/JobDisplay'
 import ShowJob from '@/components/ShowJob'
+import { router, usePathname } from 'expo-router';
 
 const home = () => {
-  const {user,jobs} = useGlobalContext();
+  const {user,jobs,setJobs} = useGlobalContext();
   const [preferences, setPreferences] = useState({
     location : "",
   })
@@ -36,6 +37,36 @@ const home = () => {
   const toggleFilterModal = () => {
     setIsFilterModalVisible(!isFilterModalVisible);
   } 
+  const pathname = usePathname();
+  const handleProfile = (username) => {
+    toggleModal();
+    if(pathname.startsWith("/profileSearch")) router.setParams({});
+    else router.push(`/profileSearch/${username}`);
+  }
+  const renderItem = ({item}) => (
+    <View key={item}>
+              <TouchableOpacity
+                onPress={() => {
+                  let curr = item.description.length;
+                  if(curr > 100){
+                    setReadMore(true);
+                  }
+                  setCurrentJob(item);
+                  toggleModal();
+                }}
+                activeOpacity={0.5}
+                className=''
+              > 
+                <JobDisplay
+                  key={item}
+                  item={item}
+                  image={images.google}
+                  imageStyles="w-20 h-20 bg-orange-100"
+                  containerStyles="border border-primary mt-6"
+                />
+              </TouchableOpacity>
+            </View>
+  )
   return (
       <TouchableWithoutFeedback
         onPress={() => Keyboard.dismiss()}
@@ -47,37 +78,10 @@ const home = () => {
         <FlatList
           data={jobs}
           keyExtractor={(item,index) => index.toString()}
-          renderItem={({item}) => (
-            <View>
-              <TouchableOpacity
-                onPress={() => {
-                  let curr = item.description.length;
-                  if(curr > 100){
-                    setReadMore(true);
-                  }
-                  setCurrentJob(item);
-                  console.log("happen");
-                  toggleModal();
-                }}
-                activeOpacity={0.5}
-                className=''
-              >
-                <JobDisplay
-                  name={item.from}
-                  title={item.name}
-                  date={item.date.split('T')[0]}
-                  currLimit={item.current_attending}
-                  limit={item.max_attending}
-                  image={images.google}
-                  saved={item.isSaved}
-                  imageStyles="w-20 h-20 bg-orange-100"
-                  containerStyles="border border-primary mt-6"
-                />
-              </TouchableOpacity>
-            </View>
-          )}
+          renderItem={renderItem}
           ListHeaderComponent={() => (
             <View>
+              {/*console.log("rendering...\n")*/}
               <Text className='font-pmedium mt-5'>Szia, <Text className='font-pbold'>{user.name}!</Text></Text>
               <Text className='mt-2 text-2xl font-psemibold text-primary'>Találj egy Jó lehetőséget</Text>
             <View className='flex-row items-center mt-4'>
@@ -104,6 +108,7 @@ const home = () => {
         <ShowJob
           currentJob={currentJob}
           readMore={readMore}
+          handleProfileToJobDisplay={(username) => handleProfile(username)}      
           toggleModal={() => toggleModal()}
           title="Jelentkezés"
         />

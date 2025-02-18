@@ -7,7 +7,6 @@ const ConvertType = ({handleStash,selection,undoStates,handleUndoStates,handleSe
         let temp = undoStates;
         temp.push(description);
         handleUndoStates(temp);
-        //setUndoStates(temp);
         const selected = selection.start !== selection.end;
         let str = description;
         let convert = "";
@@ -45,10 +44,11 @@ const ConvertType = ({handleStash,selection,undoStates,handleUndoStates,handleSe
                     let str = description;
                     let convert = "";
                     if(firstNewlineBefore !== -1){
-                        convert = str.slice(0,firstNewlineBefore+1) + '# ' + str.slice(firstNewlineBefore+1);
+                        convert = str.slice(0,firstNewlineBefore+1) + 
+                        `#${description[firstNewlineBefore == -1 ? 0 : firstNewlineBefore + 1] == "#" ? '' : ' '}` + str.slice(firstNewlineBefore+1);
                     }
                     else{
-                      convert = '# ' + description
+                      convert = `#${description[firstNewlineBefore == -1 ? 0 : firstNewlineBefore + 1] == "#" ? '' : ' '}` + description
                     }
                     handleForm(convert)
                   }}

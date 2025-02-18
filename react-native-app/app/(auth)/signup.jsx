@@ -55,13 +55,11 @@ const signup = () => {
       await registerpart1(form.email,form.password,form.confirmPassword)
       
       if(progress != 5){
-        console.log(currentProblem);
         Alert.alert("Hiba", currentProblem);
         return;
       }
       setIsSubmitting(true);
       setFormPart(form);
-      console.log("asd")
       router.push('/welcome');
     }
     catch(error){

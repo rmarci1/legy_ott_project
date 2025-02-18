@@ -1,7 +1,7 @@
 //const API_URL = 'http://192.168.11.82:3000' // webváltó host nete;
-const API_URL = 'http://192.168.10.89:3000' // webváltó ethernet;
+//const API_URL = 'http://192.168.10.89:3000' // webváltó ethernet;
 //const API_URL = 'http://192.168.11.142:3000' // webváltó alap wifi;
-
+const API_URL = 'http://192.168.11.61:3000' // temp
 import * as SecureStore from 'expo-secure-store';
 
 export const getToken = async () => {
@@ -17,7 +17,6 @@ export const register = async (name,username, password, email)=> {
         });
         const data = await response.json();
         if (!response.ok) {
-            console.log(data.message);
             throw new Error(typeof data.message == "string" ? data.message : data.message[0])
         }
         return data;
@@ -28,7 +27,6 @@ export const register = async (name,username, password, email)=> {
 };
 export const pflogin = async (email,password) => {
     try{
-        console.log(response);
         const response = await fetch(`${API_URL}/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -55,7 +53,6 @@ export const registerpart1 = async (email,password,passwordAgain) => {
             body: JSON.stringify({ email,password,passwordAgain}),
             credentials: 'include'
         })
-        console.log(response.ok);
         const data = await response.json();
         if(!response.ok){
             throw new Error(typeof data.message == "string" ? data.message : data.message[0])
@@ -106,7 +103,6 @@ export const getJobs = async (username) => {
 }
 export const GetProfilePic = async (profile) => {
     try{
-        console.log("Fetching...")
         const response = await fetch(`${API_URL}/profilePic`,{
             method: 'GET',
             headers: {'Content-Type': 'application/json'},
@@ -125,8 +121,6 @@ export const CreateProfilePic = async (username,img) => {
         /*const convert = await fetch(img);
         const blob = await convert.blob();*/
         const formData = new FormData();
-        console.log(username);
-        console.log(img);
         formData.append('file', {uri : img, type: "image/png", name: "upload.img"});
         const xhr = new XMLHttpRequest();
 
@@ -215,6 +209,40 @@ export const createJob = async (job) => {
     }
     catch(error){
         throw new Error(error.message);
+    }
+}
+export const updateSaved = async (update, jobId,profileId, username) => {
+    try{
+        const response = await fetch(`${API_URL}/jobs/updateSave/${jobId}/${profileId}/${username}`,{
+            method : 'PATCH',
+            headers: {'Content-Type' : "application/json"},
+            body: JSON.stringify({update}),
+            credentials: "include"
+        });
+
+    }
+    catch(error){
+        throw new Error(error.message);
+    }
+}
+export const getProfileView = async (username) => {
+    try{
+        const response = await fetch(`${API_URL}/profiles/view/profile`,{
+            method: 'POST',
+            headers: {'Content-Type': "application/json"},
+            body: JSON.stringify({username}),
+            credentials: 'include'
+        })
+        const data = await response.json();
+        console.log(data);
+        if (!response.ok) {
+            throw new Error(typeof data.message == "string" ? data.message : data.message[0])
+        }
+        
+        return data;
+    }
+    catch(error){
+        throw new Error(error.message)
     }
 }
 /*export const CreateProfilePic = async (kep) => {

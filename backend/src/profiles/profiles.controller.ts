@@ -58,4 +58,12 @@ export class ProfilesController {
   remove(@Param('username') username: string) {
     return this.profilesService.remove(username);
   }
+
+  @ApiOperation({
+    summary: 'Returns a profile (name,username,profileImg,description,advertiser) properties for viewing purposes'
+  })
+  @Post('/view/profile')
+  getProfileView(@Body() body : {username : string}){
+    return this.profilesService.findOneProfileView(body.username);
+  }
 }

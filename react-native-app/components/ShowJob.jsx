@@ -7,7 +7,7 @@ import images from '@/constants/images'
 import CustomButton from './CustomButton'
 import ConvertText from './ConvertText'
 
-const ShowJob = ({currentJob,readMore,toggleModal, handlePress, title}) => {
+const ShowJob = ({currentJob,readMore,toggleModal, handlePress, title, handleProfileToJobDisplay}) => {
   const [whichButton,setWhichButton] = useState("description");
   const [showMore,setShowMore] = useState(false);
   return (
@@ -24,11 +24,9 @@ const ShowJob = ({currentJob,readMore,toggleModal, handlePress, title}) => {
                       <View className='mt-3 rounded-3xl px-2 justify-center items-center'>
                         <View className='w-[95%]'>
                           <JobDisplay
-                            name="Gipsz Jakab"
-                            title={currentJob?.name}
-                            date={new Date(currentJob?.date).toISOString().split('T')[0]}
-                            limit={currentJob?.max_attending}
+                            item={currentJob}
                             image={images.google}
+                            handleProfile={(username) => handleProfileToJobDisplay(username)}
                             imageStyles="w-16 h-16 bg-white"
                             nameStyle="text-green-400 text-sm"
                             titleStyle="text-white"

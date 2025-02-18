@@ -39,7 +39,7 @@ const welcome = () => {
     try{
       setIsSubmitting(true);
       register(form.name,form.username,formPart.password,formPart.email)
-            .then((res) => {
+              .then((res) => {
               if(res){
                 setUser(res.profile);
               }
