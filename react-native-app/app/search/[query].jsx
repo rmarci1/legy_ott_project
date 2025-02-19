@@ -48,7 +48,6 @@ const query = () => {
             </View>
           )}
           ListHeaderComponent={() => (
-            <>
               <View className='flex mt-6 px-4'>
                 <View className='flex-row items-center'>
                   <TouchableOpacity
@@ -65,7 +64,6 @@ const query = () => {
                   <SearchInput initialQuery={query.query}/>
                 </View>
               </View>
-            </>
           )}
         />
       </View>

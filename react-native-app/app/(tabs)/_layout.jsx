@@ -1,4 +1,4 @@
-import { View, Text, Platform, TouchableOpacity} from 'react-native'
+import { View, TouchableOpacity} from 'react-native'
 import React from 'react'
 import { AntDesign, Entypo, Feather, FontAwesome5, FontAwesome6 } from '@expo/vector-icons'
 import { router, Tabs } from 'expo-router'

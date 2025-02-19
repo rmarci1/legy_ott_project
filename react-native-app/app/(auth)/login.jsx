@@ -1,5 +1,5 @@
 import { View, Text, SafeAreaView, TouchableOpacity, Image } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Formfield from '@/components/Formfield'
 import CustomButton from '@/components/CustomButton';
 import images from '@/constants/images';
@@ -8,7 +8,8 @@ import { getJobs, getSaved, getUser, pflogin } from '@/lib/api';
 import { useGlobalContext } from '@/context/GlobalProvider';
 
 const login = () => {
-  const {setIsLoading,setIsloggedIn,setUser,setToken} = useGlobalContext();
+  const {setIsLoading,setIsloggedIn,setUser,setToken,isLoggedIn,user,isLoading,isJobsIn} = useGlobalContext();
+  if(isLoggedIn && !isLoading && isJobsIn && user) router.push('/(tabs)/home');
   const [form,setForm] = useState({
     email : '', 
     password : ''
@@ -20,6 +21,8 @@ const login = () => {
           .then((result)=>{
             setIsLoading(true);
             if(result){
+                console.log("in");
+                console.log(result.profile)
                 setIsloggedIn(true);
                 setUser(result.profile);
                 getJobs(result.profile.username)
@@ -44,6 +47,7 @@ const login = () => {
                 })
             }
             else{
+                console.log("user: null")
                 setIsloggedIn(false);
                 setUser(null);
             }

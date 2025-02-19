@@ -1,11 +1,13 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, FlatList } from 'react-native'
+import { View, Text, TouchableOpacity, Alert, FlatList } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { SafeAreaView, useSafeAreaFrame } from 'react-native-safe-area-context'
+import { SafeAreaView} from 'react-native-safe-area-context'
 import { useGlobalContext } from '@/context/GlobalProvider'
-import { AntDesign, Entypo, FontAwesome } from '@expo/vector-icons'
-import { getHistorys, getSaved, updateSaved } from '@/lib/api'
+import { Entypo, FontAwesome } from '@expo/vector-icons'
+import { getHistorys } from '@/lib/api'
 import JobDisplay from '@/components/JobDisplay'
 import images from '@/constants/images'
+import { FlashList } from '@shopify/flash-list'
+
 const list = () => {
   const {user,jobs,setJobs,saved,setSaved} = useGlobalContext();
   const [filterJobs,setFilterJobs] = useState(null);
@@ -15,9 +17,14 @@ const list = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   
   useEffect(() => {
-    handleClick("saved");
+    handleClick(currentPage);
   },[])
-
+  useEffect(() => {
+    console.log(saved.length);
+    if(currentPage == "saved"){
+      setFilterJobs(saved);
+    }
+  }, [saved])
   const handleClick = async (title) => {
     try{
       const response = title === "saved" ? saved : await getHistorys(user.username);
@@ -34,9 +41,10 @@ const list = () => {
   return (
     <SafeAreaView className=''>
       <View className='min-h-full'>
-      <FlatList
+      <FlashList
         data={filterJobs}
         keyExtractor={(item,index) => index.toString()}
+        estimatedItemSize={40}
         renderItem={({item}) => (
           <View className='w-[90%] self-center'>
             <TouchableOpacity

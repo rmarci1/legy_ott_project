@@ -1,18 +1,35 @@
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { LinearGradient } from 'expo-linear-gradient'
 import JobDisplay from './JobDisplay'
-import { AntDesign } from '@expo/vector-icons'
+import { AntDesign, Feather } from '@expo/vector-icons'
 import images from '@/constants/images'
 import CustomButton from './CustomButton'
 import ConvertText from './ConvertText'
+import { FlashList } from '@shopify/flash-list'
+import { getReviews } from '@/lib/api'
+import Rating from './Rating'
 
-const ShowJob = ({currentJob,readMore,toggleModal, handlePress, title, handleProfileToJobDisplay}) => {
+const ShowJob = ({currentJob,readMore,toggleModal, handlePress, title, handleProfile}) => {
   const [whichButton,setWhichButton] = useState("description");
   const [showMore,setShowMore] = useState(false);
-  return (
-    <ScrollView className='h-full'>
-            <View className='items-center justify-center min-h-[98%]'>
+  const [ratings,setRatings] = useState(null);
+  useEffect(() => {
+    getRatings();
+  }, [])
+  const renderItem = ({item}) => (
+    <Rating
+      handleProfile={(username) => handleProfile(username)}
+      item={item}
+    />
+  )
+  const getRatings = async () => {
+    const res = await getReviews(currentJob.from);
+    setRatings(res);
+  }
+  return (  
+      <ScrollView className='h-[80%]'>
+            <View className='items-center justify-center min-h-full'>
               <LinearGradient
                 colors={['#1a1a2e', '#16213e', '#0f3460']}
                 start={{x:0, y:0.5}}
@@ -26,7 +43,7 @@ const ShowJob = ({currentJob,readMore,toggleModal, handlePress, title, handlePro
                           <JobDisplay
                             item={currentJob}
                             image={images.google}
-                            handleProfile={(username) => handleProfileToJobDisplay(username)}
+                            handleProfile={(username) => handleProfile(username)}
                             imageStyles="w-16 h-16 bg-white"
                             nameStyle="text-green-400 text-sm"
                             titleStyle="text-white"
@@ -38,42 +55,45 @@ const ShowJob = ({currentJob,readMore,toggleModal, handlePress, title, handlePro
                             <View className='flex-row justify-between items-center w-[95%]'>
                               <TouchableOpacity
                                 onPress={() => setWhichButton("description")}
-                                className={`justify-center items-center w-[33%] h-full rounded-3xl ${whichButton == "description" && "bg-white opacity-80"}`}
+                                className={`justify-center items-center w-[50%] h-full rounded-3xl ${whichButton == "description" && "bg-white opacity-80"}`}
                               >
                                 <Text className='text-white font-pregular'>Leírás</Text>
                               </TouchableOpacity>
                               <TouchableOpacity
-                                onPress={() => setWhichButton("áttekintés")}
-                                className={`justify-center items-center w-[33%] h-full rounded-3xl ${whichButton == "áttekintés" && "bg-white opacity-80"}`}
-                              >
-                                <Text className='text-white font-pregular'>Teszt</Text>
-                              </TouchableOpacity>
-                              <TouchableOpacity
                                 onPress={() => setWhichButton("értékelés")}
-                                className={`justify-center items-center w-[33%] h-full rounded-3xl ${whichButton == "értékelés" && "bg-white opacity-80"}`}
+                                className={`justify-center items-center w-[50%] h-full rounded-3xl ${whichButton == "értékelés" && "bg-white opacity-80"}`}
                               >
                                 <Text className='text-white font-pregular'>Értékelés</Text>
                               </TouchableOpacity>
                             </View>
                           </View>
-                          <View className='my-8'>
+                          {whichButton == "description" ? <View>
+                            <View className='my-8'>
                             <Text className='font-pbold text-white text-lg'>Feladat Leírása</Text>
                           </View>
-                          <View>
-                            <Text className='font-light text-white'>
-                              <ConvertText
-                                text={readMore? !showMore? currentJob?.description.substring(0,100)+"..." : currentJob?.description : currentJob?.description}
-                              /> 
-                            </Text>      
-                            {readMore && (
-                              <TouchableOpacity
-                                onPress={() => setShowMore(!showMore)}
-                                className=' border-white'
-                              >
-                                <Text className='font-pbold text-orange-400'>{showMore? "Kevesebb" : "Olvass többet"}</Text>
-                            </TouchableOpacity>
-                            )}                
-                          </View>
+                              <View>
+                                <Text className='font-light text-white'>
+                                  <ConvertText
+                                    text={readMore? !showMore? currentJob?.description.substring(0,100)+"..." : currentJob?.description : currentJob?.description}
+                                  /> 
+                                </Text>      
+                                {readMore && (
+                                  <TouchableOpacity
+                                    onPress={() => setShowMore(!showMore)}
+                                    className=' border-white'
+                                  >
+                                    <Text className='font-pbold text-orange-400'>{showMore? "Kevesebb" : "Olvass többet"}</Text>
+                                </TouchableOpacity>
+                                )}                
+                              </View>
+                            </View> : <View>
+                                <FlashList
+                                  data={ratings}
+                                  renderItem={renderItem}
+                                  keyExtractor={(item,index) => index.toString()}
+                                  estimatedItemSize={10}
+                                />
+                              </View>}
                         </View>
                       </View>
                       <TouchableOpacity
@@ -84,16 +104,7 @@ const ShowJob = ({currentJob,readMore,toggleModal, handlePress, title, handlePro
                       </TouchableOpacity>
                     </View>        
                 </View>
-                <View className='relative flex-1 justify-end'>
-                  <View className='w-full p-5 self-center bg-gray-50'>
-                    <CustomButton
-                      title={title}
-                      handlePress={handlePress}
-                      textStyles="text-white"
-                      containerStyles="bg-primary w-[95%]"
-                    />
-                  </View>
-                </View> 
+                
               </LinearGradient>        
             </View>   
         </ScrollView>

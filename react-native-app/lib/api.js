@@ -1,7 +1,8 @@
 //const API_URL = 'http://192.168.11.82:3000' // webváltó host nete;
 //const API_URL = 'http://192.168.10.89:3000' // webváltó ethernet;
 //const API_URL = 'http://192.168.11.142:3000' // webváltó alap wifi;
-const API_URL = 'http://192.168.11.61:3000' // temp
+const API_URL = 'http://192.168.0.179:3000' // temp
+
 import * as SecureStore from 'expo-secure-store';
 
 export const getToken = async () => {
@@ -94,6 +95,7 @@ export const getJobs = async (username) => {
         if(!response.ok){
             throw new Error(data.message);
         }
+        console.log(data.length);
         return data;
     }
     catch(error){
@@ -219,7 +221,10 @@ export const updateSaved = async (update, jobId,profileId, username) => {
             body: JSON.stringify({update}),
             credentials: "include"
         });
-
+        const data = response.json();
+        if(!response.ok){
+            throw new Error(data.message);
+        }
     }
     catch(error){
         throw new Error(error.message);
@@ -243,6 +248,40 @@ export const getProfileView = async (username) => {
     }
     catch(error){
         throw new Error(error.message)
+    }
+}
+export const getReviews = async (username) => {
+    try{
+        console.log(username);
+        const response = await fetch(`${API_URL}/reviews/${username}`,{
+            method: "GET",
+            credentials: "include"
+        })
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(typeof data.message == "string" ? data.message : data.message[0])
+        }
+        return data;
+    }
+    catch(error){
+        throw new Error(error.message);
+    }
+}
+export const getAverageRating = async (username) => {
+    try{
+        const response = await fetch(`${API_URL}/reviews/average/${username}`,{
+            method: "GET",
+            credentials: "include"
+        })
+        const data = await response.json();
+        if(!response.ok){
+            throw new Error(data.message);
+        }
+        return data?._avg.review;
+    }
+    catch(error){
+        throw new Error(error.message);
     }
 }
 /*export const CreateProfilePic = async (kep) => {

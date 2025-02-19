@@ -1,10 +1,10 @@
 import { View, Text, TouchableOpacity, Image, TouchableWithoutFeedback, Animated, Easing } from 'react-native'
-import React, { useRef, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { Heart } from "lucide-react-native";
 import { updateSaved } from '@/lib/api';
 import { useGlobalContext } from '@/context/GlobalProvider';
 const JobDisplay = ({image,containerStyles,item,imageStyles,handleUpdate,nameStyle,titleStyle,dateStyle,handleProfile}) => {
-  const {saved,setJobs,setSaved,user}= useGlobalContext();
+  const {setJobs,setSaved,user}= useGlobalContext();
   const animatedValue = useRef(new Animated.Value(0.5)).current;
   const handleClick = async () => {
      Animated.sequence([
@@ -25,14 +25,14 @@ const JobDisplay = ({image,containerStyles,item,imageStyles,handleUpdate,nameSty
     }
     const update = async (isLiked) => {
          await updateSaved(isLiked,item.id,user.id,user.username);
-         let temp = saved;
-         if(!isLiked) temp.pop(item.id)
+         if(!isLiked) setSaved((curr) => curr.filter((savedItem) => savedItem.id !== item.id))
          else {
-           temp.push({...item, isSaved: isLiked});
+          setSaved((curr) => [...curr,{...item,isSaved: isLiked}]);
          }
+         console.log(isLiked);
          setJobs((prevJobs) => prevJobs.map((job) => job.id !== item.id ? job : {...job, isSaved:isLiked}));
-         setSaved(temp);
-       }
+
+  }
   return (
         <View className={`rounded-3xl px-2 justify-center ${containerStyles}`}>
           <View className='flex-row mt-2'>
