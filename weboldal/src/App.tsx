@@ -22,17 +22,19 @@ function App() {
   return (
     <>
       <BrowserRouter >
-        <div className="flex h-screen font-poppins">
-          <Navbar/>
+        <div className="flex flex-row h-screen w-full overflow-hidden font-poppins">
+
+            <Navbar/>
+
             <AuthProvider>
-              <div className='flex-grow p-4'>
+              {/*<div className=' p-4 '>*/}
                 <Routes>
                   <Route path="/home" element={<Home />}/>
                   <Route path='/login' element={<Login /> } />
                   <Route path='/register' element={<Register />} />
                   <Route path='/profile' element={<Profile />} />
                 </Routes>
-              </div>
+              {/*</div>*/}
             </AuthProvider>
         </div>
       </BrowserRouter>

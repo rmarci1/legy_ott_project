@@ -42,8 +42,8 @@ export default function Login(){
 
 
     return <>
-        <div className="justify-center flex">
-        <div className=" w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-indigo-950 dark:border-gray-700">
+        <div className=" w-dvw flex flex-wrap h-screen justify-center items-center">
+        <div className=" w-full max-w-sm p-4 bg-white h-fit border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-indigo-950 dark:border-gray-700">
             <form className="space-y-6" onSubmit={handleLogin}>
                 <h5 className="text-xl font-medium text-gray-900 dark:text-white">Bejelentkezés</h5>
                 <div>

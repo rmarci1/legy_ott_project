@@ -1,21 +1,24 @@
 import { Job } from "../Types/Job";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
+import { PiHeartLight, PiHeartFill } from "react-icons/pi";
 
 interface jobProps{
     Job: Job
 }
 
 export default function JobCard({Job}: jobProps){
-
+    //TODO: Get saved state from database
+    const [saved, setSaved] = useState<boolean>(false);
     useEffect(() => {
         console.log("miezmiertnemmukodik")
     }, []);
 
     return(<>
-        <div className="rounded-lg shadow-secondary-1 bg-surface-dark w-1/3 float-left m-1 ">
+        <div className="rounded-lg shadow-secondary-1 bg-surface-dark w-1/3 m-4">
             <img className="rounded-t-lg" src={Job.img} alt="Job picture"/>
             <div className="p-6 text-surface border-2">
                 <h5 className="mb-2 text-xl font-medium leading-tight">{Job.name}</h5>
+                <span>{saved? <PiHeartFill size={10} color="red" onClick={() => setSaved(false)}/> : <PiHeartLight size={10} onClick={() => setSaved(true)}/>}</span>
                 <p className="mb-4 text-base">
                     {Job.description}
                 </p>

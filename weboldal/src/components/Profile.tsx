@@ -39,7 +39,7 @@ export default function Profile(){
     }
 
     return <>
-        <div className="justify-center flex flex-wrap">
+        <div className="w-dvw flex flex-wrap h-fit p-3 justify-center ">
             <div className="flex w-fit">
                 <div className="w-fit relative text-center rounded-full group cursor-pointer" onClick={() => setModal(true)}>
                         <img className="w-28 h-auto rounded-full drop-shadow-lg transition-all duration-300 group-hover:brightness-50" src={user?.profileImg}></img>

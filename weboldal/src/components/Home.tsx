@@ -18,8 +18,7 @@ export default function Home() {
     }, [])
 
     return (
-        <>
-            <div className="w-fit h-screen">
+            <div className="flex flex-wrap h-screen justify-center overflow-y-scroll">
             {
                 jobs.map((item: Job) => (
                     <JobCard key={item.id} Job={item}/>
@@ -27,6 +26,6 @@ export default function Home() {
             }
             </div>
 
-        </>
+
     );
 }
