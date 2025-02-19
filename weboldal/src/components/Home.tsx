@@ -18,7 +18,7 @@ export default function Home() {
     }, [])
 
     return (
-            <div className="flex flex-wrap h-screen justify-center overflow-y-scroll">
+            <div className="flex flex-wrap h-screen w-dvw justify-center overflow-y-scroll">
             {
                 jobs.map((item: Job) => (
                     <JobCard key={item.id} Job={item}/>

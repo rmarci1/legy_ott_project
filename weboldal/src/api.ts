@@ -105,32 +105,6 @@ export const getUser = async (): Promise<RegisterResponse> => {
   }
 };
 
-export const getProfilePic = async (): Promise<string> => {
-  try {
-    const response = await fetch(`${API_URL}/profilePic`, {
-      method: 'GET',
-      credentials: 'include',
-    });
-
-    return response.json();
-  } catch (error: any) {
-    throw new Error(error.message);
-  }
-};
-
-// export const UpdateProfilePic = async (profilePic: File) =>{
-//   const 
-
-  
-
-//   const response = await fetch(`${API_URL}/profiles/kovacs.laci`, {
-//     method: 'PATCH',
-//     credentials: "include",
-//     headers: { 'Content-Type': 'application/octet-stream' },
-//     body: JSON.stringify({ UpdateProfilePic:  }),
-//   })
-
-
 export const getAvailableJobs = async (username: string) =>{
   try{
     const response = await fetch(`${API_URL}/jobs/available/${username}`, {
@@ -138,7 +112,11 @@ export const getAvailableJobs = async (username: string) =>{
       credentials: 'include',
     })
 
-    return response.json();
+    const data = response.json();
+
+    console.log(data)
+
+    return data;
   }
   catch (e: any) {
     throw new Error(e.message)
@@ -147,7 +125,7 @@ export const getAvailableJobs = async (username: string) =>{
 
 export const profilePicChange = async (formData: FormData, username: string) => {
   try{
-    const result = await fetch(`http://localhost:3000/profiles/${username}/uploadProfilePic`,
+    const result = await fetch(`${API_URL}/profiles/${username}/uploadProfilePic`,
         {
           body: formData,
           method: "post",
@@ -159,3 +137,22 @@ export const profilePicChange = async (formData: FormData, username: string) => 
     throw new Error(e.message);
   }
 }
+
+export const saveForLater = async (jobId: number,profileId: number,username: string, update: boolean) => {
+  try{
+    const res = await fetch(`${API_URL}/jobs/updateSave/${jobId}/${profileId}/${username}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json'},
+      body: JSON.stringify({update}),
+      credentials: "include"
+    });
+
+    const resp = res.json()
+    console.log(resp);
+    return resp;
+  }
+  catch (e: any){
+    throw new Error(e.message)
+  }
+}
+

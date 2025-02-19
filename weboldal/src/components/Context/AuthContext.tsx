@@ -1,14 +1,15 @@
 import { createContext, ReactNode, useContext, useState } from "react";
 import { User } from "../../Types/User";
 import {Job} from "../../Types/Job.ts";
-import {getAvailableJobs} from "../../api.ts";
+import {getAvailableJobs, saveForLater} from "../../api.ts";
 
 interface AuthContextType {
     user: User | null,
     jobs: Job[],
     kijelentkezes: () => void,
     bejelentkezes: (newUser: User) => void,
-    profilKepUpdate: (url: string, user: User) => void
+    profilKepUpdate: (url: string, user: User) => void,
+    setSave: (job: Job, user: User ,value: boolean) => void
 }
 interface AuthContextTypeProps {
     children : ReactNode;
@@ -25,6 +26,7 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
 
     const bejelentkezes = async (newUser: User) =>{
         setUser({
+            id: newUser.id,
             name: newUser.name,
             username: newUser.username,
             email: newUser.email,
@@ -33,7 +35,7 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
             profileImg: newUser.profileImg
         });
 
-        setJobs(await getAvailableJobs(newUser.username))
+        setJobs(await getAvailableJobs(newUser.username));
     }
 
     const kijelentkezes = () =>{
@@ -42,13 +44,14 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
 
     const profilKepUpdate = (url: string, user: User) =>{
         setUser({
-            name: user.name,
-            username: user.username,
-            email: user.email,
-            password: user.password,
-            bejelentkezett: true,
+            ...user,
             profileImg: url
         })
+    }
+    const setSave = async (job: Job, user: User ,value: boolean) => {
+        await saveForLater(job.id, user.id, user.username, value);
+
+        setJobs(await getAvailableJobs(user.username));
     }
 
     return (
@@ -58,7 +61,8 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
                 jobs,
                 kijelentkezes,
                 bejelentkezes,
-                profilKepUpdate
+                profilKepUpdate,
+                setSave
             }}
         >
             {children}

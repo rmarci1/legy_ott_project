@@ -7,7 +7,7 @@ export default function Navbar(){
 
     return <>
         <div className="sticky bg-indigo-950 w-20 h-screen flex flex-1 items-center p-4 hover:w-64 transform transition-all duration-300 ease-in-out group">
-            <nav className="list-none sticky space-y-10 place-content-center place-items-center ">
+            <nav className="list-none sticky space-y-10 place-content-center  ">
                 <div>
                     <Link to="/home" className="flex  place-items-center">
                         <IoHomeOutline size={40} color="white"/>
