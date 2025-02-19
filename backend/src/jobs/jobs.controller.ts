@@ -70,24 +70,12 @@ export class JobsController {
   })
   @Get('/savedForLater/:username')
   findSavedForLater(@Param('username') username: string){
-    return this.jobsService.findsavedForLater(username);
+    return this.jobsService.findSavedForLater(username);
   }
 
   @ApiOperation({
-    summary: 'Changes saveForLater property to true for job(by Id) that the user(by username) wants to save'
+    summary: 'Changes saveForLater property to what the frontend sends for job(by Id) that the user(by username) wants to alter'
   })
-  @Patch('/saveForLater/:jobId/:username')
-  saveForLater(@Param('username') username: string, @Param('jobId') id: string){
-    return this.jobsService.saveForLater(username, +id);
-  }
-
-  @ApiOperation({
-    summary: 'Changes saveForLater property to false for job(by Id) that the user(by username) wants to remove from saves'
-  })
-  @Patch('/removeSave/:jobId/:username')
-  removeSave(@Param('username') username: string, @Param('jobId') id: string){
-    return this.jobsService.removeSave(username, +id);
-  }
   @Patch('/updateSave/:jobId/:profileId/:username')
   updateSave(@Param('username') username: string, @Param('jobId') id: string, @Param('profileId') profileId : string, @Body() body : {update : boolean}){
     return this.jobsService.updateSave(username, +id, +profileId, body);
@@ -134,6 +122,6 @@ export class JobsController {
   })
   @Post('/filter/name')
   async filter(@Body() body : {name : string,username : string}){
-    return await this.jobsService.FilterAdvertisementsByName(body);
+    return await this.jobsService.filterAdvertisementsByName(body);
   }
 }
