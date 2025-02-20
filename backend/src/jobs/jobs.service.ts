@@ -89,17 +89,21 @@ export class JobsService {
           AND: [
             {max_attending: {gt: this.db.job.fields.current_attending}},
             {date: {gte: today}},
-            {from: {not: username}}
+            {from: {not: username}},
+            {
+              profiles: {
+                  none: {
+                    isApplied: true
+                  }
+              }
+            }
           ],
         },
         include: {
           profiles: {
-            where: {
-              isApplied: false
-            },
-            select: {
-              saveForLater: true,
-              isApplied: true
+            select:{
+              isApplied: true,
+              saveForLater: true
             }
           }
         }
@@ -178,12 +182,15 @@ export class JobsService {
 
   async attend(id: number, username: string){
     try{
-      const profileid = await this.db.profile.findUnique({
+      //user profile
+      const profile = await this.db.profile.findUnique({
         where: { username },
-        select: { id: true }
-      }).then((res) =>{
-        return res.id
-      });
+        select: {
+          id: true
+        }
+      })
+
+      //current attending count
       const numberOfPeople: number = await this.db.job.findUnique({
         select: {
           current_attending: true,
@@ -195,23 +202,52 @@ export class JobsService {
         return res.current_attending + 1;
       }) ;
 
-      this.db.jobProfile.create({
-        data: {
-          job:{
-            connect: {id}
-          },
-          profile: {
-            connect: {id: profileid}
+      //check if the relation already exists
+      const alreadyExists = await this.db.jobProfile.findUnique({
+        where: {
+          profileId_jobId: {
+            profileId: profile.id,
+            jobId: id
           }
-        } as Prisma.jobProfileCreateInput
+        }
       })
 
+      //if exists update it if not create it
+      if (alreadyExists){
+        await this.db.jobProfile.update({
+          where: {
+            profileId_jobId: {
+              profileId: profile.id,
+              jobId: id
+            }
+          },
+          data:{
+            isApplied: true
+          }
+        })
+      }
+      else{
+        await this.db.jobProfile.create({
+          data: {
+            job:{
+              connect: {id}
+            },
+            profile: {
+              connect: {id: profile.id}
+            },
+            isApplied: true,
+            saveForLater: false
+          } as Prisma.jobProfileCreateInput
+        })
+      }
+
+      //update current count of attending user
       return await this.db.job.update({
         where: {
           id
         },
         data: {
-          current_attending: numberOfPeople
+          current_attending: numberOfPeople,
         }
       })
     }
@@ -222,6 +258,7 @@ export class JobsService {
 
   async forfeitJob(id: number, username: string){
     try{
+      //get current attending number of user then subtract one
       const numberOfPeople : number = await this.db.job.findUnique({
         where: {
           id
@@ -233,6 +270,7 @@ export class JobsService {
         return res.current_attending;
       }) - 1;
 
+      //delete the relation between the job and user
       this.db.jobProfile.delete({
         where: {
           profileId_jobId: {
@@ -247,6 +285,7 @@ export class JobsService {
         }
       })
 
+      //update the number of current attending user
       return this.db.job.update({
         where: {
           id
