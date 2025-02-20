@@ -81,19 +81,11 @@ export class JobsController {
     return this.jobsService.updateSave(username, +id, +profileId, body);
   }
   @ApiOperation({
-    summary: 'Adds a new attendee(by username) to the job(by id)'
+    summary: 'Changes isApplied property to what the frontend sends for job(by Id) that the user(by username) wants to alter'
   })
   @Patch('/attend/:id/:username')
-  attend(@Param('id') id: string, @Param('username') username: string) {
-    return this.jobsService.attend(+id, username);
-  }
-
-  @ApiOperation({
-    summary: 'Removes an attendee(by username) from the job(by id)'
-  })
-  @Patch('/forfeitPlace/:id/:username')
-  forfeitJob(@Param('id') id: string, @Param('username') username: string){
-    return this.jobsService.forfeitJob(+id, username);
+  attend(@Param('id') id: string, @Param('username') username: string, @Body() body : {update : boolean}) {
+    return this.jobsService.attend(+id, username, body.update);
   }
 
   @ApiOperation({

@@ -133,7 +133,7 @@ export class JobsService {
       throw new Error("Error: " + error);
     }
   }
-  async filterAdvertisementsByName(body : {name,username}){
+  async filterAdvertisementsByName(body : {name: string,username: string}){
     try{
       const jobs = await this.db.job.findMany({
         where : {
@@ -180,7 +180,8 @@ export class JobsService {
     }
   }
 
-  async attend(id: number, username: string){
+  //value false: forfeit; value true: attend
+  async attend(id: number, username: string, value: boolean){
     try{
       //user profile
       const profile = await this.db.profile.findUnique({
@@ -199,7 +200,7 @@ export class JobsService {
           id,
         },
       }).then((res) => {
-        return res.current_attending + 1;
+        return value? res.current_attending + 1 : res.current_attending - 1;
       }) ;
 
       //check if the relation already exists
@@ -212,33 +213,51 @@ export class JobsService {
         }
       })
 
-      //if exists update it if not create it
+      //if exists and want to attend update it if not create it
       if (alreadyExists){
-        await this.db.jobProfile.update({
-          where: {
-            profileId_jobId: {
-              profileId: profile.id,
-              jobId: id
+        //already exits, not saved for later and wants to delete attendance => delete relation
+        if (!value && !alreadyExists.saveForLater){
+          await this.db.jobProfile.delete({
+            where: {
+              profileId_jobId: {
+                profileId: profile.id,
+                jobId: id
+              }
             }
-          },
-          data:{
-            isApplied: true
-          }
-        })
+          })
+        }
+        //already exits, saved for later and wants to attend or wants to delete => update
+        else{
+          await this.db.jobProfile.update({
+            where: {
+              profileId_jobId: {
+                profileId: profile.id,
+                jobId: id
+              }
+            },
+            data:{
+              isApplied: value
+            }
+          })
+        }
       }
       else{
-        await this.db.jobProfile.create({
-          data: {
-            job:{
-              connect: {id}
-            },
-            profile: {
-              connect: {id: profile.id}
-            },
-            isApplied: true,
-            saveForLater: false
-          } as Prisma.jobProfileCreateInput
-        })
+        //if it doesn't exist but wants to attend => create the relation
+        if (value){
+          await this.db.jobProfile.create({
+            data: {
+              job:{
+                connect: {id}
+              },
+              profile: {
+                connect: {id: profile.id}
+              },
+              isApplied: true,
+              saveForLater: false
+            } as Prisma.jobProfileCreateInput
+          })
+        }
+
       }
 
       //update current count of attending user
@@ -252,80 +271,10 @@ export class JobsService {
       })
     }
     catch {
-      throw new Error('Nem sikerült a jelentkezés')
+      throw new Error(value? 'Nem sikerült a jelentkezés!' : 'Nem sikerült a jelentkezés törlése!')
     }
   }
 
-  async forfeitJob(id: number, username: string){
-    try{
-      //get current attending number of user then subtract one
-      const numberOfPeople : number = await this.db.job.findUnique({
-        where: {
-          id
-        },
-        select: {
-          current_attending: true
-        }
-      }).then((res)=>{
-        return res.current_attending;
-      }) - 1;
-
-      //update isApplied attribute to false
-      this.db.jobProfile.update({
-        where: {
-          profileId_jobId: {
-            profileId: await this.db.profile.findUnique({
-              where: { username },
-              select: { id: true }
-            }).then((res) =>{
-              return res.id
-            }),
-            jobId: id
-          }
-        },
-        data: {
-          isApplied: false
-        }
-      })
-
-      //update the number of current attending user
-      return this.db.job.update({
-        where: {
-          id
-        },
-        data: {
-          current_attending: numberOfPeople
-        }
-      })
-    }
-    catch {
-      throw new Error('Nem sikerült a jelentkezés törlése');
-    }
-  }
-
-  async removeSave(username: string, id: number){
-    try {
-      return await this.db.jobProfile.update({
-        where: {
-          profileId_jobId: {
-            profileId: await this.db.profile.findUnique({
-              where: { username },
-              select: { id: true }
-            }).then((res) =>{
-              return res.id
-            }),
-            jobId: id
-          }
-        },
-          data: {
-            saveForLater: false
-          }
-      })
-    }
-    catch (err){
-      throw new Error("Error: " + err)
-    }
-  }
   async updateSave(username: string, id: number, profileId : number, body : {update : boolean}){
     try {
       const res = await this.db.jobProfile.findUnique({
