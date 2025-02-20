@@ -22,7 +22,7 @@ const login = () => {
             setIsLoading(true);
             if(result){
                 console.log("in");
-                console.log(result.profile)
+                console.log("profile: " + result.profile)
                 setIsloggedIn(true);
                 setUser(result.profile);
                 getJobs(result.profile.username)

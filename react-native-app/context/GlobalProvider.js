@@ -26,6 +26,7 @@ const GlobalProvider = ({children}) => {
                 getUser(res)
                 .then((result)=>{
                     if(result){
+                        console.log("result: ",result.profile)
                         setIsloggedIn(true);
                         setUser(result.profile);
                         getJobs(result.profile.username)

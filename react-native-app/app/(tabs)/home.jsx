@@ -97,6 +97,7 @@ const home = () => {
         data={jobs}
         renderItem={renderItem}
         estimatedItemSize={121}
+        ListFooterComponent={<View style={{height: 100}}/>}
         ListEmptyComponent={() => (
           <View className='flex-1 items-center justify-center'>
             <EmptyState

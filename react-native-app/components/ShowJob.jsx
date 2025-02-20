@@ -35,6 +35,9 @@ const ShowJob = ({currentJob,readMore,toggleModal, handlePress, title, handlePro
                 start={{x:0, y:0.5}}
                 end={{x:1, y:1}}
                 className='w-[95%] h-full'
+                style= {{
+                  borderRadius: 50
+                }}
               >
                 <View className="rounded-2xl">
                     <View>

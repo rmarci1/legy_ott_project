@@ -31,7 +31,6 @@ const JobDisplay = ({image,containerStyles,item,imageStyles,handleUpdate,nameSty
          }
          console.log(isLiked);
          setJobs((prevJobs) => prevJobs.map((job) => job.id !== item.id ? job : {...job, isSaved:isLiked}));
-
   }
   return (
         <View className={`rounded-3xl px-2 justify-center ${containerStyles}`}>

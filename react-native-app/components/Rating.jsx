@@ -10,7 +10,6 @@ const Rating = ({item,handleProfile}) => {
         setReadMoreRating(true);
     }
   })
-  console.log(item.review);
   return (
     <View key={item} className='mt-5 w-[90%] self-center'>
       <View className='flex-row justify-between items-center'>
