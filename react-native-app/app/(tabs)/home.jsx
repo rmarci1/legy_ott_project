@@ -1,88 +1,85 @@
-import { View, Text, TouchableOpacity, TouchableWithoutFeedback, Keyboard,FlatList, Modal, ScrollView,TextInput } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, Modal, TouchableWithoutFeedback, Keyboard } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import React, { useState } from 'react'
+import React, {useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import SearchInput from '@/components/SearchInput'
-import { AntDesign, Fontisto, Ionicons } from '@expo/vector-icons'
-import images from '@/constants/images'
-import { CreateProfilePic, updateSaved } from '@/lib/api'
-import { useGlobalContext } from '@/context/GlobalProvider'
-import { StatusBar } from 'expo-status-bar'
-import { LinearGradient } from 'expo-linear-gradient'
-import JobDisplay from '@/components/JobDisplay'
-import ShowJob from '@/components/ShowJob'
+import { useGlobalContext } from '@/context/GlobalProvider';
+import images from '@/constants/images';
 import { router, usePathname } from 'expo-router';
+import ShowJob from '@/components/ShowJob';
+import { AntDesign, Fontisto, Ionicons } from '@expo/vector-icons';
+import { TextInput } from 'react-native-gesture-handler';
+import { LinearGradient } from 'expo-linear-gradient';
+import SearchInput from '@/components/SearchInput';
+import { StatusBar } from 'expo-status-bar';
+import EmptyState from '@/components/EmptyState';
+import { FlashList } from "@shopify/flash-list";
+import JobDisplay from '@/components/JobDisplay';
+import CustomButton from '@/components/CustomButton';
 
 const home = () => {
   const {user,jobs,setJobs} = useGlobalContext();
   const [preferences, setPreferences] = useState({
-    location : "",
+      location : "",
   })
-  const [query,setQuery] = useState("");
+  const query = "";
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isFilterModalVisible,setIsFilterModalVisible] = useState(false);
   const [currentJob,setCurrentJob] = useState(null);
   const [readMore,setReadMore] = useState(false);
   const submit = async () => {
-    try {
-        await CreateProfilePic(user.username);
+      try {
+          await CreateProfilePic(user.username);
+      }
+      catch(error){
+        console.log(error);
+      }
     }
-    catch(error){
-      console.log(error);
+    const toggleModal = () => {
+      setIsModalVisible(!isModalVisible);
     }
-  }
-  const toggleModal = () => {
-    setIsModalVisible(!isModalVisible);
-  }
-  const toggleFilterModal = () => {
-    setIsFilterModalVisible(!isFilterModalVisible);
-  } 
-  const pathname = usePathname();
-  const handleProfile = (username) => {
-    toggleModal();
-    if(pathname.startsWith("/profileSearch")) router.setParams({});
-    else router.push(`/profileSearch/${username}`);
-  }
+    const toggleFilterModal = () => {
+      setIsFilterModalVisible(!isFilterModalVisible);
+    } 
+    const pathname = usePathname();
+    const handleProfile = (username) => {
+      toggleModal();
+      if(pathname.startsWith("/profileSearch")) router.setParams({});
+      else router.push(`/profileSearch/${username}`);
+    }
   const renderItem = ({item}) => (
     <View key={item}>
-              <TouchableOpacity
-                onPress={() => {
-                  let curr = item.description.length;
-                  if(curr > 100){
-                    setReadMore(true);
-                  }
-                  setCurrentJob(item);
-                  toggleModal();
-                }}
-                activeOpacity={0.5}
-                className=''
-              > 
-                <JobDisplay
-                  key={item}
-                  item={item}
-                  image={images.google}
-                  imageStyles="w-20 h-20 bg-orange-100"
-                  containerStyles="border border-primary mt-6"
-                />
-              </TouchableOpacity>
-            </View>
+        <TouchableOpacity
+          onPress={() => {
+            let curr = item.description.length;
+            if(curr > 100){
+              setReadMore(true);
+            }
+            setCurrentJob(item);
+            toggleModal();
+          }}
+          activeOpacity={0.5}
+          className=''
+        > 
+            <JobDisplay
+               key={item}
+               item={item}
+               image={images.google}
+               imageStyles="w-20 h-20 bg-orange-100"
+               containerStyles="border border-primary mt-6"
+            />
+        </TouchableOpacity>
+    </View>
   )
   return (
-      <TouchableWithoutFeedback
-        onPress={() => Keyboard.dismiss()}
-      >
-    <SafeAreaView className='h-full items-center bg-gray-50'>
+    <TouchableWithoutFeedback
+      onPress={() => Keyboard.dismiss()}
+    >
+    <SafeAreaView className='h-full items-center justify-center'>
       <GestureHandlerRootView className='flex-1'>
       <StatusBar style='dark'/>
-      <View className='h-min-[65vh] w-[90%]'>
-        <FlatList
-          data={jobs}
-          keyExtractor={(item,index) => index.toString()}
-          renderItem={renderItem}
-          ListHeaderComponent={() => (
-            <View>
-              {/*console.log("rendering...\n")*/}
-              <Text className='font-pmedium mt-5'>Szia, <Text className='font-pbold'>{user.name}!</Text></Text>
+      <View className='w-[90%] min-h-[100vh] self-center'>
+      <View>
+          <Text className='font-pmedium mt-5'>Szia, <Text className='font-pbold'>{user.name}!</Text></Text>
               <Text className='mt-2 text-2xl font-psemibold text-primary'>Találj egy Jó lehetőséget</Text>
             <View className='flex-row items-center mt-4'>
             <SearchInput
@@ -95,11 +92,22 @@ const home = () => {
               <Ionicons name="filter-sharp" size={30} color="white" />
             </TouchableOpacity>
           </View>
-          </View>
-          )}
-        />
       </View>
-      <Modal
+      <FlashList
+        data={jobs}
+        renderItem={renderItem}
+        estimatedItemSize={121}
+        ListFooterComponent={<View style={{height: 100}}/>}
+        ListEmptyComponent={() => (
+          <View className='flex-1 items-center justify-center'>
+            <EmptyState
+              title="Sajnáljuk nincs jelenleg"
+              substitle="lehetőség"
+            />
+          </View>
+        )}
+        />
+       <Modal
         animationType='slide'  
         transparent={true}
         visible={isModalVisible}
@@ -108,10 +116,18 @@ const home = () => {
         <ShowJob
           currentJob={currentJob}
           readMore={readMore}
-          handleProfileToJobDisplay={(username) => handleProfile(username)}      
+          handleProfile={(username) => handleProfile(username)}      
           toggleModal={() => toggleModal()}
           title="Jelentkezés"
         />
+        <View className='w-full p-5 self-center bg-gray-50 relative flex-1'>
+          <CustomButton
+            title="Jelentkezés"
+            handlePress={() => {}}
+            textStyles="text-white"
+            containerStyles="bg-primary w-[95%]"
+          />
+        </View>
       </Modal>
       <Modal
         animationType='slide'  
@@ -151,9 +167,11 @@ const home = () => {
           </View>
         </ScrollView>
       </Modal>
-    </GestureHandlerRootView>
+      </View>
+    </GestureHandlerRootView> 
     </SafeAreaView>
-    </TouchableWithoutFeedback>
+  </TouchableWithoutFeedback>
   )
 }
+
 export default home

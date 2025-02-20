@@ -31,6 +31,13 @@ export class ReviewsController {
   async findAllByUsername(@Param('reviewedUsername') username: string) {
     return await this.reviewsService.findAllByUsername(username);
   }
+  @ApiOperation({
+    summary: 'Returns the average rating of a specific user found by username'
+  })
+  @Get('/average/:username')
+  async getAverage(@Param('username') username: string){
+    return await this.reviewsService.findAverageRating(username);
+  }
 
   @ApiOperation({
     summary: 'Alters a review(by id)'

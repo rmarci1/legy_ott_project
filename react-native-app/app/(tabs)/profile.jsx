@@ -25,7 +25,6 @@ const profile = () => {
           user={user}
           isView={false}
         />
-        
       </ScrollView>
       </View>
   )

@@ -27,7 +27,7 @@ export class CreateReviewDto {
   })
   @IsNumber()
   @IsNotEmpty()
-  @Max(5)x
+  @Max(5)
   @Min(1)
   review: number;
 

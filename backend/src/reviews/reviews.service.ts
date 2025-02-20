@@ -30,7 +30,21 @@ export class ReviewsService {
       throw new Error("Nincsenek értékelések ehhez a profilhoz!")
     }
   }
-
+  async findAverageRating(username : string){
+    try{
+      return await this.db.review.aggregate({
+        where: {
+          reviewed_un: username
+        },
+        _avg: {
+          review: true
+        }
+      });
+    }
+    catch{
+      throw new Error("Nincsenek értékelések ehhez a profilhoz!")
+    }
+  }
   async update(id: number, updateReviewDto: UpdateReviewDto) {
     try{
       return await this.db.review.update({

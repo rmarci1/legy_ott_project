@@ -45,9 +45,9 @@ const main = async () => {
     );
 
     await Promise.all(
-        jobs.map((job, index) => {
+        jobs.map(async (job, index) => {
             const isSaved = faker.datatype.boolean();
-            prisma.jobProfile.create({
+            await prisma.jobProfile.create({
                 data: {
                     profileId: profiles[faker.number.int({min:0, max:profiles.length-1})].id,
                     jobId: job.id,
@@ -70,7 +70,6 @@ const main = async () => {
             }) 
         })
     )
-    console.log(res);
 }
 
 main()

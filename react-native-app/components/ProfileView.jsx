@@ -3,10 +3,11 @@ import React, { useRef, useState,useEffect } from 'react'
 import CustomButton from './CustomButton'
 import { AntDesign, Entypo, Feather } from '@expo/vector-icons'
 import ConvertType from './ConvertType'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router'
+import { getAverageRating } from '@/lib/api'
 
-const ProfileView = ({isView, user}) => {
+const ProfileView = ({isView, user, handleModal}) => {
   const [selection, setSelection] = useState({
       start: 0,
       end : 0
@@ -19,10 +20,21 @@ const ProfileView = ({isView, user}) => {
   const [editing,setEditing] = useState("");
   const [readMore,setReadMore] = useState();
   const [pressed, setPressed] = useState("");
+  const [rating,setRating] = useState(0);
   useEffect(() => {
     if(user.description.length > 100){
       setReadMore(true);
     }
+    getAverageRating(user.username).then((res) => {
+      if(res){
+        setRating(res);
+      }
+      else{
+        setRating(0);
+      }
+    }).catch((error) => {
+      throw new Error(error);
+    })
   },[])
   const slideAnim = useState(new Animated.Value(400))[0];
   const imageSlide = useRef(new Animated.Value(0.3)).current;
@@ -165,7 +177,13 @@ const ProfileView = ({isView, user}) => {
                   </View>
                   }
                 </View>
-                <Text className='font-pregular text-lg mt-2'><AntDesign name="star" size={16} color="orange" />4</Text>
+                {rating >= 1 && <TouchableOpacity
+                  onPress={handleModal}
+                  activeOpacity={0.8}
+                >
+                  <Text className='font-pregular text-lg mt-2'>
+                  <AntDesign name="star" size={16} color="orange" />{rating.toFixed(2)}</Text>
+                  </TouchableOpacity>}
               </View>
               {
                 editing !== "description" ? <View><Text className='mt-5 font-pmedium'>{(readMore && !showMore) && user?.description.substring(0,100)}
@@ -247,7 +265,6 @@ const ProfileView = ({isView, user}) => {
                   <Text className='text-3xl'>asdasdasd</Text>
                   <Text className='text-3xl'>asdasdasd</Text>
                   <Text className='text-3xl'>asdasdasd</Text>
-
                 </Animated.View>
               }
             </View>

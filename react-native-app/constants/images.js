@@ -9,4 +9,6 @@ import google from "../assets/images/google.png"
 import test from "../assets/images/test.png"
 import fetch from "../assets/images/fetch.jpg"
 import blur from "../assets/images/blur.png"
-export default { welcomebg, growing, communication, logo,dot,active_dot,expand,google,test,fetch,blur};
+import empty from "../assets/images/empty.png"
+import search from "../assets/images/search.png"
+export default { welcomebg, growing, communication, logo, dot, active_dot, expand, google, test, fetch, blur, empty, search};
