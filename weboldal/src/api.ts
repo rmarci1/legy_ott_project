@@ -113,9 +113,7 @@ export const getAvailableJobs = async (username: string) =>{
     })
 
     const data = response.json();
-
-    console.log(data)
-
+    console.log(data);
     return data;
   }
   catch (e: any) {
@@ -147,12 +145,31 @@ export const saveForLater = async (jobId: number,profileId: number,username: str
       credentials: "include"
     });
 
-    const resp = res.json()
-    console.log(resp);
-    return resp;
+    return res.json();
   }
   catch (e: any){
     throw new Error(e.message)
+  }
+}
+
+export const attend = async (id: number, username: string, update: boolean) => {
+  try{
+    const res = await fetch(`${API_URL}/jobs/attend/${id}/${username}`,{
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json'},
+      body: JSON.stringify({update}),
+      credentials: "include"
+
+    })
+
+    const data = res.json();
+
+    console.log(data)
+
+    return data;
+  }
+  catch (e: any) {
+    throw new Error(e.message);
   }
 }
 

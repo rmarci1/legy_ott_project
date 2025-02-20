@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useContext, useState } from "react";
 import { User } from "../../Types/User";
 import {Job} from "../../Types/Job.ts";
-import {getAvailableJobs, saveForLater} from "../../api.ts";
+import {attend, getAvailableJobs, saveForLater} from "../../api.ts";
 
 interface AuthContextType {
     user: User | null,
@@ -9,7 +9,8 @@ interface AuthContextType {
     kijelentkezes: () => void,
     bejelentkezes: (newUser: User) => void,
     profilKepUpdate: (url: string, user: User) => void,
-    setSave: (job: Job, user: User ,value: boolean) => void
+    setSave: (job: Job, user: User ,value: boolean) => void,
+    attendJob: (id: number, username: string, value: boolean) => void
 }
 interface AuthContextTypeProps {
     children : ReactNode;
@@ -35,7 +36,11 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
             profileImg: newUser.profileImg
         });
 
-        setJobs(await getAvailableJobs(newUser.username));
+        await resetJobs(newUser.username);
+    }
+
+    const resetJobs = async (username: string) => {
+        setJobs(await getAvailableJobs(username));
     }
 
     const kijelentkezes = () =>{
@@ -51,7 +56,13 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
     const setSave = async (job: Job, user: User ,value: boolean) => {
         await saveForLater(job.id, user.id, user.username, value);
 
-        setJobs(await getAvailableJobs(user.username));
+        await resetJobs(user.username);
+    }
+
+    const attendJob = async (id: number, username: string, value: boolean) => {
+        await attend(id, username, value);
+
+        await resetJobs(username)
     }
 
     return (
@@ -62,7 +73,8 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
                 kijelentkezes,
                 bejelentkezes,
                 profilKepUpdate,
-                setSave
+                setSave,
+                attendJob
             }}
         >
             {children}

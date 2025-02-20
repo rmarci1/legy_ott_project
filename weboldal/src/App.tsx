@@ -17,6 +17,7 @@ function App() {
     link.href = '/icon.png'; 
     document.head.appendChild(link);
 
+
   }, [])
 
   return (
@@ -27,14 +28,13 @@ function App() {
             <Navbar/>
 
             <AuthProvider>
-              {/*<div className=' p-4 '>*/}
                 <Routes>
+                  <Route path='/' element={<Home/>}/>
                   <Route path="/home" element={<Home />}/>
                   <Route path='/login' element={<Login /> } />
                   <Route path='/register' element={<Register />} />
                   <Route path='/profile' element={<Profile />} />
                 </Routes>
-              {/*</div>*/}
             </AuthProvider>
         </div>
       </BrowserRouter>

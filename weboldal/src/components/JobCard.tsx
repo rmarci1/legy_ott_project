@@ -8,8 +8,9 @@ interface jobProps{
 }
 
 export default function JobCard({Job}: jobProps){
+    //TODO: Look at the advertisers profile
     const [modal, setModal] = useState(false);
-    const {user, setSave} = useAuth();
+    const {user, setSave, attendJob} = useAuth();
     const date = new Date(Job.date);
     useEffect(() => {
     }, []);
@@ -77,11 +78,15 @@ export default function JobCard({Job}: jobProps){
                                         Helyszín: {Job.address}
                                     </p>
                                 </div>
-                                <div className="grow">
-                                    <button type={"button"} className="bg-green-700 rounded p-2">
-                                        Jelentkezés
-                                    </button>
-                                </div>
+                                {
+                                    user &&
+                                    (<div className="grow">
+                                        <button type={"button"} onClick={() => attendJob(Job.id, user.username, true)}
+                                                className="bg-green-700 rounded p-2">
+                                            Jelentkezés
+                                        </button>
+                                    </div>)
+                                }
                                 <div className="flex flex-row w-full justify-center content-center">
                                     <div className="grow flex flex-col">
                                         <p>
