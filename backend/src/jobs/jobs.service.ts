@@ -270,8 +270,8 @@ export class JobsService {
         return res.current_attending;
       }) - 1;
 
-      //delete the relation between the job and user
-      this.db.jobProfile.delete({
+      //update isApplied attribute to false
+      this.db.jobProfile.update({
         where: {
           profileId_jobId: {
             profileId: await this.db.profile.findUnique({
@@ -282,6 +282,9 @@ export class JobsService {
             }),
             jobId: id
           }
+        },
+        data: {
+          isApplied: false
         }
       })
 
