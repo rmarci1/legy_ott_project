@@ -94,27 +94,40 @@ export class JobsService {
       const jobs = await this.db.job.findMany({
         where: {
           AND: [
-            {max_attending: {gt: this.db.job.fields.current_attending}},
-            {date: {gte: today}},
-            {from: {not: username}},
+            { max_attending: { gt: this.db.job.fields.current_attending } },
+            { date: { gte: today } },
+            { from: { not: username } },
             {
               profiles: {
-                  none: {
-                    isApplied: true
-                  }
-              }
-            }
+                none: {
+                  AND: [
+                    { isApplied: true },
+                    {
+                      profile: {
+                        username
+                      }
+                    }
+                  ],
+                },
+              },
+            },
           ],
         },
         include: {
           profiles: {
-            select:{
+            where: {
+              profile: {
+                username
+              }
+            },
+            select: {
+              profileId: true,
               isApplied: true,
-              saveForLater: true
-            }
-          }
-        }
-      })
+              saveForLater: true,
+            },
+          },
+        },
+      });
 
       return jobs;
     }
