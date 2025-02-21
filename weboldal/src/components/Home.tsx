@@ -12,8 +12,7 @@ export default function Home() {
 
     useEffect(() => {
         if(!user){
-            alert("Nincs bejelentkezve!");
-            navigate('/login');
+            navigate('/');
         }
     }, [])
 

@@ -105,6 +105,20 @@ export const getUser = async (): Promise<RegisterResponse> => {
   }
 };
 
+export const getAllJobs = async () =>{
+  try{
+    const res = await fetch(`${API_URL}/jobs`, {
+      method: 'GET',
+      credentials: "include"
+    })
+
+    return res.json();
+  }
+  catch (e: any){
+    throw new Error(e.message);
+  }
+}
+
 export const getAvailableJobs = async (username: string) =>{
   try{
     const response = await fetch(`${API_URL}/jobs/available/${username}`, {

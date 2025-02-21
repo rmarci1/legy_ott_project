@@ -7,6 +7,7 @@ import Login from './components/LoginRegister/Login';
 import Register from './components/LoginRegister/Register';
 import Profile from './components/Profile';
 import { AuthProvider } from './components/Context/AuthContext';
+import MainPage from "./components/MainPage.tsx";
 
 function App() {
   useEffect(() => {
@@ -16,8 +17,6 @@ function App() {
     link.rel = 'icon';
     link.href = '/icon.png'; 
     document.head.appendChild(link);
-
-
   }, [])
 
   return (
@@ -29,7 +28,7 @@ function App() {
 
             <AuthProvider>
                 <Routes>
-                  <Route path='/' element={<Home/>}/>
+                  <Route path='/' element={<MainPage/>}/>
                   <Route path="/home" element={<Home />}/>
                   <Route path='/login' element={<Login /> } />
                   <Route path='/register' element={<Register />} />

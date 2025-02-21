@@ -1,16 +1,18 @@
 import { createContext, ReactNode, useContext, useState } from "react";
 import { User } from "../../Types/User";
 import {Job} from "../../Types/Job.ts";
-import {attend, getAvailableJobs, saveForLater} from "../../api.ts";
+import {attend, getAllJobs, getAvailableJobs, saveForLater} from "../../api.ts";
 
 interface AuthContextType {
     user: User | null,
     jobs: Job[],
+    allJobs: Job[],
     kijelentkezes: () => void,
     bejelentkezes: (newUser: User) => void,
     profilKepUpdate: (url: string, user: User) => void,
     setSave: (job: Job, user: User ,value: boolean) => void,
-    attendJob: (id: number, username: string, value: boolean) => void
+    attendJob: (id: number, username: string, value: boolean) => void,
+    getAll: () => void
 }
 interface AuthContextTypeProps {
     children : ReactNode;
@@ -23,7 +25,17 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({children} : AuthContextTypeProps) => {
     const [user, setUser] = useState<User | null>(null);
+    const [allJobs, setAllJobs] = useState<Job[]>([]);
     const [jobs, setJobs] = useState<Job[]>([])
+
+
+
+    const getAll = () => {
+        getAllJobs()
+            .then((res) =>{
+                setAllJobs(res);
+            });
+    }
 
     const bejelentkezes = async (newUser: User) =>{
         setUser({
@@ -45,6 +57,7 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
 
     const kijelentkezes = () =>{
         setUser(null);
+        getAll()
     }
 
     const profilKepUpdate = (url: string, user: User) =>{
@@ -70,11 +83,13 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
             value = {{
                 user,
                 jobs,
+                allJobs,
                 kijelentkezes,
                 bejelentkezes,
                 profilKepUpdate,
                 setSave,
-                attendJob
+                attendJob,
+                getAll
             }}
         >
             {children}
