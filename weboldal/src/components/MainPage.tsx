@@ -1,7 +1,7 @@
 import "../index.css"
 import {useAuth} from "./Context/AuthContext.tsx";
 import {Job} from "../Types/Job.ts";
-import JobCard from "./JobCard.tsx";
+import JobCard from "./JobCard/JobCard.tsx";
 import {useEffect} from "react";
 import {useNavigate} from "react-router";
 

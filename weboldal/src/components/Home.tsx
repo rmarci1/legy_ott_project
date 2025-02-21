@@ -3,7 +3,7 @@ import {useEffect} from "react";
 import {useAuth} from "./Context/AuthContext.tsx";
 import {useNavigate} from "react-router";
 import {Job} from "../Types/Job.ts";
-import JobCard from "./JobCard.tsx";
+import JobCard from "./JobCard/JobCard.tsx";
 
 export default function Home() {
 
