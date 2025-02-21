@@ -24,18 +24,6 @@ export class ProfilesService {
     return this.db.profile.findMany();
   }
 
-  async findOne(username: string) {
-    try{
-      return await this.db.profile.findUnique({
-        where:{
-          username
-        }
-      });
-    }
-    catch{
-      throw new NotFoundException("Nem létezik ilyen profil");
-    }
-  }
   async findOneProfileView(username: string) {
     try{
       return await this.db.profile.findUnique({

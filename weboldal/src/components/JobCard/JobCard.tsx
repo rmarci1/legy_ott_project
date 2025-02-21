@@ -3,14 +3,15 @@ import {useEffect, useState} from "react";
 import { PiHeartLight, PiHeartFill } from "react-icons/pi";
 import {useAuth} from "../Context/AuthContext.tsx";
 import JobModal from "./Modals/JobModal.tsx";
+import ProfileModal from "./Modals/ProfileModal.tsx";
 
 interface jobProps{
     Job: Job
 }
 
 export default function JobCard({Job}: jobProps){
-    //TODO: Look at the advertisers profile
     const [jobModal, setJobModal] = useState(false);
+    const [profileModal, setProfileModal] = useState(false);
     const {user, setSave, attendJob} = useAuth();
     useEffect(() => {
     }, []);
@@ -23,11 +24,11 @@ export default function JobCard({Job}: jobProps){
                     <h5 className="mb-2 text-xl font-medium leading-tight flex-grow">{Job.name}</h5>
                     {user && (
                         <span className="flex-none">
-                        {Job.profiles[0] && Job.profiles[0].saveForLater ?
-                            <PiHeartFill size={40} color="red"
-                                         onClick={() => setSave(Job, user, false)}/> :
-                            <PiHeartLight size={40} onClick={() => setSave(Job, user, true)}/>}
-                    </span>
+                            {Job.profiles[0] && Job.profiles[0].saveForLater ?
+                                <PiHeartFill size={40} color="red"
+                                             onClick={() => setSave(Job, user, false)}/> :
+                                <PiHeartLight size={40} onClick={() => setSave(Job, user, true)}/>}
+                        </span>
                     )}
                 </div>
                 <p className="mb-4 text-base">
@@ -43,13 +44,25 @@ export default function JobCard({Job}: jobProps){
 
             {jobModal && (
                 user? (
-                        <JobModal job={Job} user={user} setModal={setJobModal} attendJob={attendJob}/>
-
+                        <JobModal job={Job} user={user} setModal={setJobModal} attendJob={attendJob} setProfileModal={setProfileModal}/>
                     ):
                     (
-                        <JobModal job={Job} setModal={setJobModal} attendJob={attendJob}/>
+                        <JobModal job={Job} setModal={setJobModal} attendJob={attendJob} setProfileModal={setProfileModal}/>
                     )
             )}
+
+            {
+                profileModal && (
+                    user? (
+                        <ProfileModal user={user} setModal={setProfileModal} setJobModal={setJobModal} username={Job.from}/>
+                    ):
+                    (
+                        <ProfileModal setModal={setProfileModal} setJobModal={setJobModal} username={Job.from}/>
+                    )
+                )
+            }
+
+
         </div>
     </>
 }

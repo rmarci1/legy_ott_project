@@ -18,19 +18,19 @@ export class ProfilesController {
   }
 
   @ApiOperation({
+    summary: 'Returns a profile (name,username,profileImg,description,advertiser) properties for viewing purposes'
+  })
+  @Get('/view/:username')
+  getProfileView(@Param('username') username: string){
+    return this.profilesService.findOneProfileView(username);
+  }
+
+  @ApiOperation({
     summary: 'Returns all of the profiles'
   })
   @Get()
   findAll() {
     return this.profilesService.findAll();
-  }
-
-  @ApiOperation({
-    summary: 'Finds profile by username'
-  })
-  @Get(':username')
-  findOne(@Param('username') username: string) {
-    return this.profilesService.findOne(username);
   }
 
   @ApiOperation({
@@ -59,11 +59,4 @@ export class ProfilesController {
     return this.profilesService.remove(username);
   }
 
-  @ApiOperation({
-    summary: 'Returns a profile (name,username,profileImg,description,advertiser) properties for viewing purposes'
-  })
-  @Post('/view/profile')
-  getProfileView(@Body() body : {username : string}){
-    return this.profilesService.findOneProfileView(body.username);
-  }
 }

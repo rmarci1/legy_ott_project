@@ -1,15 +1,22 @@
 import {Job} from "../../../Types/Job.ts";
 import {User} from "../../../Types/User.ts";
+import {useEffect} from "react";
+import {useAuth} from "../../Context/AuthContext.tsx";
 
 interface JobModalProps{
     job: Job,
     user?: User
     setModal: (value: boolean) => void,
+    setProfileModal: (value: boolean) => void,
     attendJob: (id: number, username: string, value: boolean) => void
 }
 
-export default function JobModal({job, user, setModal, attendJob}: JobModalProps){
+export default function JobModal({job, user, setModal, attendJob, setProfileModal}: JobModalProps){
     const date = new Date(job.date);
+    const { getAdvertiserProfile } = useAuth();
+    useEffect(() => {
+        getAdvertiserProfile(job.from);
+    }, []);
     return <>
         <div tabIndex={-1}
              className="overflow-y-auto text-white overflow-x-hidden fixed justify-center items-center w-fit h-fit justify-self-center md:inset-0 max-h-full">
@@ -21,8 +28,8 @@ export default function JobModal({job, user, setModal, attendJob}: JobModalProps
                                 <h3 className="text-xl font-semibold">
                                     {job.name}
                                 </h3>
-                                <p className="text-gray-400">
-                                    {job.from}
+                                <p onClick={() => {setModal(false); setProfileModal(true)}} className="text-gray-400 cursor-pointer hover:text-gray-50">
+                                    @{job.from}
                                 </p>
                             </div>
                             <button type="button"

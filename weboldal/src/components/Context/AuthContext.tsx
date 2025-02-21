@@ -1,18 +1,21 @@
-import { createContext, ReactNode, useContext, useState } from "react";
-import { User } from "../../Types/User";
+import {createContext, ReactNode, useContext, useState} from "react";
+import {User} from "../../Types/User";
 import {Job} from "../../Types/Job.ts";
-import {attend, getAllJobs, getAvailableJobs, saveForLater} from "../../api.ts";
+import {attend, getAllJobs, getAvailableJobs, getProfile, saveForLater} from "../../api.ts";
+import {Advertiser} from "../../Types/Advertiser.ts";
 
 interface AuthContextType {
     user: User | null,
     jobs: Job[],
     allJobs: Job[],
+    advertiser: Advertiser | null,
     kijelentkezes: () => void,
     bejelentkezes: (newUser: User) => void,
     profilKepUpdate: (url: string, user: User) => void,
     setSave: (job: Job, user: User ,value: boolean) => void,
     attendJob: (id: number, username: string, value: boolean) => void,
-    getAll: () => void
+    getAll: () => void,
+    getAdvertiserProfile: (username: string) => void
 }
 interface AuthContextTypeProps {
     children : ReactNode;
@@ -26,9 +29,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({children} : AuthContextTypeProps) => {
     const [user, setUser] = useState<User | null>(null);
     const [allJobs, setAllJobs] = useState<Job[]>([]);
+    const [advertiser, setAdvertiser] = useState<Advertiser | null>(null);
     const [jobs, setJobs] = useState<Job[]>([])
-
-
 
     const getAll = () => {
         getAllJobs()
@@ -78,18 +80,24 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
         await resetJobs(username)
     }
 
+    const getAdvertiserProfile = async (username: string) =>{
+        setAdvertiser(await getProfile(username));
+    }
+
     return (
         <AuthContext.Provider
             value = {{
                 user,
                 jobs,
                 allJobs,
+                advertiser,
                 kijelentkezes,
                 bejelentkezes,
                 profilKepUpdate,
                 setSave,
                 attendJob,
-                getAll
+                getAll,
+                getAdvertiserProfile
             }}
         >
             {children}

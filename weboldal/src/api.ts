@@ -112,7 +112,14 @@ export const getAllJobs = async () =>{
       credentials: "include"
     })
 
-    return res.json();
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message as string);
+    }
+
+    return data;
+
   }
   catch (e: any){
     throw new Error(e.message);
@@ -126,8 +133,12 @@ export const getAvailableJobs = async (username: string) =>{
       credentials: 'include',
     })
 
-    const data = response.json();
-    console.log(data);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message as string);
+    }
+
     return data;
   }
   catch (e: any) {
@@ -143,7 +154,13 @@ export const profilePicChange = async (formData: FormData, username: string) => 
           method: "post",
         });
 
-    return result.json();
+    const data = await result.json();
+
+    if (!result.ok) {
+      throw new Error(data.message as string);
+    }
+
+    return data;
   }
   catch (e: any){
     throw new Error(e.message);
@@ -159,7 +176,13 @@ export const saveForLater = async (jobId: number,profileId: number,username: str
       credentials: "include"
     });
 
-    return res.json();
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message as string);
+    }
+
+    return data;
   }
   catch (e: any){
     throw new Error(e.message)
@@ -176,14 +199,37 @@ export const attend = async (id: number, username: string, update: boolean) => {
 
     })
 
-    const data = res.json();
 
-    console.log(data)
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message as string);
+    }
 
     return data;
   }
   catch (e: any) {
     throw new Error(e.message);
+  }
+}
+
+export const getProfile = async (username: string) => {
+  try{
+    const res = await fetch(`${API_URL}/profiles/view/${username}`, {
+      method: 'GET',
+      credentials: "include"
+    })
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message as string);
+    }
+
+    return data;
+  }
+  catch (e: any) {
+    throw new Error(e.message)
   }
 }
 
