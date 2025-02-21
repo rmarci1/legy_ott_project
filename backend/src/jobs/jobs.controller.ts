@@ -18,7 +18,7 @@ export class JobsController {
   }
 
   @ApiOperation({
-    summary: 'Returns all of the jobs'
+    summary: 'Returns all of the jobs that are not archived or full'
   })
   @Get()
   findAll() {

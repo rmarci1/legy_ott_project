@@ -29,7 +29,14 @@ export class JobsService {
   }
 
   findAll() {
-    return  this.db.job.findMany();
+    return  this.db.job.findMany({
+      where: {
+        AND: [
+          {max_attending: {gt: this.db.job.fields.current_attending}},
+          {date: {gte: new Date()}},
+        ]
+      }
+    });
   }
 
   async findOne(id: number) {
