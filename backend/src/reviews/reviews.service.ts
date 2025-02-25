@@ -8,7 +8,18 @@ export class ReviewsService {
 
   constructor(private readonly db: PrismaService) {}
 
-  create(createReviewDto: CreateReviewDto) {
+  async create(createReviewDto: CreateReviewDto, username : string) {
+    const findId = await this.db.profile.findUnique({
+      where:{
+        username : username
+      },
+      select: {
+        id: true
+      }
+    });
+    if(!findId){
+      throw new Error("Nincs ilyen profil létrehozva!");
+    };
     return this.db.review.create({
       data: createReviewDto
     });

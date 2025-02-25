@@ -21,7 +21,9 @@ export class JobsService {
         try{
           createJobDto.img = "";
           await this.db.job.create({
-            data: createJobDto
+            data: {...createJobDto,
+              date: new Date(createJobDto.date)
+            }
           })
         }catch(err){
           throw new Error("error:" + err)
@@ -87,7 +89,74 @@ export class JobsService {
     }
 
   }
-
+  async findHistory(username : string){
+    const currentDay = new Date();
+    try{
+      return await this.db.job.findMany({
+        where : {
+          AND: [{
+            date: {lt: currentDay},
+            profiles: {
+              every : 
+              {
+                AND: [{
+                  profile:{
+                    username : username
+                  },
+                  isApplied: true
+                }]
+              }
+            }
+          }]
+        },
+        include:{
+          profiles:{
+            select:{
+              isApplied: true,
+              saveForLater: true  
+            }
+          }
+        }
+      })
+    }
+    catch(error){
+      throw new Error(error);
+    }
+  }
+  async findAppliedJobs(username : string){
+    try{
+      const currentDay = new Date();
+      return await this.db.job.findMany({
+        where : {
+          AND: [{
+            date: {gte: currentDay},
+            profiles: {
+              every : 
+              {
+                AND: [{
+                  profile:{
+                    username : username
+                  },
+                  isApplied: true
+                }]
+              }
+            }
+          }]
+        },
+        include:{
+          profiles:{
+            select:{
+              isApplied: true,
+              saveForLater: true  
+            }
+          }
+        }
+      })
+    }
+    catch(error){
+      throw new Error(error)
+    }
+  }
   async findAllAvailable(username: string){
     const today = new Date();
     try{
@@ -121,7 +190,6 @@ export class JobsService {
               }
             },
             select: {
-              profileId: true,
               isApplied: true,
               saveForLater: true,
             },
@@ -164,7 +232,20 @@ export class JobsService {
             {date: {gte: new Date()}},
             {from: {not: body.username}}
           ]
-        }
+        },
+        include: {
+          profiles: {
+            where: {
+              profile: {
+                username: body.username
+              }
+            },
+            select: {
+              isApplied: true,
+              saveForLater: true,
+            },
+          },
+        },
       })
       return jobs;
     }
@@ -313,13 +394,17 @@ export class JobsService {
       });
       if(!res){
         return await this.db.jobProfile.create({
-          data : {
-            jobId : id,
-            profileId : profileId,
-            saveForLater : true,
-            isApplied: false
-          }
-        })
+          data: {
+            job:{
+              connect: {id}
+            },
+            profile: {
+              connect: {id: profileId}
+            },
+            isApplied: false,
+            saveForLater: true
+          } as Prisma.jobProfileCreateInput
+        })   
       }
       return await this.db.jobProfile.update({
         where: {
@@ -344,24 +429,33 @@ export class JobsService {
   }
   async findSavedForLater(username: string){
     try{
-      const res = await this.db.jobProfile.findMany({
-        select: {
-          job: true,
-          saveForLater: true
-        },
+      console.log(username);
+      const res = await this.db.job.findMany({
         where: {
-          AND: [
-            {
-              profile: {
-                username
-              }
+          profiles: {
+            every: {
+              AND: [
+                {saveForLater: true},
+                {
+                  profile: {
+                    username
+                  }
+                }
+              ],
             },
-            {
-              saveForLater: {equals: true}
-            }
-          ]
-        }
-      })
+          },
+        },
+        include: {
+          profiles: {
+            select: {
+              profileId: true,
+              isApplied: true,
+              saveForLater: true,
+            },
+          },
+        },
+      });
+      console.log(res);
       return res;
     }
     catch{

@@ -3,7 +3,7 @@ import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { Heart } from "lucide-react-native";
 import { updateSaved } from '@/lib/api';
 import { useGlobalContext } from '@/context/GlobalProvider';
-const JobDisplay = ({image,containerStyles,item,imageStyles,handleUpdate,nameStyle,titleStyle,dateStyle,handleProfile}) => {
+const JobDisplay = ({image,containerStyles,item,imageStyles,handleUpdate,nameStyle,titleStyle,dateStyle,handleProfile, createing}) => {
   const {setJobs,setSaved,user}= useGlobalContext();
   const animatedValue = useRef(new Animated.Value(0.5)).current;
   const handleClick = async () => {
@@ -21,16 +21,15 @@ const JobDisplay = ({image,containerStyles,item,imageStyles,handleUpdate,nameSty
          useNativeDriver: false,
        })
      ]).start();
-     await update(!item.isSaved);
+     await update(item.profiles[0]?.saveForLater ? !item.profiles[0]?.saveForLater : true);
     }
     const update = async (isLiked) => {
-         await updateSaved(isLiked,item.id,user.id,user.username);
-         if(!isLiked) setSaved((curr) => curr.filter((savedItem) => savedItem.id !== item.id))
-         else {
-          setSaved((curr) => [...curr,{...item,isSaved: isLiked}]);
-         }
-         console.log(isLiked);
-         setJobs((prevJobs) => prevJobs.map((job) => job.id !== item.id ? job : {...job, isSaved:isLiked}));
+        await updateSaved(isLiked,item.id,user.id,user.username);
+        if(!isLiked) setSaved((curr) => curr.filter((savedItem) => savedItem.id !== item.id))
+        else {
+          setSaved((curr) => [...curr,{...item, profiles:[{isApplied: curr.isApplied,saveForLater:isLiked}]}]);
+        }
+        setJobs((prevJobs) => prevJobs.map((job) => job.id !== item.id ? job : {...job, profiles: [{isApplied: false, saveForLater: isLiked}]}));
   }
   return (
         <View className={`rounded-3xl px-2 justify-center ${containerStyles}`}>
@@ -50,7 +49,7 @@ const JobDisplay = ({image,containerStyles,item,imageStyles,handleUpdate,nameSty
                   >
                     <Text className={`font-pregular ${nameStyle}`}>{item.from}</Text>
                   </TouchableOpacity>
-                  <TouchableWithoutFeedback
+                  {!createing && <TouchableWithoutFeedback
                     onPress={handleClick}
                   >
                   <Animated.View style={{
@@ -61,9 +60,9 @@ const JobDisplay = ({image,containerStyles,item,imageStyles,handleUpdate,nameSty
                       })
                     }]
                   }} pointerEvents="box-none">
-                    <Heart size={20} color={item.isSaved ? "red" : "gray"} fill={item.isSaved ? "red" : "none"} className='h-full'/>
+                    <Heart size={20} color={item.profiles[0]?.saveForLater ? "red" : "gray"} fill={item.profiles[0]?.saveForLater ? "red" : "none"} className='h-full'/>
                   </Animated.View>
-                  </TouchableWithoutFeedback>
+                  </TouchableWithoutFeedback>}
                 </View>
                 <Text className={`font-pbold text-lg ${titleStyle}`}>{item.name}</Text>
                 <Text className={`font-pregula text-base ${dateStyle}`}><Text className='text-blue-400'>

@@ -8,21 +8,22 @@ import { getJobs, getSaved, getUser, pflogin } from '@/lib/api';
 import { useGlobalContext } from '@/context/GlobalProvider';
 
 const login = () => {
-  const {setIsLoading,setIsloggedIn,setUser,setToken,isLoggedIn,user,isLoading,isJobsIn} = useGlobalContext();
-  if(isLoggedIn && !isLoading && isJobsIn && user) router.push('/(tabs)/home');
+  const {setIsLoading,setIsloggedIn,setUser,setToken,isLoggedIn,user,isLoading,isJobsIn,setIsJobsIn,setJobs,setIsSavedIn,isSavedIn,setSaved} = useGlobalContext();
+  useEffect(() => {
+    if(isLoggedIn && !isLoading && isJobsIn && user && isSavedIn) router.push('/(tabs)/home');
+  },[isLoggedIn,user,isJobsIn,isLoading,isSavedIn])
   const [form,setForm] = useState({
     email : '', 
     password : ''
   });
+
   const submit = async () => {
       await pflogin(form.email,form.password).then((res) => {
+          setIsLoading(true);
           setToken(res.access_token);
           getUser(res.access_token)
           .then((result)=>{
-            setIsLoading(true);
             if(result){
-                console.log("in");
-                console.log("profile: " + result.profile)
                 setIsloggedIn(true);
                 setUser(result.profile);
                 getJobs(result.profile.username)
@@ -40,14 +41,15 @@ const login = () => {
                 .then((save) => {
                 if(save){
                   setSaved(save);
+                  setIsSavedIn(true);
                 }
                 else{
                   setSaved(null);
+                  setIsSavedIn(false);
                 }
-                })
+              })
             }
             else{
-                console.log("user: null")
                 setIsloggedIn(false);
                 setUser(null);
             }
@@ -59,7 +61,6 @@ const login = () => {
             setIsLoading(false);
           })
       });
-      router.push('/(tabs)/home');
     }
   return (
     <SafeAreaView className='h-full'>

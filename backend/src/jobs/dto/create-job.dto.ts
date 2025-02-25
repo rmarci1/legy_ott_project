@@ -1,16 +1,7 @@
-import { IsDate, IsNotEmpty, IsNumber, IsString, Min } from "class-validator";
+import { IsDate, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from "class-validator";
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateJobDto {
-
-    @ApiProperty({
-      description: 'Id of job',
-      type: 'number',
-      required: false,
-      uniqueItems: true
-    })
-    @IsNumber()
-    id: number;
 
     @ApiProperty({
       description: 'Name of the job',
@@ -22,11 +13,11 @@ export class CreateJobDto {
 
     @ApiProperty({
       description: 'Date of the job: The day it is happening',
-      type: Date
+      type: 'string'
     })
     @IsNotEmpty()
-    @IsDate()
-    date: Date;
+    @IsString()
+    date: string;
 
     @ApiProperty({
       description: 'More detailed description of the job',
@@ -63,7 +54,6 @@ export class CreateJobDto {
     @IsNotEmpty()
     @Min(0)
     current_attending: number = 0;
-
 
     @ApiProperty({
       description: 'The advertisers username',
