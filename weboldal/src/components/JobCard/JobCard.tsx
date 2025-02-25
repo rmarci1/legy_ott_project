@@ -1,5 +1,5 @@
 import { Job } from "../../Types/Job.ts";
-import {useEffect, useState} from "react";
+import { useState} from "react";
 import { PiHeartLight, PiHeartFill } from "react-icons/pi";
 import {useAuth} from "../Context/AuthContext.tsx";
 import JobModal from "./Modals/JobModal.tsx";
@@ -13,8 +13,6 @@ export default function JobCard({Job}: jobProps){
     const [jobModal, setJobModal] = useState(false);
     const [profileModal, setProfileModal] = useState(false);
     const {user, setSave, attendJob} = useAuth();
-    useEffect(() => {
-    }, []);
 
     return<>
         <div className="rounded-lg shadow-secondary-1 bg-surface-dark w-1/3 m-4">

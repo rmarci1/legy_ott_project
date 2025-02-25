@@ -32,6 +32,7 @@ export default function Login(){
             const user = await getUser().then((res)=>{
                 return res.profile
             })
+            console.log(user);
             bejelentkezes(user);
             navigate("/home")
         }

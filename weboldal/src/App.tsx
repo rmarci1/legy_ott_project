@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
 import './index.css';
 import Navbar from './components/Navbar';
-import { BrowserRouter, Routes, Route } from 'react-router-dom'; 
-import Home from './components/Home';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './components/LoginRegister/Login';
 import Register from './components/LoginRegister/Register';
 import Profile from './components/Profile';
@@ -17,6 +16,7 @@ function App() {
     link.rel = 'icon';
     link.href = '/icon.png'; 
     document.head.appendChild(link);
+
   }, [])
 
   return (
@@ -24,12 +24,11 @@ function App() {
       <BrowserRouter >
         <div className="flex flex-row h-screen w-full overflow-hidden font-poppins">
 
+            <AuthProvider>
             <Navbar/>
 
-            <AuthProvider>
                 <Routes>
                   <Route path='/' element={<MainPage/>}/>
-                  <Route path="/home" element={<Home />}/>
                   <Route path='/login' element={<Login /> } />
                   <Route path='/register' element={<Register />} />
                   <Route path='/profile' element={<Profile />} />

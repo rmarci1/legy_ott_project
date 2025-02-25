@@ -1,20 +1,5 @@
-const API_URL = 'http://192.168.11.45:3000';
-let token = '';
 
-interface RegisterResponse {
-  message: string;
-  [key: string]: any;
-}
-
-interface LoginResponse {
-  token?: string;
-  message: string;
-  [key: string]: any;
-}
-
-interface ErrorResponse {
-  message: string | string[];
-}
+const API_URL = 'http://localhost:3000';
 
 export const register = async (
   name: string,
@@ -22,7 +7,7 @@ export const register = async (
   email: string,
   password: string,
   password2: string
-): Promise<RegisterResponse> => {
+) => {
   try {
     if (password !== password2) {
       throw new Error("Nem egyeznek a jelszavak.");
@@ -35,7 +20,7 @@ export const register = async (
       credentials: 'include',
     });
 
-    const data: RegisterResponse & ErrorResponse = await response.json();
+    const data = await response.json();
 
     if (!response.ok) {
       throw new Error(
@@ -54,7 +39,7 @@ export const pflogin = async (
   login: string,
   password: string,
   loginMode: string
-): Promise<LoginResponse> => {
+) => {
   try {
     let response: any;
     const email = login;
@@ -75,8 +60,6 @@ export const pflogin = async (
         typeof data.message === 'string' ? data.message : data.message[0]
       );
     }
-
-    token = data.access_token;
     return data;
   } catch (error: any) {
     console.error("2 Fetch error:", error.message);
@@ -84,21 +67,20 @@ export const pflogin = async (
   }
 }; 
 
-export const getUser = async (): Promise<RegisterResponse> => {
+export const getUser = async () => {
   try {
     const response = await fetch(`${API_URL}/auth/check-auth`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' , 'Authorization': `Bearer ${token}`},
+      headers: { 'Content-Type': 'application/json'},
       credentials: 'include',
     });
 
-    const data: RegisterResponse & ErrorResponse = await response.json();
+    const data = await response.json();
 
     if (!response.ok) {
       throw new Error(data.message as string);
     }
-
-    return data;
+    return {profile: data};
   } catch (error: any) {
     console.log(error.message);
     throw error;
@@ -232,4 +214,6 @@ export const getProfile = async (username: string) => {
     throw new Error(e.message)
   }
 }
+
+
 

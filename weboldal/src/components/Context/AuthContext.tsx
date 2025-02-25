@@ -1,4 +1,4 @@
-import {createContext, ReactNode, useContext, useState} from "react";
+import {createContext, ReactNode, useContext, useEffect, useState} from "react";
 import {User} from "../../Types/User";
 import {Job} from "../../Types/Job.ts";
 import {attend, getAllJobs, getAvailableJobs, getProfile, saveForLater} from "../../api.ts";
@@ -31,6 +31,10 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
     const [allJobs, setAllJobs] = useState<Job[]>([]);
     const [advertiser, setAdvertiser] = useState<Advertiser | null>(null);
     const [jobs, setJobs] = useState<Job[]>([])
+
+    useEffect(() => {
+
+    }, []);
 
     const getAll = () => {
         getAllJobs()
