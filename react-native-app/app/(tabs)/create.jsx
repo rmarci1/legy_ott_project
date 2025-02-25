@@ -5,7 +5,7 @@ import Formfield from '@/components/Formfield'
 import { Entypo, Feather} from '@expo/vector-icons'
 import { router } from 'expo-router'
 import * as ImagePicker from 'expo-image-picker';
-import { CreateProfilePic } from '@/lib/api'
+import { createJob, CreateProfilePic } from '@/lib/api'
 import { useGlobalContext } from '@/context/GlobalProvider'
 import CustomButton from '@/components/CustomButton'
 import ShowJob from '@/components/ShowJob'
@@ -47,7 +47,7 @@ const create = () => {
   }
   const submit = async () => {
     try{
-        await CreateProfilePic(user.username,form.img);
+        await createJob(form);
     }
     catch(error){
       Alert.alert("Hiba",error.message)
@@ -199,7 +199,16 @@ const create = () => {
           toggleModal={() => toggleModal()}
           readMore={readMore}
           title="Véglegesítés"
+          create={true}
         />
+        <View className='w-full p-5 self-center bg-gray-50 relative flex-1'>
+          <CustomButton
+            title="Véglegesítés"
+            handlePress={submit}
+            textStyles="text-white"
+            containerStyles="bg-primary w-[95%] rounded-full"
+          />
+        </View>
       </Modal>
     </SafeAreaView>
   )

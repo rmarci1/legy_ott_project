@@ -10,12 +10,14 @@ import { FlashList } from '@shopify/flash-list'
 import { getReviews } from '@/lib/api'
 import Rating from './Rating'
 
-const ShowJob = ({currentJob,readMore,toggleModal, handlePress, title, handleProfile}) => {
+const ShowJob = ({currentJob,readMore,toggleModal, handlePress, title, handleProfile,create}) => {
   const [whichButton,setWhichButton] = useState("description");
   const [showMore,setShowMore] = useState(false);
   const [ratings,setRatings] = useState(null);
   useEffect(() => {
-    getRatings();
+    if(!create){
+      getRatings();
+    }
   }, [])
   const renderItem = ({item}) => (
     <Rating
@@ -51,6 +53,7 @@ const ShowJob = ({currentJob,readMore,toggleModal, handlePress, title, handlePro
                             nameStyle="text-green-400 text-sm"
                             titleStyle="text-white"
                             dateStyle="text-white"
+                            createing={create}
                           />
                         </View>
                         <View className='w-[90%]'>
@@ -62,18 +65,17 @@ const ShowJob = ({currentJob,readMore,toggleModal, handlePress, title, handlePro
                               >
                                 <Text className='text-white font-pregular'>Leírás</Text>
                               </TouchableOpacity>
-                              <TouchableOpacity
+                              {!create && <TouchableOpacity
                                 onPress={() => setWhichButton("értékelés")}
                                 className={`justify-center items-center w-[50%] h-full rounded-3xl ${whichButton == "értékelés" && "bg-white opacity-80"}`}
                               >
                                 <Text className='text-white font-pregular'>Értékelés</Text>
-                              </TouchableOpacity>
+                              </TouchableOpacity>}
                             </View>
                           </View>
                           {whichButton == "description" ? <View>
-                            <View className='my-8'>
-                            <Text className='font-pbold text-white text-lg'>Feladat Leírása</Text>
-                          </View>
+                            <Text className='font-pbold text-white text-lg mt-8'>Feladat Leírása</Text>
+                              <Text className='text-white font-pregular mb-5 italic'>Helyszín: {currentJob?.address}</Text>
                               <View>
                                 <Text className='font-light text-white'>
                                   <ConvertText
@@ -103,7 +105,7 @@ const ShowJob = ({currentJob,readMore,toggleModal, handlePress, title, handlePro
                         onPress={toggleModal}
                         className='absolute right-4 top-4 h-10 w-10 bg-[#1a1a2e] opacity-95 rounded-3xl items-center justify-center'
                       >
-                        <AntDesign name="close" size={20} color="white" className='' />
+                        <AntDesign name="close" size={20} color="white"/>
                       </TouchableOpacity>
                     </View>        
                 </View>

@@ -116,4 +116,21 @@ export class JobsController {
   async filter(@Body() body : {name : string,username : string}){
     return await this.jobsService.filterAdvertisementsByName(body);
   }
+
+  @ApiOperation({
+    summary : "Returns the prevous applied jobs given by a username"
+  })
+  @Get('/history/:username')
+  async history(@Param('username') username : string){
+    return await this.jobsService.findHistory(username);
+  }
+
+  @ApiOperation({
+    summary : "Returns the current applied jobs given by a username"
+  })
+  @Get('/applied/:username')
+  async applied(@Param('username') username : string){
+    return await this.jobsService.findAppliedJobs(username);
+  }
+
 }

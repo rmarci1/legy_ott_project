@@ -15,8 +15,8 @@ const GlobalProvider = ({children}) => {
     const [queryReturn,setQueryReturn] = useState(null);
     const [historys,setHistorys] = useState(null);
     const [saved, setSaved] = useState(null);
+    const [isSavedIn, setIsSavedIn] = useState(false);
     const [token,setToken] = useState(null);
-    
     useEffect(() => {
         getToken()
         .then((res) => {
@@ -26,7 +26,6 @@ const GlobalProvider = ({children}) => {
                 getUser(res)
                 .then((result)=>{
                     if(result){
-                        console.log("result: ",result.profile)
                         setIsloggedIn(true);
                         setUser(result.profile);
                         getJobs(result.profile.username)
@@ -44,9 +43,11 @@ const GlobalProvider = ({children}) => {
                         .then((save) => {
                             if(save){
                                 setSaved(save);
+                                setIsSavedIn(true);
                             }
                             else{
                                 setSaved(null);
+                                setIsSavedIn(true);
                             }
                         })
                     }
@@ -61,7 +62,6 @@ const GlobalProvider = ({children}) => {
                     console.log(error)
                 })
                 .finally(() => {
-                    console.log("happen");
                     setIsLoading(false);
                 })
             }
@@ -92,7 +92,9 @@ const GlobalProvider = ({children}) => {
                 token,
                 setToken,
                 saved,
-                setSaved
+                setSaved,
+                isSavedIn,
+                setIsSavedIn
             }}
         >
             {children}
