@@ -129,6 +129,7 @@ export class JobsService {
         },
       });
 
+      console.log(jobs);
       return jobs;
     }
     catch(error){

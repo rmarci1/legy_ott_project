@@ -9,6 +9,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { ProfilesService } from './profiles/profiles.service';
 import { ReviewsModule } from './reviews/reviews.module';
 import { AuthModule } from './auth/auth.module';
+import * as cookieParser from 'cookie-parser';
 
 @Module({
   imports: [ProfilesModule, JobsModule, CloudinaryModule, ReviewsModule, AuthModule,],
@@ -22,7 +23,8 @@ export class AppModule {
         (req, res, next) => {
           next();
         },
-        LoggerMiddleware
+        LoggerMiddleware,
+        cookieParser()
       )
       .forRoutes('*'); 
   }

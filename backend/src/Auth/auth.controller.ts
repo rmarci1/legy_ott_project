@@ -25,10 +25,11 @@ export class AuthController {
     response.clearCookie('refreshToken');
 
     response.cookie('ac', token.access_token, {
+      sameSite : false,
       httpOnly: true,
       expires: new Date(2322, 1, 1),
     });
-    response.cookie('refresh_token', token.refresh_token, { httpOnly: true });
+    response.cookie('refresh_token', token.refresh_token, { httpOnly: true, sameSite : false });
     return token;
   }
 
@@ -81,6 +82,6 @@ export class AuthController {
   @Post('/check-auth')
   @UseGuards(AuthGuard)
   check(@Request() req) {
-    return { profile: req.profile };
+    return req['profile'];
   }
 }

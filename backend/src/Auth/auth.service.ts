@@ -50,8 +50,12 @@ export class AuthService {
       );
     }
 
-    const profile : ProfileDataWithoutPassword = loginMode == "email"? profileWithEmail : profileWithUsername
+      if (profileWithUsername) {profileWithUsername.password = null}
+    if (profileWithEmail) {profileWithEmail.password = null}
+
+    const profile = loginMode == "email"?  profileWithEmail : profileWithUsername
     console.log(profile);
+
     return {
       access_token: await this.jwtService.signAsync(profile, {
         secret: `${process.env.jwt_secret}`,
