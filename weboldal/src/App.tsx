@@ -26,7 +26,6 @@ function App() {
 
             <AuthProvider>
             <Navbar/>
-
                 <Routes>
                   <Route path='/' element={<MainPage/>}/>
                   <Route path='/login' element={<Login /> } />

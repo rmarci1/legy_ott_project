@@ -1,21 +1,32 @@
 import {ChangeEvent, useEffect, useState} from "react";
 import {useNavigate} from "react-router";
 import {useAuth} from "./Context/AuthContext.tsx";
-import {profilePicChange} from "../api.ts";
+import {logout, profilePicChange} from "../api.ts";
 
 export default function Profile(){
-    const {user, profilKepUpdate} = useAuth();
-    const navigate = useNavigate();
+    const {user, profilKepUpdate, checkUser, kijelentkezes, isLoading} = useAuth();
     const [mode, setMode] = useState<1|2>(1)
     const [modal, setModal] = useState(false);
     const [file, setFile] = useState<string | Blob>("");
+    const navigate = useNavigate();
 
-    useEffect(() =>{
-        if (!user){
-            alert("Nincs bejelentkezve");
-            navigate("/login");
+    useEffect(() => {
+        const fetchUser = async () => {
+            await checkUser();
+        };
+        fetchUser();
+    }, []);
+
+    useEffect(() => {
+        console.log("Effect Triggered → User:", user, "isLoading:", isLoading);
+
+        if (isLoading || user === undefined) return;
+
+        if (user === null) {
+            console.log("Redirecting to login...");
+            navigate('/login');
         }
-    }, [])
+    }, [user, isLoading]);
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
@@ -105,6 +116,8 @@ export default function Profile(){
                 </>)
 
             }
+
+            <button className="bg-red-700 text-white" onClick={() => logout().then(kijelentkezes)}>Logout</button>
         </div>        
     </>
 }

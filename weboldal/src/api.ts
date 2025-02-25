@@ -215,5 +215,16 @@ export const getProfile = async (username: string) => {
   }
 }
 
+export const logout = async () => {
+  try{
+    await fetch(`${API_URL}/auth/logout`, {
+      method: 'POST',
+      credentials: "include"
+    })
+  }
+  catch (e: any){
+    throw new Error(e.message)
+  }
+}
 
 

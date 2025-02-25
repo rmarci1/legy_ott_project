@@ -34,7 +34,7 @@ export default function Login(){
             })
             console.log(user);
             bejelentkezes(user);
-            navigate("/home")
+            navigate("/")
         }
         catch(error){
             alert(error);
