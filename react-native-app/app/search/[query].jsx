@@ -10,7 +10,7 @@ import { Entypo } from '@expo/vector-icons';
 import ShowJob from '@/components/ShowJob';
 
 const query = () => {
-  const {user,queryReturn} = useGlobalContext();
+  const {user, queryReturn} = useGlobalContext();
   const [isModalVisible,setIsModalVisible] = useState(false);
   const [readMore,setReadMore] = useState(false);
   const [currentJob,setCurrentJob] = useState(null);
@@ -52,7 +52,7 @@ const query = () => {
                 <View className='flex-row items-center'>
                   <TouchableOpacity
                     onPress={() => {
-                      router.push('/(tabs)/home');
+                      router.replace('/(tabs)/home');
                     }}
                   >
                     <Entypo name="chevron-thin-left" size={24} color="black" />

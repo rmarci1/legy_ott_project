@@ -1,11 +1,11 @@
-import { View, Text, ScrollView, SafeAreaView, Image, TouchableOpacity, Alert, Modal } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, Alert, Modal } from 'react-native'
 import React,{ useState,useEffect } from 'react'
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import ProfileView from '@/components/ProfileView';
 import { getProfileView } from '@/lib/api';
-import images from '@/constants/images';
-import { AntDesign, Entypo } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import EmptyView from '@/components/EmptyView';
 
 const profileSearch = () => {
   const [profile,setProfile] = useState(null);
@@ -36,23 +36,10 @@ const profileSearch = () => {
             user={profile}
             isView={true}
           /> :
-          <View className='min-h-full items-center justify-center '>
-            <View className='absolute top-[5%] left-5'>
-              <TouchableOpacity
-                  onPress={() => {
-                      router.push('/(tabs)/home');
-                    }}
-                  >
-                <Entypo name="chevron-thin-left" size={30} color="black" />
-              </TouchableOpacity>
-            </View>
-            <Text className='font-rbold text-3xl text-center text-primary'>Nem találtunk ilyen profilt!</Text>
-            <Image
-              resizeMode='contain'
-              source={images.search}
-              className='w-[75%] h-[30%]'
-            />
-          </View>
+          <EmptyView
+            close={true}
+            title="Nem találtunk ilyen profilt!"
+          />
         }
       </ScrollView>
       <Modal
@@ -64,7 +51,7 @@ const profileSearch = () => {
       <ScrollView className='h-full'>
         <View className='items-center justify-center min-h-full'>
           <LinearGradient
-            colors={['#1a1a2e', '#d97706', '#78350f']}
+            colors={['#451e01', '#d97706', '#cf8d5d']}
             start={{x:0, y:0.5}}
             end={{x:1, y:1}}
             className='w-[95%] h-full'
@@ -72,12 +59,15 @@ const profileSearch = () => {
               borderRadius: 30
             }}
           > 
+          <View className='w-[90%] self-center'>
             <TouchableOpacity
               onPress={toggleModal}
-              className='absolute right-4 top-4 h-7 w-7 bg-[rgb(93,84,122)] opacity-70 rounded-3xl items-center justify-center'
+              className='absolute right-0 top-4 h-7 w-7 bg-[rgb(93,84,122)] opacity-70 rounded-3xl items-center justify-center'
             >
               <AntDesign name="close" size={18} color="white"/>
             </TouchableOpacity>
+            <Text className='text-3xl font-pbold text-white mt-8 text-center'>Értékelések</Text>
+          </View>
           </LinearGradient>
         </View> 
       </ScrollView>

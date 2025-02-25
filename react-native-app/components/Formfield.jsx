@@ -3,15 +3,15 @@ import React, { useRef, useState } from 'react';
 import { AntDesign, Entypo, Feather } from '@expo/vector-icons';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 
-const Formfield = ({ title, otherStyles, value, placeholder, handleChangeText, date, keyboardType, inputType, multiline }) => {
+const Formfield = ({ title, otherStyles, value, placeholder, handleChangeText, date, keyboardType, inputType, multiline, bgcolor,bordercolor, dateTextStyles, dateColor}) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [showDatePicker,setShowDatePicker] = useState(false)
   return (
     <View className={`space-y-2 ${otherStyles}`}>
       <View
-        className={`border-2 w-full h-[64px] px-4 bg-[#F1F4FF] rounded-3xl items-center ${
-          isFocused ? 'border-[#546ECC]' : 'border-gray-200'
+        className={`border-2 w-full h-[64px] px-4 ${bgcolor? bgcolor : "bg-[#F1F4FF]"} rounded-3xl items-center ${
+          isFocused ? 'border-[#546ECC]' : bordercolor? bordercolor  :'border-gray-200'
         } flex-row ${date && 'justify-between'}`}
       >
         {!date && <TextInput
@@ -37,18 +37,18 @@ const Formfield = ({ title, otherStyles, value, placeholder, handleChangeText, d
           </TouchableOpacity>
         )}
         {date && <View className="flex-row">
-          <Text className="text-xl font-pmedium flex-1">{value.toISOString().split('T')[0]}</Text>
+          <Text className={`text-xl font-pmedium flex-1 ${dateTextStyles}`}>{value? value.toISOString().split('T')[0]:""}</Text>
           <TouchableOpacity
             onPress={() => setShowDatePicker(true)}
           >
-            <Feather name="calendar" size={24} color="black" className='mr-3 text-right'/>
+            <Feather name="calendar" size={24} color={dateColor? dateColor : "black"} className='mr-3 text-right'/>
           </TouchableOpacity>  
           <DateTimePicker
             isVisible={showDatePicker}
             mode="date"
             onConfirm={(selectedDate) => {
               setShowDatePicker(false);
-              handleChangeText(selectedDate);                
+              handleChangeText(new Date(selectedDate));                
             }}
             onCancel={() => setShowDatePicker(false)}
           />

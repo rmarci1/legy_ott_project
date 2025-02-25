@@ -1,33 +1,43 @@
 import { View, Text, TouchableOpacity, Alert, FlatList } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { SafeAreaView} from 'react-native-safe-area-context'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { useGlobalContext } from '@/context/GlobalProvider'
-import { Entypo, FontAwesome } from '@expo/vector-icons'
-import { getHistorys } from '@/lib/api'
+import { Entypo, FontAwesome, Fontisto } from '@expo/vector-icons'
+import { getApplied, getHistorys } from '@/lib/api'
 import JobDisplay from '@/components/JobDisplay'
 import images from '@/constants/images'
 import { FlashList } from '@shopify/flash-list'
 
 const list = () => {
   const {user,jobs,setJobs,saved,setSaved} = useGlobalContext();
-  const [filterJobs,setFilterJobs] = useState(null);
+  const [filterJobs,setFilterJobs] = useState(saved);
   const [currentJob,setCurrentJob] = useState(null);
   const [readMore,setReadMore] = useState(false);
   const [currentPage,setCurrentPage] = useState("saved");
   const [isModalVisible, setIsModalVisible] = useState(false);
-  
   useEffect(() => {
     handleClick(currentPage);
   },[])
   useEffect(() => {
-    console.log(saved.length);
-    if(currentPage == "saved"){
+    if(currentPage==="saved"){
       setFilterJobs(saved);
     }
   }, [saved])
+  const pageStatus = async (title) => {
+    if(title === "saved"){
+      return saved;
+    }
+    else if(title === "history"){
+      return await getHistorys(user.username);
+    }
+    else {
+      return await getApplied(user.username);
+    }
+  }
   const handleClick = async (title) => {
     try{
-      const response = title === "saved" ? saved : await getHistorys(user.username);
+      const response = await pageStatus(title);
+      console.log("res: ",response)
       setCurrentPage(title);
       setFilterJobs(response);
     }
@@ -40,7 +50,7 @@ const list = () => {
   }
   return (
     <SafeAreaView className=''>
-      <View className='min-h-full'>
+      <View className={`min-h-full`}>
       <FlashList
         data={filterJobs}
         keyExtractor={(item,index) => index.toString()}
@@ -72,15 +82,23 @@ const list = () => {
           <View className='flex-row justify-between mt-5'>
             <TouchableOpacity
               onPress={() => handleClick("history")}
-              className='w-[45%] flex-row justify-center items-center'
+              className='w-[30%] flex-row justify-center items-center'
             >
-              <Text className={`text-xl font-psemibold text-primary ${currentPage === "history" && "underline"}`}>Előzmények</Text>
+              <Text className={`text-xl font-psemibold text-primary ${currentPage === "history" && "underline"}`}>Előzmény</Text>
               <FontAwesome name="history" size={24} color="#1F41BB" />
             </TouchableOpacity>
-            <Text className='w-[10%] text-center text-xl'>|</Text>
+            <Text className='text-center text-xl'>|</Text>
+            <TouchableOpacity
+              onPress={() => handleClick("current")}
+              className='w-[30%] justify-center items-center flex-row'
+            >
+              <Text className={`text-xl color-green-400 font-psemibold ${currentPage === "current" && "underline"}`}>Jelenleg</Text>
+              <Fontisto name="radio-btn-active" size={24} color="#4ade80" />
+            </TouchableOpacity>
+            <Text className='text-center text-xl'>|</Text>
             <TouchableOpacity
               onPress={() => handleClick("saved")}
-              className='w-[45%] justify-center items-center flex-row'
+              className='w-[30%] justify-center items-center flex-row'
             >
               <Text className={`text-xl color-red-400 font-psemibold ${currentPage === "saved" && "underline"}`}>Elmentett</Text>
               <Entypo name="save" size={24} color="#f87171" />

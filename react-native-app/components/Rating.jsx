@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, FontAwesome } from '@expo/vector-icons';
 
 const Rating = ({item,handleProfile}) => {
   const [showMoreRating,setShowMoreRating] = useState(false);
@@ -17,25 +17,22 @@ const Rating = ({item,handleProfile}) => {
         className='w-[70%]'
         onPress={() => handleProfile(item.reviewer_un)}
       >
-        <Text className='text-purple-400 font-plight text-lg'>{item.reviewer_un}</Text>
+        <Text className='text-blue-400 font-plight text-lg'>{item.reviewer_un}</Text>
       </TouchableOpacity>
       <View className='flex-row w-[30%]'>
-        <AntDesign name="star" size={18} color={item.review>=1 ? "yellow" : "white"} />
-        <AntDesign name="star" size={18} color={item.review>=2 ? "yellow" : "white"} />
-        <AntDesign name="star" size={18} color={item.review>=3 ? "yellow" : "white"} />
-        <AntDesign name="star" size={18} color={item.review>=4 ? "yellow" : "white"} />
-        <AntDesign name="star" size={18} color={item.review==5 ? "yellow" : "white"} />
+        <FontAwesome name="star" size={18} color={item.review>=1 ? "aqua" : "white"} />
+        <FontAwesome name="star" size={18} color={item.review>=2 ? "aqua" : "white"} className='mx-1' />
+        <FontAwesome name="star" size={18} color={item.review>=3 ? "aqua" : "white"} />
+        <FontAwesome name="star" size={18} color={item.review>=4 ? "aqua" : "white"} className='mx-1' />
+        <FontAwesome name="star" size={18} color={item.review==5 ? "aqua" : "white"} />
       </View>
-      </View>
-      <Text className='text-white font-pmedium mt-4'>{(readMoreRating && !showMoreRating)? item.desc.substring(0,50)+"..." : item.desc}</Text>
-      {readMoreRating && (
-        <TouchableOpacity
-          onPress={() => setShowMoreRating(!showMoreRating)}
-          className=' border-white'
-        >
-          <Text className='font-pbold text-teal-900'>{showMoreRating? "Kevesebb" : "Olvass többet"}</Text>
-        </TouchableOpacity>
-      )}  
+      </View><TouchableOpacity
+        disabled={!readMoreRating}
+        onPress={() =>setShowMoreRating(!showMoreRating)}
+        activeOpacity={0.5}
+      >
+        <Text className='text-white font-pmedium mt-4'>{(readMoreRating && !showMoreRating)? item.desc.substring(0,50)+"..." : item.desc}</Text>
+      </TouchableOpacity>
     </View>
   )
 }

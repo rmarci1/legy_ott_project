@@ -6,8 +6,11 @@ import ConvertType from './ConvertType'
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router'
 import { getAverageRating } from '@/lib/api'
+import { useGlobalContext } from '@/context/GlobalProvider'
+import ConvertText from './ConvertText'
 
 const ProfileView = ({isView, user, handleModal}) => {
+  const {setUser} = useGlobalContext();
   const [selection, setSelection] = useState({
       start: 0,
       end : 0
@@ -18,11 +21,11 @@ const ProfileView = ({isView, user, handleModal}) => {
   const [showMore,setshowMore] = useState(false);
   const [isExpand,setIsExpand] = useState(false); 
   const [editing,setEditing] = useState("");
-  const [readMore,setReadMore] = useState();
+  const [readMore,setReadMore] = useState(false);
   const [pressed, setPressed] = useState("");
-  const [rating,setRating] = useState(0);
+  const [rating, setRating] = useState(0);
   useEffect(() => {
-    if(user.description.length > 100){
+    if(user.description.length > 50){
       setReadMore(true);
     }
     getAverageRating(user.username).then((res) => {
@@ -99,7 +102,6 @@ const ProfileView = ({isView, user, handleModal}) => {
             quality : 0.3,
           })
       if (!result.canceled) {
-        console.log(result);
         setUser({...user, profileImg : result.assets[0].uri});
       }
   }
@@ -186,10 +188,11 @@ const ProfileView = ({isView, user, handleModal}) => {
                   </TouchableOpacity>}
               </View>
               {
-                editing !== "description" ? <View><Text className='mt-5 font-pmedium'>{(readMore && !showMore) && user?.description.substring(0,100)}
-                {showMore && <Text>{user?.description}</Text>}
-                </Text>
-                {(!showMore && !isView) && <TouchableOpacity onPress={() => setEditing("description")} className='font-pbold text-lg'>
+                editing !== "description" ? <View>
+                <ConvertText
+                  text={((readMore && !showMore)) ? user?.description.substring(0,100)+"..." : user?.description}
+                />
+                {(!isView) && <TouchableOpacity onPress={() => setEditing("description")} className='font-pbold text-lg'>
                   <AntDesign name="edit" size={24} color="black" />
                 </TouchableOpacity>}
                 {readMore && <TouchableOpacity
@@ -202,8 +205,8 @@ const ProfileView = ({isView, user, handleModal}) => {
                   <View className='border-b border-gray-300 mt-4'/>
                     <ConvertType
                       selection={selection}
-                      description={user?.leiras || ""}
-                      handleForm={(e) =>setUser({...user,leiras: e})}
+                      description={user?.description || ""}
+                      handleForm={(e) =>setUser({...user, description: e})}
                       undoStates={undoStates}
                       handleSelection={(e) => setSelection(e)}
                       handleUndoStates={(e) => setSelection(e)}
@@ -212,10 +215,10 @@ const ProfileView = ({isView, user, handleModal}) => {
                     />     
                   <View className='border-b border-gray-300'/>
                   <TextInput
-                    className='flex-1 font-pmedium'
-                    value={user?.leiras || ""}
+                    className='flex-1 font-pmedium mt-5'
+                    value={user?.description || ""}
                     onChangeText={(e) => {
-                      setUser((prevUser) => ({...prevUser, leiras : e}))
+                      setUser((prevUser) => ({...prevUser, description : e}))
                       if(typingTimeout){
                         clearTimeout(typingTimeout);
                       }

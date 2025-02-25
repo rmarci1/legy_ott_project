@@ -11,9 +11,9 @@ export class ReviewsController {
   @ApiOperation({
     summary: 'Creates a review'
   })
-  @Post()
-  create(@Body() createReviewDto: CreateReviewDto) {
-    return this.reviewsService.create(createReviewDto);
+  @Post('/add/:username')
+  create(@Body() createReviewDto: CreateReviewDto, @Param('username') username : string) {
+    return this.reviewsService.create(createReviewDto,username);
   }
 
   @ApiOperation({

@@ -1,7 +1,6 @@
 //const API_URL = 'http://192.168.11.82:3000' // webváltó host nete;
 const API_URL = 'http://192.168.10.89:3000' // webváltó ethernet;
 //const API_URL = 'http://192.168.11.142:3000' // webváltó alap wifi;
-
 import * as SecureStore from 'expo-secure-store';
 
 export const getToken = async () => {
@@ -60,7 +59,6 @@ export const registerpart1 = async (email,password,passwordAgain) => {
         return data;
     }
     catch(error){
-        console.log(error);
         throw new Error(error.message);
     }
 }
@@ -79,7 +77,6 @@ export const getUser = async (token) => {
         return data; 
     }
     catch(error){
-        console.log(error);
         throw new Error(error.message);
     }
 }
@@ -94,11 +91,9 @@ export const getJobs = async (username) => {
         if(!response.ok){
             throw new Error(data.message);
         }
-        console.log(data.length);
         return data;
     }
     catch(error){
-        console.log(error);
         throw new Error(error);
     }
 }
@@ -113,7 +108,6 @@ export const GetProfilePic = async (profile) => {
         return data;
     }
     catch(error){
-        console.log(error.message);
         throw new Error(error.message)
     }
 }
@@ -130,8 +124,6 @@ export const CreateProfilePic = async (username,img) => {
                 if (xhr.readyState !== 4) {
                   return;
                 }
-                console.log(xhr.status);
-                console.log(xhr.responseText);
                 if (xhr.status === 201 || xhr.status === 0) {
                   resolve(JSON.parse(xhr.responseText));
                 } else {
@@ -144,16 +136,8 @@ export const CreateProfilePic = async (username,img) => {
         }).catch((error) => {
             console.log(error);
         })
-        console.log("Fetching...");
-
-        const response = await fetch(`${API_URL}/profiles/${username}/uploadProfilePic`,{
-            method: 'POST',
-            headers: {'Content-Type' : 'multipart/form-data'},
-            body: formData,
-        });
     }
     catch(error){
-        console.log(error);
         throw new Error(error)
     }
 }
@@ -177,8 +161,32 @@ export const FilterJobsByName = async (name,username) => {
 }
 export const getHistorys = async (username) => {
     try{
-
+        const response = await fetch(`${API_URL}/jobs/history/${username}`,{
+            method: 'GET',
+            credentials: 'include'
+        })
+        const data = await response.json();
+        if(!response.ok){
+            throw new Error(data.message);
+        }
+        return data;
     }   
+    catch(error){
+        throw new Error(error.message);
+    }
+}
+export const getApplied = async (username) => {
+    try{
+        const response = await fetch(`${API_URL}/jobs/applied/${username}`,{
+            method: 'GET',
+            credentials: 'include'
+        })
+        const data = await response.json();
+        if(!response.ok){
+            throw new Error(data.message);
+        }
+        return data;
+    }
     catch(error){
         throw new Error(error.message);
     }
@@ -204,9 +212,14 @@ export const createJob = async (job) => {
         const response = await fetch(`${API_URL}/jobs`,{
             method : "POST",
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({job}),
+            body: JSON.stringify({name: job.name, date:new Date(job.date), ...job}),
             credentials: "include"
         })
+        const data = await response.json();
+        if(!response.ok){
+            throw new Error(typeof data.message == "string" ? data.message : data.message[0])
+        }   
+        return data;
     }
     catch(error){
         throw new Error(error.message);
@@ -238,7 +251,6 @@ export const getProfileView = async (username) => {
             credentials: 'include'
         })
         const data = await response.json();
-        console.log(data);
         if (!response.ok) {
             throw new Error(typeof data.message == "string" ? data.message : data.message[0])
         }
@@ -251,7 +263,6 @@ export const getProfileView = async (username) => {
 }
 export const getReviews = async (username) => {
     try{
-        console.log(username);
         const response = await fetch(`${API_URL}/reviews/${username}`,{
             method: "GET",
             credentials: "include"
@@ -278,6 +289,24 @@ export const getAverageRating = async (username) => {
             throw new Error(data.message);
         }
         return data?._avg.review;
+    }
+    catch(error){
+        throw new Error(error.message);
+    }
+}
+export const createReview = async (username,review) => {
+    try{
+        const response = await fetch(`${API_URL}/reviews/add/${username}`,{
+            method: 'POST',
+            headers: { 'Content-Type' : 'application/json' },
+            body: JSON.stringify({review}),
+            credentials: 'include'
+        })
+        const data = await response.json();
+        if(!response.ok){
+            throw new Error(data.message);
+        }
+        return data;
     }
     catch(error){
         throw new Error(error.message);
