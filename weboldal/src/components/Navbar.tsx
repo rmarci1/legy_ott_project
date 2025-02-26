@@ -24,14 +24,16 @@ export default function Navbar(){
                     </p>
 
                 </div>
-                <div className="flex  place-items-center">
-                    <IoArchiveOutline size={40} color="white"/>
-                    <p className="text-white text-2xl overflow-hidden whitespace-nowrap transition-all duration-300 ease-in-out max-w-0 px-0 group-hover:max-w-[10rem] group-hover:px-3">
-                        Előzmények
-                    </p>
+                <div>
+                    <Link to="/interacted" className="flex place-items-center">
+                        <IoArchiveOutline size={40} color="white"/>
+                        <p className="text-white text-2xl overflow-hidden whitespace-nowrap transition-all duration-300 ease-in-out max-w-0 px-0 group-hover:max-w-[10rem] group-hover:px-3">
+                            Előzmények
+                        </p>
+                    </Link>
 
                 </div>
-                <div className="flex  place-items-center">
+                <div >
                     <Link to="/profile" className="flex place-items-center">
                         <FaRegCircleUser size={40} color="white"/>
                         <p className="text-white text-2xl overflow-hidden whitespace-nowrap transition-all duration-300 ease-in-out max-w-0 px-0 group-hover:max-w-[10rem] group-hover:px-3">

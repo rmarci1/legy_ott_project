@@ -4,9 +4,9 @@ import {Job} from "../../Types/Job.ts";
 import {
     attend,
     getAdvertised,
-    getAllJobs,
+    getAllJobs, getArchivedAds, getArchivedJobs,
     getAvailableJobs,
-    getProfile,
+    getProfile, getSavedForLater,
     getSelectedJobs,
     getUser,
     saveForLater
@@ -19,6 +19,9 @@ interface AuthContextType {
     allJobs: Job[],
     selectedJobs: Job[],
     ads: Job[],
+    savedJobs: Job[],
+    archivedJobs: Job[],
+    archivedAds: Job[],
     advertiser: Advertiser | null,
     isLoading: boolean,
     setIsLoading: (value: boolean)=> void,
@@ -46,6 +49,9 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
     const [allJobs, setAllJobs] = useState<Job[]>([]);
     const [selectedJobs, setSelectedJobs] = useState<Job[]>([])
     const [ads, setAds] = useState<Job[]>([])
+    const [savedJobs, setSavedJobs] = useState<Job[]>([]);
+    const [archivedJobs, setArchivedJobs] = useState<Job[]>([])
+    const [archivedAds, setArchivedAds] = useState<Job[]>([]);
     const [advertiser, setAdvertiser] = useState<Advertiser | null>(null);
     const [jobs, setJobs] = useState<Job[]>([])
 
@@ -99,6 +105,9 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
         setJobs(await getAvailableJobs(username));
         await userSelectedJobs(username)
         await userAdvertisedJobs(username);
+        await userSavedJobs(username);
+        await userArchivedJobs(username);
+        await userArchivedAds(username);
         setIsLoading(false)
     }
 
@@ -147,11 +156,30 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
         setIsLoading(false);
     }
 
+    const userSavedJobs = async (username: string) => {
+        setIsLoading(true);
+        setSavedJobs(await getSavedForLater(username));
+        setIsLoading(false);
+    }
+
+    const userArchivedJobs = async (username: string) => {
+        setIsLoading(true);
+        setArchivedJobs(await getArchivedJobs(username));
+        setIsLoading(false);
+    }
+
+    const userArchivedAds = async (username: string) => {
+        setIsLoading(true);
+        setArchivedAds(await getArchivedAds(username));
+        setIsLoading(false);
+    }
+
     const getAdvertiserProfile = async (username: string) =>{
         setIsLoading(true)
         setAdvertiser(await getProfile(username));
         setIsLoading(false)
     }
+
 
     return (
         <AuthContext.Provider
@@ -163,6 +191,9 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
                 isLoading,
                 selectedJobs,
                 ads,
+                savedJobs,
+                archivedJobs,
+                archivedAds,
                 setIsLoading,
                 kijelentkezes,
                 bejelentkezes,

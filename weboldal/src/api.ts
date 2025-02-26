@@ -260,6 +260,69 @@ export const getAdvertised = async (username: string) => {
     if (!res.ok) {
       throw new Error(data.message as string);
     }
+
+    return data;
+
+  }
+  catch (e: any){
+    throw new Error(e.message)
+  }
+}
+
+export const getSavedForLater = async (username: string) => {
+  try{
+    const res = await fetch(`${API_URL}/jobs/savedForLater/${username}`, {
+      method: 'GET',
+      credentials: "include"
+    })
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message as string);
+    }
+    return data;
+
+  }
+  catch (e: any){
+    throw new Error(e.message)
+  }
+}
+
+export const getArchivedJobs = async (username: string) => {
+  try{
+    const res = await fetch(`${API_URL}/jobs/archived/${username}`, {
+      method: 'GET',
+      credentials: "include"
+    })
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message as string);
+    }
+    console.log(data)
+
+    return data;
+
+  }
+  catch (e: any){
+    throw new Error(e.message)
+  }
+}
+
+export const getArchivedAds = async (username: string) => {
+  try{
+    const res = await fetch(`${API_URL}/jobs/archivedAds/${username}`, {
+      method: 'GET',
+      credentials: "include"
+    })
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message as string);
+    }
     console.log(data)
 
     return data;
