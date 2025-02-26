@@ -55,31 +55,40 @@ export class JobsService {
   async findArchived(username: string){
     try{
       const today = new Date();
-
-      const jobs: Job[] = await this.db.jobProfile.findMany({
+      const jobs = await this.db.job.findMany({
         where: {
           AND: [
             {
-              profile: {
-                username,
-              },
+              profiles: {
+                some: {
+                  profile: {
+                    username
+                  },
+                  isApplied: true
+                }
+              }
             },
             {
               OR: [
                 {
-                  job: {
-                    date: { lt: today },
-                  },
+                  date: { lt: today },
                 },
                 {
-                  job:{
-                    max_attending: {lte: this.db.job.fields.current_attending}
-                  }
+                  max_attending: {lte: this.db.job.fields.current_attending}
                 }
               ],
             },
           ],
         },
+        include:{
+          profiles: {
+            where: {
+              profile: {
+                username
+              }
+            }
+          }
+        }
       });
 
       return jobs;
@@ -446,7 +455,7 @@ export class JobsService {
       const res = await this.db.job.findMany({
         where: {
           profiles: {
-            every: {
+            some: {
               AND: [
                 {saveForLater: true},
                 {
@@ -457,6 +466,7 @@ export class JobsService {
               ],
             },
           },
+          date: {gte: new Date()}
         },
         include: {
           profiles: {
@@ -465,6 +475,11 @@ export class JobsService {
               isApplied: true,
               saveForLater: true,
             },
+            where: {
+              profile: {
+                username
+              }
+            }
           },
         },
       });
