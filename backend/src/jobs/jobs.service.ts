@@ -197,7 +197,6 @@ export class JobsService {
         },
       });
 
-      console.log(jobs);
       return jobs;
     }
     catch(error){
@@ -256,25 +255,41 @@ export class JobsService {
   async userSelectedJobs(username: string){
     try{
       const today = new Date();
-      const jobs = await this.db.jobProfile.findMany({
-        select: {
-          job: true
-        },
+      const jobs = await this.db.job.findMany({
         where: {
           AND: [
             {
-              job: {
-                date: { gte: today}
-              }
+              date: { gte: today },
             },
             {
+              profiles: {
+                some: {
+                  AND: [
+                    {
+                      profile: {
+                        username
+                      },
+                    },
+                    {
+                      isApplied: true
+                    }
+                  ],
+                },
+              },
+            },
+          ],
+        },
+        include: {
+          profiles: {
+            where: {
               profile: {
                 username
               }
             }
-          ]
+          }
         }
-      })
+      });
+      console.log(jobs);
       return jobs;
     }
     catch(error){
@@ -359,9 +374,7 @@ export class JobsService {
             } as Prisma.jobProfileCreateInput
           })
         }
-
       }
-
       //update current count of attending user
       return await this.db.job.update({
         where: {
@@ -370,7 +383,7 @@ export class JobsService {
         data: {
           current_attending: numberOfPeople,
         }
-      })
+      });
     }
     catch {
       throw new Error(value? 'Nem sikerült a jelentkezés!' : 'Nem sikerült a jelentkezés törlése!')
