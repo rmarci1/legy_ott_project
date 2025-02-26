@@ -42,6 +42,14 @@ export class JobsController {
   }
 
   @ApiOperation({
+    summary: 'Returns archived advertisements'
+  })
+  @Get('archivedAds/:username')
+  findArchivedAds(@Param('username') username: string){
+    return this.jobsService.findArchivedAds(username);
+  }
+
+  @ApiOperation({
     summary: 'Returns jobs advertised by the user'
   })
   @Get('/ads/:username')

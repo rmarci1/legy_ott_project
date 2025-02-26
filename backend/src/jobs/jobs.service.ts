@@ -96,8 +96,36 @@ export class JobsService {
     catch(error){
       throw new Error("Error: " + error)
     }
-
   }
+
+  async findArchivedAds(username: string){
+    try{
+      const jobs = await this.db.job.findMany({
+        where: {
+          AND: [
+            { from: username },
+            {
+              OR: [
+                { date: { lt: new Date() } },
+                {
+                  current_attending: {equals: this.db.job.fields.max_attending}
+                }
+              ],
+            },
+          ],
+        },
+        include: {
+          profiles: true,
+        },
+      });
+
+      return jobs;
+    }
+    catch (error){
+      throw new Error("Error: " + error);
+    }
+  }
+  
   async findHistory(username : string){
     const currentDay = new Date();
     try{
