@@ -5,13 +5,14 @@ import {useAuth} from "../../Context/AuthContext.tsx";
 
 interface JobModalProps{
     job: Job,
-    user?: User
+    user?: User,
+    attending: boolean,
     setModal: (value: boolean) => void,
     setProfileModal: (value: boolean) => void,
     attendJob: (id: number, username: string, value: boolean) => void
 }
 
-export default function JobModal({job, user, setModal, attendJob, setProfileModal}: JobModalProps){
+export default function JobModal({job, user, attending,setModal, attendJob, setProfileModal}: JobModalProps){
     const date = new Date(job.date);
     const { getAdvertiserProfile } = useAuth();
     useEffect(() => {
@@ -55,7 +56,7 @@ export default function JobModal({job, user, setModal, attendJob, setProfileModa
                             </p>
                         </div>
                         {
-                            user &&
+                            user && !attending &&
                             (<div className="grow">
                                 <button type={"button"} onClick={() => attendJob(job.id, user.username, true)}
                                         className="bg-green-700 rounded p-2">

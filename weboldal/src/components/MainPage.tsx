@@ -11,20 +11,17 @@ export default function MainPage() {
         checkUser()
     }, []);
 
-
     return (
-        <div className="flex flex-wrap h-screen w-dvw justify-center overflow-y-scroll">
+        <div className="flex flex-wrap h-screen w-dvw justify-center overflow-auto">
             {
                 user?
                     (jobs.map((item: Job) => (
-                        <JobCard key={item.id} Job={item}/>
+                        <JobCard key={item.id} attending={false} Job={item}/>
                     )))
                 :(allJobs.map((item: Job) => (
-                    <JobCard key={item.id} Job={item}/>
+                    <JobCard key={item.id} attending={false} Job={item}/>
                 )))
             }
         </div>
-
-
     );
 }

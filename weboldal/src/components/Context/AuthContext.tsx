@@ -1,13 +1,24 @@
 import {createContext, ReactNode, useContext, useEffect, useState} from "react";
 import {User} from "../../Types/User";
 import {Job} from "../../Types/Job.ts";
-import {attend, getAllJobs, getAvailableJobs, getProfile, getUser, saveForLater} from "../../api.ts";
+import {
+    attend,
+    getAdvertised,
+    getAllJobs,
+    getAvailableJobs,
+    getProfile,
+    getSelectedJobs,
+    getUser,
+    saveForLater
+} from "../../api.ts";
 import {Advertiser} from "../../Types/Advertiser.ts";
 
 interface AuthContextType {
     user: User | null,
     jobs: Job[],
     allJobs: Job[],
+    selectedJobs: Job[],
+    ads: Job[],
     advertiser: Advertiser | null,
     isLoading: boolean,
     setIsLoading: (value: boolean)=> void,
@@ -33,11 +44,12 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [allJobs, setAllJobs] = useState<Job[]>([]);
+    const [selectedJobs, setSelectedJobs] = useState<Job[]>([])
+    const [ads, setAds] = useState<Job[]>([])
     const [advertiser, setAdvertiser] = useState<Advertiser | null>(null);
     const [jobs, setJobs] = useState<Job[]>([])
 
     useEffect(() => {
-
     }, []);
 
     const getAll = () => {
@@ -85,6 +97,8 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
     const resetJobs = async (username: string) => {
         setIsLoading(true)
         setJobs(await getAvailableJobs(username));
+        await userSelectedJobs(username)
+        await userAdvertisedJobs(username);
         setIsLoading(false)
     }
 
@@ -119,6 +133,20 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
         setIsLoading(false)
     }
 
+    const userSelectedJobs = async (username: string) => {
+        setIsLoading(true)
+        setSelectedJobs(await getSelectedJobs(username).then((res) => {
+            return res
+        }))
+        setIsLoading(false)
+    }
+
+    const userAdvertisedJobs = async (username: string) => {
+        setIsLoading(true);
+        setAds(await getAdvertised(username));
+        setIsLoading(false);
+    }
+
     const getAdvertiserProfile = async (username: string) =>{
         setIsLoading(true)
         setAdvertiser(await getProfile(username));
@@ -133,6 +161,8 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
                 allJobs,
                 advertiser,
                 isLoading,
+                selectedJobs,
+                ads,
                 setIsLoading,
                 kijelentkezes,
                 bejelentkezes,

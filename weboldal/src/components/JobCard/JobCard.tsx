@@ -1,18 +1,22 @@
 import { Job } from "../../Types/Job.ts";
-import { useState} from "react";
+import {useEffect, useState} from "react";
 import { PiHeartLight, PiHeartFill } from "react-icons/pi";
 import {useAuth} from "../Context/AuthContext.tsx";
 import JobModal from "./Modals/JobModal.tsx";
 import ProfileModal from "./Modals/ProfileModal.tsx";
 
 interface jobProps{
-    Job: Job
+    Job: Job,
+    attending: boolean
 }
 
-export default function JobCard({Job}: jobProps){
+export default function JobCard({Job, attending}: jobProps){
     const [jobModal, setJobModal] = useState(false);
     const [profileModal, setProfileModal] = useState(false);
     const {user, setSave, attendJob} = useAuth();
+
+    useEffect(() => {
+    }, []);
 
     return<>
         <div className="rounded-lg shadow-secondary-1 bg-surface-dark w-1/3 m-4">
@@ -20,9 +24,9 @@ export default function JobCard({Job}: jobProps){
             <div className="p-6 text-surface border-2">
                 <div className="flex flex-row w-full">
                     <h5 className="mb-2 text-xl font-medium leading-tight flex-grow">{Job.name}</h5>
-                    {user && (
+                    {user && !attending && (
                         <span className="flex-none">
-                            {Job.profiles[0] && Job.profiles[0].saveForLater ?
+                            {Job.profiles && Job.profiles[0] && Job.profiles[0].saveForLater ?
                                 <PiHeartFill size={40} color="red"
                                              onClick={() => setSave(Job, user, false)}/> :
                                 <PiHeartLight size={40} onClick={() => setSave(Job, user, true)}/>}
@@ -42,10 +46,10 @@ export default function JobCard({Job}: jobProps){
 
             {jobModal && (
                 user? (
-                        <JobModal job={Job} user={user} setModal={setJobModal} attendJob={attendJob} setProfileModal={setProfileModal}/>
+                        <JobModal job={Job} user={user} setModal={setJobModal} attending={attending} attendJob={attendJob} setProfileModal={setProfileModal}/>
                     ):
                     (
-                        <JobModal job={Job} setModal={setJobModal} attendJob={attendJob} setProfileModal={setProfileModal}/>
+                        <JobModal job={Job} setModal={setJobModal} attending={attending} attendJob={attendJob} setProfileModal={setProfileModal}/>
                     )
             )}
 
@@ -59,7 +63,6 @@ export default function JobCard({Job}: jobProps){
                     )
                 )
             }
-
 
         </div>
     </>

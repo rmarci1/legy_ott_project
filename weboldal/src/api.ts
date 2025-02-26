@@ -227,4 +227,47 @@ export const logout = async () => {
   }
 }
 
+export const getSelectedJobs = async (username: string) => {
+  try{
+    const res = await fetch(`${API_URL}/jobs/selected/${username}`, {
+      method: 'GET',
+      credentials: "include"
+    })
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message as string);
+    }
+
+    return data;
+
+  }
+  catch (e: any){
+    throw new Error(e.message)
+  }
+}
+
+export const getAdvertised = async (username: string) => {
+  try{
+    const res = await fetch(`${API_URL}/jobs/ads/${username}`, {
+      method: 'GET',
+      credentials: "include"
+    })
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message as string);
+    }
+    console.log(data)
+
+    return data;
+
+  }
+  catch (e: any){
+    throw new Error(e.message)
+  }
+}
+
 
