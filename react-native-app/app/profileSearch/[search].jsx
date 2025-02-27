@@ -33,7 +33,7 @@ const profileSearch = () => {
         {
           profile? <ProfileView
             handleModal={() => toggleModal()}
-            user={profile}
+            viewed_user={profile}
             isView={true}
           /> :
           <EmptyView

@@ -22,7 +22,7 @@ const profile = () => {
       <ScrollView className='flex-1' keyboardShouldPersistTaps="handled">
       {/*<StatusBar translucent backgroundColor='transparent'/>*/}
         <ProfileView
-          user={user}
+          viewed_user={user}
           isView={false}
         />
       </ScrollView>

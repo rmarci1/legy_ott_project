@@ -73,9 +73,9 @@ export const getUser = async () => {
         throw new Error(error.message);
     }
 }
-export const getJobs = async (username) => {
+export const getJobs = async () => {
     try{     
-        const response = await fetch(`${API_URL}/jobs/available/${username}`,{
+        const response = await fetch(`${API_URL}/jobs/available`,{
             method: 'GET',
             headers: {'Content-Type': 'application/json'},
             credentials:'include'
@@ -150,9 +150,9 @@ export const FilterJobsByName = async (name,username) => {
         throw new Error(error.message);
     }
 }
-export const getHistorys = async (username) => {
+export const getHistorys = async () => {
     try{
-        const response = await fetch(`${API_URL}/jobs/archived/${username}`,{
+        const response = await fetch(`${API_URL}/jobs/archived`,{
             method: 'GET',
             credentials: 'include'
         })
@@ -166,9 +166,9 @@ export const getHistorys = async (username) => {
         throw new Error(error.message);
     }
 }
-export const getApplied = async (username) => {
+export const getApplied = async () => {
     try{
-        const response = await fetch(`${API_URL}/jobs/selected/${username}`,{
+        const response = await fetch(`${API_URL}/jobs/selected`,{
             method: 'GET',
             credentials: 'include'
         })
@@ -182,9 +182,9 @@ export const getApplied = async (username) => {
         throw new Error(error.message);
     }
 }
-export const getSaved = async (username) => {
+export const getSaved = async () => {
     try{
-        const response = await fetch(`${API_URL}/jobs/savedForLater/${username}`,{
+        const response = await fetch(`${API_URL}/jobs/savedForLater`,{
             method : "GET",
             credentials: "include",
         });
@@ -198,7 +198,7 @@ export const getSaved = async (username) => {
         throw new Error(error.message);
     }
 }
-export const createJob = async (job,username) => {
+export const createJob = async (job) => {
     try{
         const response = await fetch(`${API_URL}/jobs`,{
             method : "POST",
@@ -217,9 +217,9 @@ export const createJob = async (job,username) => {
         throw new Error(error.message);
     }
 }
-export const updateSaved = async (update, jobId,profileId, username) => {
+export const updateSaved = async (update, jobId,profileId) => {
     try{
-        const response = await fetch(`${API_URL}/jobs/updateSave/${jobId}/${profileId}/${username}`,{
+        const response = await fetch(`${API_URL}/jobs/updateSave/${jobId}/${profileId}`,{
             method : 'PATCH',
             headers: {'Content-Type' : "application/json"},
             body: JSON.stringify({update}),
@@ -234,7 +234,7 @@ export const updateSaved = async (update, jobId,profileId, username) => {
         throw new Error(error.message);
     }
 }
-export const getProfileView = async (username) => {
+export const getProfileView = async () => {
     try{
         const response = await fetch(`${API_URL}/profiles/view/${username}`,{
             method: 'GET',
@@ -283,13 +283,31 @@ export const getAverageRating = async (username) => {
         throw new Error(error.message);
     }
 }
-export const createReview = async (username,review) => {
+export const createReview = async (review,username) => {
     try{
         const response = await fetch(`${API_URL}/reviews/add/${username}`,{
             method: 'POST',
             headers: { 'Content-Type' : 'application/json' },
-            body: JSON.stringify({review}),
+            body: JSON.stringify({...review}),
             credentials: 'include'
+        })
+        const data = await response.json();
+        if(!response.ok){
+            throw new Error(data.message);
+        }
+        return data;
+    }
+    catch(error){
+        throw new Error(error.message);
+    }
+}
+export const updateProfile = async (update,type) => {
+    try{
+        const response = await fetch(`${API_URL}/profiles`,{
+            method: 'PATCH',
+            headers: {'Content-Type' : 'application/json'},
+            body: JSON.stringify( type === "name" ? {name : update} : type === "username" ? {username: update} : {description: update}),
+            credentials: "include"
         })
         const data = await response.json();
         if(!response.ok){

@@ -24,7 +24,7 @@ const JobDisplay = ({image,containerStyles,item,imageStyles,handleUpdate,nameSty
      await update(item.profiles[0]?.saveForLater ? !item.profiles[0]?.saveForLater : true);
     }
     const update = async (isLiked) => {
-        await updateSaved(isLiked,item.id,user.id,user.username);
+        await updateSaved(isLiked,item.id,user.id);
         if(!isLiked) setSaved((curr) => curr.filter((savedItem) => savedItem.id !== item.id))
         else {
           setSaved((curr) => [...curr,{...item, profiles:[{isApplied: curr.isApplied,saveForLater:isLiked}]}]);
@@ -67,7 +67,7 @@ const JobDisplay = ({image,containerStyles,item,imageStyles,handleUpdate,nameSty
                 <Text className={`font-pbold text-lg ${titleStyle}`}>{item.name}</Text>
                 <Text className={`font-pregula text-base ${dateStyle}`}><Text className='text-blue-400'>
                   {typeof item.date === 'object' ? item.date.toISOString().split('T')[0] : item.date.split('T')[0]}</Text> × {item.current_attending} / {item.max_attending} fő
-                  </Text>
+                </Text>
             </View>
         </View>
     </View>

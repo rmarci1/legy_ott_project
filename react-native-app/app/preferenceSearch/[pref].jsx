@@ -20,7 +20,7 @@ const pref = () => {
   const [isModalVisible,setIsModalVisible] = useState(false);
   const query = useLocalSearchParams();
   const [queryState,setQueryState] = useState(null);
-  console.log(query);
+  
   useEffect(() => {
     let parsedData = query ? JSON.parse(query.data) : null;
     setQueryState(parsedData);

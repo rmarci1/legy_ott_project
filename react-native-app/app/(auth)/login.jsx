@@ -25,7 +25,7 @@ const login = () => {
             if(result){
                 setIsloggedIn(true);
                 setUser(result);
-                getJobs(result.username)
+                getJobs()
                 .then((jobs) => {
                 if(jobs){
                   setJobs(jobs);

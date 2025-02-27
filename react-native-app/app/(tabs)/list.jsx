@@ -28,10 +28,10 @@ const list = () => {
       return saved;
     }
     else if(title === "history"){
-      return await getHistorys(user.username);
+      return await getHistorys();
     }
     else {
-      return await getApplied(user.username);
+      return await getApplied();
     }
   }
   const handleClick = async (title) => {
