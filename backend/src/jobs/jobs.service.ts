@@ -220,7 +220,7 @@ export class JobsService {
       throw new Error("Error: " + error);
     }
   }
-  async filterAdvertisementsByName(body : {name: string,username: string}){
+  async filterAdvertisementsByName(body : {name: string}, username:string){
     try{
       const jobs = await this.db.job.findMany({
         where : {
@@ -228,14 +228,14 @@ export class JobsService {
             {name: {contains: body.name}},
             {max_attending: {gt: this.db.job.fields.current_attending}},
             {date: {gte: new Date()}},
-            {from: {not: body.username}}
+            {from: {not: username}}
           ]
         },
         include: {
           profiles: {
             where: {
               profile: {
-                username: body.username
+                username: username
               }
             },
             select: {

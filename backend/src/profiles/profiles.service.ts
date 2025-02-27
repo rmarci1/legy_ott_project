@@ -44,15 +44,20 @@ export class ProfilesService {
       throw new NotFoundException("Nem létezik ilyen profil");
     }
   }
-  async update(username: string, updateProfileDto: UpdateProfileDto) {
+  async update(username: string, updateProfileDto: UpdateProfileDto, req: Request) {
     try{
-
-      return await this.db.profile.update({
+      const data = await this.db.profile.update({
         where:{
           username
         },
         data: updateProfileDto
       });
+
+      data.password = null;
+
+      req['profile'] = data;
+
+      return data;
     }catch(err){
       throw new Error("Error:" + err);
     }
