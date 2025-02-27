@@ -480,6 +480,7 @@ export class JobsService {
 
   async updateJobPic(id: number, file: Buffer){
     try{
+      console.log("happen");
       const readStream = Readable.from(file)
       const job = await this.db.job.findUnique({
         where: {id},

@@ -131,7 +131,7 @@ const ProfileView = ({isView, user, handleModal}) => {
         </TouchableOpacity> : 
         <TouchableOpacity
           onPress={() => {
-            router.push('/(tabs)/home');
+            router.replace('/(tabs)/home');
           }}
           className='absolute top-[15%] left-6'
         >

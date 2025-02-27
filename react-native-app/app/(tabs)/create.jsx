@@ -23,7 +23,8 @@ const create = () => {
     address : "",
     description : "",
     img : null,
-    from : user.username
+    from : user.username,
+    current_attending: 0
   })
   const [selection, setSelection] = useState({ start: 0, end: 0});
   const [isModalVisible,setIsModalVisible] = useState(false);
@@ -98,7 +99,7 @@ const create = () => {
               <View className='w-[20%]'>
                 <Formfield
                   value={form.max_attending}
-                  handleChangeText={(e) => setForm({...form, max_attending: e})}
+                  handleChangeText={(e) => setForm({...form, max_attending: parseInt(e)})}
                   keyboardType={true}
                   inputType={true}
                 />

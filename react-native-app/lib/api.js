@@ -104,10 +104,8 @@ export const GetProfilePic = async (profile) => {
         throw new Error(error.message)
     }
 }
-export const CreateProfilePic = async (jobId,img) => {
+export const UpdateJobPic = async (jobId,img) => {
     try{
-        /*const convert = await fetch(img);
-        const blob = await convert.blob();*/
         const formData = new FormData();
         formData.append('file', {uri : img, type: "image/png", name: "upload.img"});
         const xhr = new XMLHttpRequest();
@@ -212,7 +210,7 @@ export const createJob = async (job,username) => {
         if(!response.ok){
             throw new Error(typeof data.message == "string" ? data.message : data.message[0])
         }   
-        const res = await CreateProfilePic(job.img,data.id);
+        await UpdateProfilePic(data.id,job.img);
         return data;
     }
     catch(error){
@@ -238,17 +236,14 @@ export const updateSaved = async (update, jobId,profileId, username) => {
 }
 export const getProfileView = async (username) => {
     try{
-        const response = await fetch(`${API_URL}/profiles/view/profile`,{
-            method: 'POST',
-            headers: {'Content-Type': "application/json"},
-            body: JSON.stringify({username}),
+        const response = await fetch(`${API_URL}/profiles/view/${username}`,{
+            method: 'GET',
             credentials: 'include'
-        })
+        });
         const data = await response.json();
         if (!response.ok) {
             throw new Error(typeof data.message == "string" ? data.message : data.message[0])
-        }
-        
+        };
         return data;
     }
     catch(error){

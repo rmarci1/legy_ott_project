@@ -8,7 +8,7 @@ import { getJobs, getSaved, getUser, pflogin } from '@/lib/api';
 import { useGlobalContext } from '@/context/GlobalProvider';
 
 const login = () => {
-  const {setIsLoading,setIsloggedIn,setUser,setToken,isLoggedIn,user,isLoading,isJobsIn,setIsJobsIn,setJobs,setIsSavedIn,isSavedIn,setSaved} = useGlobalContext();
+  const {setIsLoading,setIsloggedIn,setUser,isLoggedIn,user,isLoading,isJobsIn,setIsJobsIn,setJobs,setIsSavedIn,isSavedIn,setSaved} = useGlobalContext();
   useEffect(() => {
     if(isLoggedIn && !isLoading && isJobsIn && user && isSavedIn) router.push('/(tabs)/home');
   },[isLoggedIn,user,isJobsIn,isLoading,isSavedIn])
@@ -20,13 +20,12 @@ const login = () => {
   const submit = async () => {
       await pflogin(form.email,form.password).then((res) => {
           setIsLoading(true);
-          setToken(res.access_token);
-          getUser(res.access_token)
+          getUser()
           .then((result)=>{
             if(result){
                 setIsloggedIn(true);
-                setUser(result.profile);
-                getJobs(result.profile.username)
+                setUser(result);
+                getJobs(result.username)
                 .then((jobs) => {
                 if(jobs){
                   setJobs(jobs);
@@ -37,7 +36,7 @@ const login = () => {
                   setIsJobsIn(false);
                 }
                 });
-                getSaved(result.profile.username)
+                getSaved(result.username)
                 .then((save) => {
                 if(save){
                   setSaved(save);
