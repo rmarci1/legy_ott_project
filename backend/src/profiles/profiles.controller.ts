@@ -8,7 +8,7 @@ import {
   Delete,
   UploadedFile,
   UseInterceptors,
-  Request, UseGuards,
+  Request, UseGuards, Res,
 } from '@nestjs/common';
 import { ProfilesService } from './profiles.service';
 import { CreateProfileDto } from './dto/create-profile.dto';
@@ -16,10 +16,12 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ApiOperation } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '../Auth/guards/Auth-Guard';
+import { Response } from 'express';
+import { AuthController } from '../Auth/auth.controller';
 
 @Controller('profiles')
 export class ProfilesController {
-  constructor(private readonly profilesService: ProfilesService) {}
+  constructor(private readonly profilesService: ProfilesService, private readonly authController: AuthController) {}
 
   @ApiOperation({
     summary: 'Creates a profile and pushes it to the database'
@@ -60,10 +62,9 @@ export class ProfilesController {
   })
   @Patch('')
   @UseGuards(AuthGuard)
-  async update(@Request() req: Request, @Body() updateProfileDto: UpdateProfileDto) {
-    return await this.profilesService.update(req['profile']['username'], updateProfileDto, req);
+  async update(@Request() req: Request, @Body() updateProfileDto: UpdateProfileDto, @Res({ passthrough: true }) response: Response) {
+    await this.authController.login( await this.profilesService.update(req['profile']['username'],updateProfileDto), response)
   }
-
 
   @ApiOperation({
     summary: 'Deletes profile by username'

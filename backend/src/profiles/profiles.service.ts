@@ -6,6 +6,7 @@ import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { defaultProfilePicUrl } from '../constants';
 import { extractPublicId } from 'cloudinary-build-url';
 import {Readable} from 'stream';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class ProfilesService {
@@ -44,20 +45,19 @@ export class ProfilesService {
       throw new NotFoundException("Nem létezik ilyen profil");
     }
   }
-  async update(username: string, updateProfileDto: UpdateProfileDto, req: Request) {
+  async update(username: string, updateProfileDto: UpdateProfileDto) {
     try{
-      const data = await this.db.profile.update({
+      const profile = await this.db.profile.update({
         where:{
           username
         },
         data: updateProfileDto
       });
 
-      data.password = null;
+      profile.password = null;
 
-      req['profile'] = data;
+      return profile;
 
-      return data;
     }catch(err){
       throw new Error("Error:" + err);
     }
