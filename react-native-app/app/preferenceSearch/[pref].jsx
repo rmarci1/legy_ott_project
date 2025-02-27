@@ -35,7 +35,7 @@ const pref = () => {
   const filteringJobs = (query) => {
     console.log(query?.datebetween.end);
     const date = query?.date? new Date(query.date) : null;
-    setFilterJobs(jobs.filter((curr) =>{
+    setFilterJobs(jobs.filter((curr) => {
       const matchesDate = date ? curr.date.split('T')[0] === date.toISOString().split('T')[0] : true;
       const matchesLocation = query?.location ? query.location === curr.address : true;
       const matchesLocationBetween = query?.datebetween ? (query.datebetween.start <= curr.date) && (query.datebetween.end >= curr.date) : true

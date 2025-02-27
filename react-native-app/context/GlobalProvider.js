@@ -6,6 +6,7 @@ const GlobalContext = createContext()
 export const useGlobalContext = () => useContext(GlobalContext)
 
 const GlobalProvider = ({children}) => {
+    
     const [formPart,setFormPart] = useState(null);  
     const [isLoggedIn,setIsloggedIn] = useState(null);
     const [user,setUser] = useState(null);
@@ -17,57 +18,49 @@ const GlobalProvider = ({children}) => {
     const [saved, setSaved] = useState(null);
     const [isSavedIn, setIsSavedIn] = useState(false);
     const [token,setToken] = useState(null);
+
     useEffect(() => {
-        getToken()
-        .then((res) => {
-            if(res){
-                setIsLoading(true);
-                setToken(res);
-                getUser(res)
-                .then((result)=>{
-                    if(result){
-                        setIsloggedIn(true);
-                        setUser(result.profile);
-                        getJobs(result.profile.username)
-                        .then((jobs) => {
-                            if(jobs){
-                                setJobs(jobs);
-                                setIsJobsIn(true);
-                            }
-                            else{
-                                setJobs(null);
-                                setIsJobsIn(false);
-                            }
-                        });
-                        getSaved(result.profile.username)
-                        .then((save) => {
-                            if(save){
-                                setSaved(save);
-                                setIsSavedIn(true);
-                            }
-                            else{
-                                setSaved(null);
-                                setIsSavedIn(true);
-                            }
-                        })
+        getUser()
+        .then((result)=>{
+            console.log(result);
+            if(result){
+                setIsloggedIn(true);
+                setUser(result);
+                getJobs(result.username)
+                .then((jobs) => {
+                    if(jobs){
+                        setJobs(jobs);
+                        setIsJobsIn(true);
                     }
                     else{
-                        setIsloggedIn(false);
-                        setUser(null);
                         setJobs(null);
                         setIsJobsIn(false);
                     }
-                })
-                .catch((error) => {
-                    console.log(error)
-                })
-                .finally(() => {
-                    setIsLoading(false);
+                });
+                getSaved(result.username)
+                .then((save) => {
+                    if(save){
+                        setSaved(save);
+                        setIsSavedIn(true);
+                    }
+                    else{
+                        setSaved(null);
+                        setIsSavedIn(true);
+                    }
                 })
             }
             else{
-                setToken(null);
+                setIsloggedIn(false);
+                setUser(null);
+                setJobs(null);
+                setIsJobsIn(false);
             }
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+        .finally(() => {
+            setIsLoading(false);
         })
     }, [])
     return (

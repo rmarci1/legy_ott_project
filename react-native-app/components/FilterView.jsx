@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from 'react-native'
+import { View, Text, TouchableOpacity, Alert } from 'react-native'
 import React, { useState } from 'react'
 import { LinearGradient } from 'expo-linear-gradient';
 import { AntDesign, Fontisto } from '@expo/vector-icons';
@@ -17,6 +17,10 @@ const FilterView = ({toggleFilterModal}) => {
     const [focused, setFocused] = useState("");
     const [currentButtonFocused,setCurrentButtonFocused] = useState("");
     const handlePreference = () => {
+        if(!preferences.location && !preferences.date && !preferences.datebetween.start){
+            Alert.alert("Hiba","Kérjük válassz egy feltételt!");
+            return;
+        }
         toggleFilterModal();
         router.push({ pathname: `/preferenceSearch/pref`, params : { data : JSON.stringify(preferences)}, });
     }
