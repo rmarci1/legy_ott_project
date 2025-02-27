@@ -20,7 +20,7 @@ export class JobsService {
         console.log('received DTO:', createJobDto)
         try{
           createJobDto.img = "";
-          await this.db.job.create({
+          return await this.db.job.create({
             data: {...createJobDto,
               date: new Date(createJobDto.date)
             }
@@ -72,9 +72,6 @@ export class JobsService {
               OR: [
                 {
                   date: { lt: today },
-                },
-                {
-                  max_attending: {lte: this.db.job.fields.current_attending}
                 }
               ],
             },
@@ -123,41 +120,6 @@ export class JobsService {
     }
     catch (error){
       throw new Error("Error: " + error);
-    }
-  }
-  
-  async findHistory(username : string){
-    const currentDay = new Date();
-    try{
-      return await this.db.job.findMany({
-        where : {
-          AND: [{
-            date: {lt: currentDay},
-            profiles: {
-              every : 
-              {
-                AND: [{
-                  profile:{
-                    username : username
-                  },
-                  isApplied: true
-                }]
-              }
-            }
-          }]
-        },
-        include:{
-          profiles:{
-            select:{
-              isApplied: true,
-              saveForLater: true  
-            }
-          }
-        }
-      })
-    }
-    catch(error){
-      throw new Error(error);
     }
   }
   async findAppliedJobs(username : string){
@@ -326,7 +288,6 @@ export class JobsService {
           }
         }
       });
-      console.log(jobs);
       return jobs;
     }
     catch(error){
@@ -479,7 +440,6 @@ export class JobsService {
   }
   async findSavedForLater(username: string){
     try{
-      console.log(username);
       const res = await this.db.job.findMany({
         where: {
           profiles: {
@@ -511,7 +471,6 @@ export class JobsService {
           },
         },
       });
-      console.log(res);
       return res;
     }
     catch{
