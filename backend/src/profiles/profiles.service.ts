@@ -11,7 +11,7 @@ import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class ProfilesService {
 
-  constructor(private readonly db: PrismaService, private readonly cloudinary: CloudinaryService){}
+  constructor(private readonly db: PrismaService, private readonly cloudinary: CloudinaryService, private jwtService: JwtService){}
 
   async create(createProfileDto: CreateProfileDto) {
     createProfileDto.profileImg = defaultProfilePicUrl;
@@ -54,10 +54,16 @@ export class ProfilesService {
         data: updateProfileDto
       });
 
-      profile.password = null;
-
-      return profile;
-
+      return {
+        access_token: await this.jwtService.signAsync(profile, {
+          secret: `${process.env.jwt_secret}`,
+          expiresIn: '1h'
+        }),
+        refresh_token: this.jwtService.sign(profile, {
+          expiresIn: '1d',
+          secret: `${process.env.refresh_secret}`,
+        })
+      };
     }catch(err){
       throw new Error("Error:" + err);
     }

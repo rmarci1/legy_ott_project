@@ -17,11 +17,10 @@ import { ApiOperation } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '../Auth/guards/Auth-Guard';
 import { Response } from 'express';
-import { AuthController } from '../Auth/auth.controller';
 
 @Controller('profiles')
 export class ProfilesController {
-  constructor(private readonly profilesService: ProfilesService, private readonly authController: AuthController) {}
+  constructor(private readonly profilesService: ProfilesService) {}
 
   @ApiOperation({
     summary: 'Creates a profile and pushes it to the database'
@@ -63,7 +62,17 @@ export class ProfilesController {
   @Patch('')
   @UseGuards(AuthGuard)
   async update(@Request() req: Request, @Body() updateProfileDto: UpdateProfileDto, @Res({ passthrough: true }) response: Response) {
-    await this.authController.login( await this.profilesService.update(req['profile']['username'],updateProfileDto), response)
+    const token = await this.profilesService.update(req['profile']['username'],updateProfileDto)
+    response.clearCookie('ac');
+    response.clearCookie('refreshToken');
+
+    response.cookie('ac', token.access_token, {
+      sameSite : false,
+      httpOnly: true,
+      expires: new Date(2322, 1, 1),
+    });
+    response.cookie('refresh_token', token.refresh_token, { httpOnly: true, sameSite : false });
+    return token;
   }
 
   @ApiOperation({
