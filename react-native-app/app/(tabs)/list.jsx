@@ -1,21 +1,25 @@
-import { View, Text, TouchableOpacity, Alert, FlatList } from 'react-native'
+import { View, Text, TouchableOpacity, Alert, Modal, RefreshControl } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useGlobalContext } from '@/context/GlobalProvider'
 import { Entypo, FontAwesome, Fontisto } from '@expo/vector-icons'
-import { getApplied, getHistorys } from '@/lib/api'
+import { getApplied, getHistorys, getSaved } from '@/lib/api'
 import JobDisplay from '@/components/JobDisplay'
 import images from '@/constants/images'
 import { FlashList } from '@shopify/flash-list'
 import EmptyState from '@/components/EmptyState'
+import CustomButton from '@/components/CustomButton'
+import ShowJob from '@/components/ShowJob'
+import { router } from 'expo-router'
 
 const list = () => {
-  const {user,jobs,setJobs,saved,setSaved} = useGlobalContext();
-  const [filterJobs,setFilterJobs] = useState(saved);
+  const {saved,handleSubmit} = useGlobalContext();
+  const [filterJobs,setFilterJobs] = useState([]);
   const [currentJob,setCurrentJob] = useState(null);
   const [readMore,setReadMore] = useState(false);
   const [currentPage,setCurrentPage] = useState("saved");
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [refreshing,setRefreshing] = useState(false);
   useEffect(() => {
     handleClick(currentPage);
   },[])
@@ -26,7 +30,7 @@ const list = () => {
   }, [saved])
   const pageStatus = async (title) => {
     if(title === "saved"){
-      return saved;
+      return await getSaved();
     }
     else if(title === "history"){
       return await getHistorys();
@@ -38,7 +42,6 @@ const list = () => {
   const handleClick = async (title) => {
     try{
       const response = await pageStatus(title);
-      console.log("res: ",response)
       setCurrentPage(title);
       setFilterJobs(response);
     }
@@ -49,6 +52,16 @@ const list = () => {
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
   }
+  const handleProfile = (username) => {
+      toggleModal();
+      router.push(`/profileSearch/${username}`);
+  }
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await handleClick(currentPage);
+    setRefreshing(false);
+  }
+  const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
   return (
     <SafeAreaView className=''>
       <View className={`min-h-full`}>
@@ -75,6 +88,12 @@ const list = () => {
                   image={images.google}
                   imageStyles="w-20 h-20 bg-orange-100"
                   containerStyles="border border-primary mt-6"
+                  handleSave={async (isLiked) => {
+                    if(!isLiked){
+                      await sleep(600);
+                    }
+                    handleClick(currentPage);
+                  }}
                 />
               </TouchableOpacity>
           </View>
@@ -111,7 +130,37 @@ const list = () => {
             title="Nem találtunk lehetőségeket"
           />
         )}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>
+        }
       />
+      <Modal
+        animationType='slide'
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={toggleModal}
+      >
+        <ShowJob
+          currentJob={currentJob}
+          readMore={readMore}
+          handleProfile={(username) => handleProfile(username)}      
+          toggleModal={() => toggleModal()}      
+        />
+        {
+          currentPage !== "history" && <View className='w-full p-5 self-center bg-gray-50 relative flex-1'>
+            <CustomButton
+              title={currentJob?.profiles[0].isApplied ? "Lemondás" : "Jelentkezés"}
+              handlePress={async () => {
+                setIsModalVisible(false);
+                await handleSubmit(!currentJob?.profiles[0].isApplied, currentJob?.id);
+                handleClick(currentPage);
+              }}
+              textStyles="text-white"
+              containerStyles={`${currentJob?.profiles[0].isApplied ? "bg-red-500" : "bg-primary"} w-[95%]`}
+            />
+          </View>
+        }
+      </Modal>
       </View>
     </SafeAreaView>
   )

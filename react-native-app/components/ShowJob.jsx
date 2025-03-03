@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { LinearGradient } from 'expo-linear-gradient'
 import JobDisplay from './JobDisplay'
@@ -13,12 +13,16 @@ import Rating from './Rating'
 const ShowJob = ({currentJob,readMore,toggleModal, handlePress, title, handleProfile,create}) => {
   const [whichButton,setWhichButton] = useState("description");
   const [showMore,setShowMore] = useState(false);
+  const [isLoading,setIsLoading] = useState(false);
   const [ratings,setRatings] = useState(null);
   useEffect(() => {
     if(!create){
       getRatings();
     }
   }, [])
+  useEffect(() => {
+    console.log(isLoading);
+  }, [isLoading])
   const renderItem = ({item}) => (
     <Rating
       handleProfile={(username) => handleProfile(username)}
@@ -26,8 +30,20 @@ const ShowJob = ({currentJob,readMore,toggleModal, handlePress, title, handlePro
     />
   )
   const getRatings = async () => {
-    const res = await getReviews(currentJob.from);
-    setRatings(res);
+    try{
+      setIsLoading(true);
+      const res = await getReviews(currentJob.from);
+      setRatings(res);
+    }
+    catch(error){
+      Alert.alert("Hiba",error.message);
+    }
+    finally{
+      setIsLoading(false);
+    }
+  }
+  const submit = async () => {
+
   }
   return (  
       <ScrollView className='h-[80%]'>
@@ -97,6 +113,16 @@ const ShowJob = ({currentJob,readMore,toggleModal, handlePress, title, handlePro
                                   renderItem={renderItem}
                                   keyExtractor={(item,index) => index.toString()}
                                   estimatedItemSize={10}
+                                  ListEmptyComponent={() => (
+                                    <View
+                                      className='min-h-full items-center justify-center'
+                                    > 
+                                    {isLoading? <ActivityIndicator size={60}/> : <EmptyView
+                                      close={true}
+                                      title="Nem találtunk ilyen profilt!"
+                                    />}
+                                   </View>
+                                  )}
                                 />
                               </View>}
                         </View>

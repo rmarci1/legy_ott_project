@@ -1,5 +1,6 @@
-import { getJobs, getSaved, getToken, getUser} from "@/lib/api";
+import { attending, getJobs, getSaved, getToken, getUser} from "@/lib/api";
 import {createContext, useContext, useEffect, useState} from "react"
+import { Alert } from "react-native";
 
 const GlobalContext = createContext()
 
@@ -62,6 +63,16 @@ const GlobalProvider = ({children}) => {
             setIsLoading(false);
         })
     }, [])
+
+    const handleSubmit = async (update,jobId) => {
+        try{    
+            await attending(jobId,update);
+            setJobs((prevJobs) => prevJobs.filter((job) => job.id !== jobId));
+        }
+        catch(error){
+            Alert.alert(error.message);
+        }
+    }
     return (
         <GlobalContext.Provider
             value = {{
@@ -82,7 +93,8 @@ const GlobalProvider = ({children}) => {
                 saved,
                 setSaved,
                 isSavedIn,
-                setIsSavedIn
+                setIsSavedIn,
+                handleSubmit
             }}
         >
             {children}

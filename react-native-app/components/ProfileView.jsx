@@ -5,7 +5,7 @@ import { AntDesign, Entypo, Feather, FontAwesome, Ionicons } from '@expo/vector-
 import ConvertType from './ConvertType'
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router'
-import { createReview, getAverageRating, getCanReview, updateProfile } from '@/lib/api'
+import { createReview, getAverageRating, getCanReview, updateProfile, UpdateProfilePic } from '@/lib/api'
 import { useGlobalContext } from '@/context/GlobalProvider'
 import ConvertText from './ConvertText'
 
@@ -130,6 +130,7 @@ const ProfileView = ({isView, viewed_user, handleModal}) => {
             quality : 0.3,
           })
       if (!result.canceled) {
+        await UpdateProfilePic(result.assets[0].uri);
         setUser({...viewed_user, profileImg : result.assets[0].uri});
       }
   }

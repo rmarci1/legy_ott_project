@@ -90,20 +90,6 @@ export const getJobs = async () => {
         throw new Error(error);
     }
 }
-export const GetProfilePic = async (profile) => {
-    try{
-        const response = await fetch(`${API_URL}/profilePic`,{
-            method: 'GET',
-            headers: {'Content-Type': 'application/json'},
-            credentials:'include'
-        });
-        const data = response.blob();
-        return data;
-    }
-    catch(error){
-        throw new Error(error.message)
-    }
-}
 export const UpdateJobPic = async (jobId,img) => {
     try{
         const formData = new FormData();
@@ -122,6 +108,34 @@ export const UpdateJobPic = async (jobId,img) => {
                 }
               };
               xhr.open("POST", `${API_URL}/jobs/${jobId}/updateJobPic`);
+              xhr.setRequestHeader('Content-Type', 'multipart/form-data');
+              xhr.send(formData);  
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
+    catch(error){
+        throw new Error(error)
+    }
+}
+export const UpdateProfilePic = async (img) => {
+    try{
+        const formData = new FormData();
+        formData.append('file', {uri : img, type: "image/png", name: "upload.img"});
+        const xhr = new XMLHttpRequest();
+
+        return new Promise((resolve,reject) => {
+            xhr.onreadystatechange = e => {
+                if (xhr.readyState !== 4) {
+                  return;
+                }
+                if (xhr.status === 201 || xhr.status === 0) {
+                  resolve(JSON.parse(xhr.responseText));
+                } else {
+                  reject("Request Failed");
+                }
+              };
+              xhr.open("POST", `${API_URL}/profiles/uploadProfilePic`);
               xhr.setRequestHeader('Content-Type', 'multipart/form-data');
               xhr.send(formData);  
         }).catch((error) => {
@@ -336,3 +350,22 @@ export const getCanReview = async (username) => {
         throw new Error(error.message);
     }
 }   
+export const attending = async (jobId, update) => {
+    try{
+        const response = await fetch(`${API_URL}/jobs/attend/${jobId}`,{
+            method: 'PATCH',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({update}),
+            credentials: 'include'
+        })
+        const data = await response.json();
+        console.log(response.ok);
+        if(!response.ok){
+            throw new Error(data.message);
+        }
+        return data;
+    }
+    catch(error){
+        throw new Error(error.message);
+    }
+}
