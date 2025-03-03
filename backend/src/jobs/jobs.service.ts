@@ -390,6 +390,8 @@ export class JobsService {
 
   async updateSave(username: string, id: number, profileId : number, body : {update : boolean}){
     try {
+      console.log("happen");
+      console.log("user: ",username, " id: ",id, " profileId: ", profileId, " body: ", body.update);
       const res = await this.db.jobProfile.findUnique({
         where: {
           profileId_jobId: {
@@ -494,14 +496,7 @@ export class JobsService {
       }
 
       const newPicUrl = await this.cloudinary.uploadImage(readStream);
-      const update = this.db.job.update({
-        where: {
-          id
-        },
-        data: {
-          img: newPicUrl.url
-        }
-      });
+      const update = this.update(id,{img: newPicUrl.ur})
       return update;
     }
     catch (err) {
@@ -531,5 +526,45 @@ export class JobsService {
     }catch(err){
       throw new Error("error: " + err)
     }
+  }
+  async canReview(username: string, review_username: string){
+    const currDate = new Date();
+    const res = await this.db.job.findFirst({
+      where: {
+        AND: [
+          {
+            profiles: {
+              some: {
+                profile: {
+                  username
+                },
+                isApplied: true
+              }
+            },
+            from: review_username
+          },
+          {
+            OR: [
+              {
+                date: { lt: currDate },
+              }
+            ],
+          },
+        ],
+      },
+      include:{
+        profiles: {
+          where: {
+            profile: {
+              username
+            }
+          }
+        }
+      }
+    });
+    if(res){
+      return true
+    }
+    return false;
   }
 }

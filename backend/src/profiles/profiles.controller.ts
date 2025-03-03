@@ -9,6 +9,7 @@ import {
   UploadedFile,
   UseInterceptors,
   Request, UseGuards,
+  Res,
 } from '@nestjs/common';
 import { ProfilesService } from './profiles.service';
 import { CreateProfileDto } from './dto/create-profile.dto';
@@ -16,6 +17,7 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ApiOperation } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '../Auth/guards/Auth-Guard';
+import { Response } from 'express';
 
 @Controller('profiles')
 export class ProfilesController {
@@ -51,8 +53,22 @@ export class ProfilesController {
   @Post('/uploadProfilePic')
   @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('file'))
-  async uploadProfilePic(@UploadedFile() file: Express.Multer.File, @Request() req: Request){
-    return this.profilesService.uploadProfilePic(req['profile']['username'], file.buffer);
+  async uploadProfilePic(@UploadedFile() file: Express.Multer.File, @Request() req: Request, @Res({passthrough: true}) response: Response){
+    const token = await this.profilesService.uploadProfilePic(req['profile']['username'], file.buffer);
+    response.clearCookie('ac');
+    response.clearCookie('refresh_token')
+
+    response.cookie('ac', token.access_token, {
+      sameSite: false,
+      httpOnly: true,
+      expires: new Date(2322,1,1),
+    })
+    response.cookie('refresh_token', token.refresh_token, {
+      httpOnly: true,
+      sameSite: false
+    })
+
+    return token;
   }
 
   @ApiOperation({
@@ -60,11 +76,25 @@ export class ProfilesController {
   })
   @Patch('')
   @UseGuards(AuthGuard)
-  async update(@Request() req: Request, @Body() updateProfileDto: UpdateProfileDto) {
-    return await this.profilesService.update(req['profile']['username'], updateProfileDto, req);
+  async update(@Request() req: Request, @Body() updateProfileDto: UpdateProfileDto, @Res({passthrough: true}) response: Response) {
+    const token = await this.profilesService.update(req['profile']['username'], updateProfileDto);
+
+    response.clearCookie('ac');
+    response.clearCookie('refresh_token')
+
+    response.cookie('ac', token.access_token, {
+      sameSite: false,
+      httpOnly: true,
+      expires: new Date(2322,1,1),
+    })
+    response.cookie('refresh_token', token.refresh_token, {
+      httpOnly: true,
+      sameSite: false
+    })
+
+    return token;
   }
-
-
+  
   @ApiOperation({
     summary: 'Deletes profile by username'
   })
@@ -73,5 +103,4 @@ export class ProfilesController {
   remove(@Request() req: Request) {
     return this.profilesService.remove(req['profile']['username']);
   }
-
 }

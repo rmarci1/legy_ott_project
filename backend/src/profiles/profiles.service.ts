@@ -6,11 +6,12 @@ import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { defaultProfilePicUrl } from '../constants';
 import { extractPublicId } from 'cloudinary-build-url';
 import {Readable} from 'stream';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class ProfilesService {
 
-  constructor(private readonly db: PrismaService, private readonly cloudinary: CloudinaryService){}
+  constructor(private readonly db: PrismaService, private readonly cloudinary: CloudinaryService, private jwtService: JwtService){}
 
   async create(createProfileDto: CreateProfileDto) {
     createProfileDto.profileImg = defaultProfilePicUrl;
@@ -44,26 +45,33 @@ export class ProfilesService {
       throw new NotFoundException("Nem létezik ilyen profil");
     }
   }
-  async update(username: string, updateProfileDto: UpdateProfileDto, req: Request) {
+  async update(username: string, updateProfileDto: UpdateProfileDto): Promise<{access_token: string, refresh_token: string}> {
     try{
-      const data = await this.db.profile.update({
+      const profile = await this.db.profile.update({
         where:{
           username
         },
         data: updateProfileDto
       });
 
-      data.password = null;
+      profile.password = null;
 
-      req['profile'] = data;
-
-      return data;
+      return {
+        access_token: await this.jwtService.signAsync(profile, {
+          secret: `${process.env.jwt_secret}`,
+          expiresIn: '1h'
+        }),
+        refresh_token: this.jwtService.sign(profile, {
+          expiresIn: '1d',
+          secret: `${process.env.refresh_secret}`,
+        })
+      };
     }catch(err){
       throw new Error("Error:" + err);
     }
   }
 
-  async uploadProfilePic(username: string, file: Buffer){
+  async uploadProfilePic(username: string, file: Buffer): Promise<{access_token: string, refresh_token: string}> {
     try{
         const readStream = Readable.from(file)
         const profile = await this.db.profile.findUnique({
@@ -77,14 +85,7 @@ export class ProfilesService {
           await this.cloudinary.destroyImage(publicId);
         }
         const newPicUrl = await this.cloudinary.uploadImage(readStream);
-        const update = this.db.profile.update({
-          where: {
-            username
-          },
-          data: {
-            profileImg: newPicUrl.url
-          }
-        });
+        const update = this.update(username,{profileImg: newPicUrl.url});
         return update;
       }
     catch (err) {
@@ -104,5 +105,5 @@ export class ProfilesService {
       throw new Error("Nem létezik ilyen profil")
     }
   }
-  
+
 }
