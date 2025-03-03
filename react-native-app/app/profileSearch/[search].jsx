@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity, Alert, Modal } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, Alert, Modal, ActivityIndicator } from 'react-native'
 import React,{ useState,useEffect } from 'react'
 import { useLocalSearchParams } from 'expo-router';
 import ProfileView from '@/components/ProfileView';
@@ -10,6 +10,7 @@ import EmptyView from '@/components/EmptyView';
 const profileSearch = () => {
   const [profile,setProfile] = useState(null);
   const [isModalVisible,setIsModalVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const query = useLocalSearchParams();
 
   const toggleModal = () => {
@@ -17,11 +18,15 @@ const profileSearch = () => {
   }
   const getProfile = async () => {
     try {
+      setIsLoading(true);
       const res = await getProfileView(query.search);
       setProfile(res);
     }
     catch(error){
       Alert.alert(error.message);
+    }
+    finally{
+      setIsLoading(false);
     }
   }
   useEffect(() => {
@@ -36,10 +41,14 @@ const profileSearch = () => {
             viewed_user={profile}
             isView={true}
           /> :
-          <EmptyView
-            close={true}
-            title="Nem találtunk ilyen profilt!"
-          />
+          <View
+            className='min-h-full items-center justify-center'
+          > 
+            {isLoading? <ActivityIndicator size={60}/> :  <EmptyView
+              close={true}
+              title="Nem találtunk ilyen profilt!"
+            />}
+          </View>
         }
       </ScrollView>
       <Modal

@@ -217,9 +217,9 @@ export const createJob = async (job) => {
         throw new Error(error.message);
     }
 }
-export const updateSaved = async (update, jobId,profileId) => {
+export const updateSaved = async (update, jobId) => {
     try{
-        const response = await fetch(`${API_URL}/jobs/updateSave/${jobId}/${profileId}`,{
+        const response = await fetch(`${API_URL}/jobs/updateSave/${jobId}`,{
             method : 'PATCH',
             headers: {'Content-Type' : "application/json"},
             body: JSON.stringify({update}),
@@ -319,33 +319,20 @@ export const updateProfile = async (update,type) => {
         throw new Error(error.message);
     }
 }
-/*export const CreateProfilePic = async (kep) => {
-    console.log(kep);
+export const getCanReview = async (username) => {
     try{
-        const signResponse = await fetch(`${API_URL}/profiles/test/test`,{
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({text : "test12"}),    
-        });
-        const test = await signResponse.json();
-        console.log(test);
-        const {signature,timestamp,api_key} = test;
-        console.log(api_key);
-        const data = new FormData();
-        data.append("file", {uri : kep, type: "image/png", name: "upload.jpg"});
-        data.append("api_key",api_key);
-        data.append("timestamp",timestamp);
-        data.append("signature", signature);
-        const response = await fetch("https://api.cloudinary.com/v1_1/drg0zbnak/image/upload", {
-            method: "POST",
-            body: data,
-        });
-        const result = await response.json();
-        console.log(result);
-        return result.secure_url;
+        console.log("first")
+        const response = await fetch(`${API_URL}/jobs/review/${username}`,{
+            method: 'GET',
+            credentials: 'include'
+        })
+        const data = await response.json();
+        if(!response.ok){
+            throw new Error(data.message);
+        }
+        return data;
     }
     catch(error){
-        console.log(error.message)
         throw new Error(error.message);
     }
-};*/
+}   

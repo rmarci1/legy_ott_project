@@ -14,10 +14,9 @@ const GlobalProvider = ({children}) => {
     const [jobs,setJobs] = useState(null);
     const [isJobsIn,setIsJobsIn] = useState(false);
     const [queryReturn,setQueryReturn] = useState(null);
-    const [historys,setHistorys] = useState(null);
+    const [attendedJobs, setAttendedJobs] = useState(null);
     const [saved, setSaved] = useState(null);
     const [isSavedIn, setIsSavedIn] = useState(false);
-    const [token,setToken] = useState(null);
 
     useEffect(() => {
         getUser()
@@ -80,10 +79,6 @@ const GlobalProvider = ({children}) => {
                 setIsJobsIn,
                 queryReturn,
                 setQueryReturn,
-                historys,
-                setHistorys,
-                token,
-                setToken,
                 saved,
                 setSaved,
                 isSavedIn,

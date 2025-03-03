@@ -1,15 +1,15 @@
-import { View, Text, Animated, TouchableOpacity, TextInput, Image, Modal } from 'react-native'
+import { View, Text, Animated, TouchableOpacity, TextInput, Image, Modal, Alert } from 'react-native'
 import React, { useRef, useState,useEffect } from 'react'
 import CustomButton from './CustomButton'
 import { AntDesign, Entypo, Feather, FontAwesome, Ionicons } from '@expo/vector-icons'
 import ConvertType from './ConvertType'
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router'
-import { createReview, getAverageRating, updateProfile } from '@/lib/api'
+import { createReview, getAverageRating, getCanReview, updateProfile } from '@/lib/api'
 import { useGlobalContext } from '@/context/GlobalProvider'
 import ConvertText from './ConvertText'
 
-const ProfileView = ({isView, viewed_user, handleModal,canReview}) => {
+const ProfileView = ({isView, viewed_user, handleModal}) => {
   const {user, setUser} = useGlobalContext();
   const [selection, setSelection] = useState({
       start: 0,
@@ -25,11 +25,14 @@ const ProfileView = ({isView, viewed_user, handleModal,canReview}) => {
   const [showMore,setshowMore] = useState(false);
   const [isExpand,setIsExpand] = useState(false); 
   const [editing,setEditing] = useState("");
+  const [animating,setAnimating] = useState(false);
   const [readMore,setReadMore] = useState(false);
   const [pressed, setPressed] = useState("");
   const [rating, setRating] = useState(0);
   const [isModalVisible,setIsModalVisible] = useState(false);
   const [editingState,setEditingState] = useState("");
+  const [canProfileReview, setCanProfileReview] = useState(false);
+  
   useEffect(() => {
     if(viewed_user.description.length > 50){
       setReadMore(true);
@@ -44,6 +47,10 @@ const ProfileView = ({isView, viewed_user, handleModal,canReview}) => {
     }).catch((error) => {
       throw new Error(error);
     })
+    canReview()
+    .catch((error) => {
+      Alert.alert("Hiba",error);
+    });
   },[])
   const slideAnim = useState(new Animated.Value(400))[0];
   const imageSlide = useRef(new Animated.Value(0.3)).current;
@@ -65,14 +72,14 @@ const ProfileView = ({isView, viewed_user, handleModal,canReview}) => {
     setIsExpand(!isExpand);
   }
   const toggleSlide = (curr) => {
+    setAnimating(true);
     if (!pressed) {
+      setPressed(curr);
       Animated.timing(slideAnim, {
         toValue: 0,
         duration: 800,
         useNativeDriver: true,
-      }).start(() => {
-        setPressed(curr);
-      });
+      }).start(() => setAnimating(false));
     } 
     else{
       if(curr != pressed){
@@ -86,7 +93,7 @@ const ProfileView = ({isView, viewed_user, handleModal,canReview}) => {
               toValue: 0,
               duration: 800,
               useNativeDriver: true,
-            }).start();
+            }).start(() => setAnimating(false));
           })
       }
       else{
@@ -95,6 +102,7 @@ const ProfileView = ({isView, viewed_user, handleModal,canReview}) => {
           duration: 800,
           useNativeDriver: true,
         }).start(() => {
+          setAnimating(false);
           setPressed("");
         });
       }
@@ -102,6 +110,17 @@ const ProfileView = ({isView, viewed_user, handleModal,canReview}) => {
   }
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
+  }
+  const canReview = async () => {
+    try{
+      console.log("happen")
+      const res = await getCanReview(viewed_user);
+      setCanProfileReview(res);
+    }
+    catch(error){
+      console.log(error);
+      throw new Error(error.message);
+    }
   }
   const openPicker = async () => {
       let result = await ImagePicker.launchImageLibraryAsync({
@@ -115,7 +134,7 @@ const ProfileView = ({isView, viewed_user, handleModal,canReview}) => {
       }
   }
   const reviewSubmit = async () => {
-    const res = await createReview({reviewed_un : viewed_user.username, reviewer_un: user.username, desc: reviewForm.desc, review: reviewForm.rating},viewed_user.username);
+    await createReview({reviewed_un : viewed_user.username, reviewer_un: user.username, desc: reviewForm.desc, review: reviewForm.rating},viewed_user.username);
   }
   return (
     <View>
@@ -222,7 +241,7 @@ const ProfileView = ({isView, viewed_user, handleModal,canReview}) => {
                     <AntDesign name="star" size={16} color="orange" />{rating.toFixed(2)}</Text>
                     </TouchableOpacity>
                     {
-                      !canReview &&  <TouchableOpacity
+                      canProfileReview &&  <TouchableOpacity
                         onPress={toggleModal}
                         activeOpacity={0.4}
                         className='rounded-xl flex-row items-center'
@@ -302,12 +321,14 @@ const ProfileView = ({isView, viewed_user, handleModal,canReview}) => {
               }
               <View className='flex-row mt-4 justify-between'>
                   <TouchableOpacity
+                    disabled={animating}
                     className='w-[45%] bg-primary rounded-xl h-[35px] items-center justify-center'
                     onPress={() => toggleSlide("onkentes")}
                   >
                     <Text className='text-white font-pregular'>Önkéntes</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
+                    disabled={animating}
                     onPress={() => toggleSlide("hirdeto")}
                     className='w-[45%] bg-orange-400 rounded-xl h-[35px] items-center justify-center'
                   >

@@ -20,11 +20,13 @@ const pref = () => {
   const [isModalVisible,setIsModalVisible] = useState(false);
   const query = useLocalSearchParams();
   const [queryState,setQueryState] = useState(null);
-  
+  const [isLoading,setIsLoading] = useState(false);
   useEffect(() => {
+    setIsLoading(true);
     let parsedData = query ? JSON.parse(query.data) : null;
     setQueryState(parsedData);
     filteringJobs(parsedData);
+    setIsLoading(false);
   }, [])
   const pathname = usePathname();
   const handleProfile = (username) => {
@@ -108,9 +110,14 @@ const pref = () => {
             </View>
         )}
         ListEmptyComponent={() => (
-            <EmptyView
+          <View
+            className='min-h-full items-center justify-center'
+          > 
+            {isLoading? <ActivityIndicator size={60}/> :  <EmptyView
+              close={true}
               title="Sajnos nem találtunk ilyen lehetőséget"
-            />
+            />}
+          </View>
         )}
         />
         </View>

@@ -7,6 +7,7 @@ import { getApplied, getHistorys } from '@/lib/api'
 import JobDisplay from '@/components/JobDisplay'
 import images from '@/constants/images'
 import { FlashList } from '@shopify/flash-list'
+import EmptyState from '@/components/EmptyState'
 
 const list = () => {
   const {user,jobs,setJobs,saved,setSaved} = useGlobalContext();
@@ -106,9 +107,9 @@ const list = () => {
           </View>
         )}
         ListEmptyComponent={() => (
-          <View>
-            
-          </View>
+          <EmptyState
+            title="Nem találtunk lehetőségeket"
+          />
         )}
       />
       </View>

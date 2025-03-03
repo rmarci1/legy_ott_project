@@ -24,7 +24,8 @@ const JobDisplay = ({image,containerStyles,item,imageStyles,handleUpdate,nameSty
      await update(item.profiles[0]?.saveForLater ? !item.profiles[0]?.saveForLater : true);
     }
     const update = async (isLiked) => {
-        await updateSaved(isLiked,item.id,user.id);
+        console.log(isLiked);
+        await updateSaved(isLiked,item.id);
         if(!isLiked) setSaved((curr) => curr.filter((savedItem) => savedItem.id !== item.id))
         else {
           setSaved((curr) => [...curr,{...item, profiles:[{isApplied: curr.isApplied,saveForLater:isLiked}]}]);
