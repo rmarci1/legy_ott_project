@@ -8,6 +8,7 @@ import images from '@/constants/images';
 import SearchInput from '@/components/SearchInput';
 import { Entypo } from '@expo/vector-icons';
 import ShowJob from '@/components/ShowJob';
+import { FlashList } from '@shopify/flash-list';
 
 const query = () => {
   const {user, queryReturn} = useGlobalContext();
@@ -21,7 +22,7 @@ const query = () => {
   return (
     <SafeAreaView className='h-full items-center'>
       <View className='w-[90%]'>
-        <FlatList
+        <FlashList
           data={queryReturn}
           keyExtractor={(item,index) => index.toString()}
           renderItem={({item}) => (

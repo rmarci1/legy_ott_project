@@ -113,7 +113,6 @@ const ProfileView = ({isView, viewed_user, handleModal}) => {
   }
   const canReview = async () => {
     try{
-      console.log("happen")
       const res = await getCanReview(viewed_user);
       setCanProfileReview(res);
     }

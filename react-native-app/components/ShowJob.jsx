@@ -9,20 +9,19 @@ import ConvertText from './ConvertText'
 import { FlashList } from '@shopify/flash-list'
 import { getReviews } from '@/lib/api'
 import Rating from './Rating'
+import EmptyView from './EmptyView'
 
 const ShowJob = ({currentJob,readMore,toggleModal, handlePress, title, handleProfile,create}) => {
   const [whichButton,setWhichButton] = useState("description");
   const [showMore,setShowMore] = useState(false);
   const [isLoading,setIsLoading] = useState(false);
   const [ratings,setRatings] = useState(null);
+  const [currJob,setCurrJob] = useState(currentJob);
   useEffect(() => {
     if(!create){
       getRatings();
     }
   }, [])
-  useEffect(() => {
-    console.log(isLoading);
-  }, [isLoading])
   const renderItem = ({item}) => (
     <Rating
       handleProfile={(username) => handleProfile(username)}
@@ -32,7 +31,7 @@ const ShowJob = ({currentJob,readMore,toggleModal, handlePress, title, handlePro
   const getRatings = async () => {
     try{
       setIsLoading(true);
-      const res = await getReviews(currentJob.from);
+      const res = await getReviews(currJob.from);
       setRatings(res);
     }
     catch(error){
@@ -41,9 +40,6 @@ const ShowJob = ({currentJob,readMore,toggleModal, handlePress, title, handlePro
     finally{
       setIsLoading(false);
     }
-  }
-  const submit = async () => {
-
   }
   return (  
       <ScrollView className='h-[80%]'>
@@ -62,9 +58,10 @@ const ShowJob = ({currentJob,readMore,toggleModal, handlePress, title, handlePro
                       <View className='mt-3 rounded-3xl px-2 justify-center items-center'>
                         <View className='w-[95%]'>
                           <JobDisplay
-                            item={currentJob}
+                            item={currJob}
                             image={images.google}
                             handleProfile={(username) => handleProfile(username)}
+                            handleModal={(isLiked) => setCurrJob({...currJob, profiles: [{isApplied: false, saveForLater: isLiked}]})}
                             imageStyles="w-16 h-16 bg-white"
                             nameStyle="text-green-400 text-sm"
                             titleStyle="text-white"
@@ -91,11 +88,11 @@ const ShowJob = ({currentJob,readMore,toggleModal, handlePress, title, handlePro
                           </View>
                           {whichButton == "description" ? <View>
                             <Text className='font-pbold text-white text-lg mt-8'>Feladat Leírása</Text>
-                              <Text className='text-white font-pregular mb-5 italic'>Helyszín: {currentJob?.address}</Text>
+                              <Text className='text-white font-pregular mb-5 italic'>Helyszín: {currJob?.address}</Text>
                               <View>
                                 <Text className='font-light text-white'>
                                   <ConvertText
-                                    text={readMore? !showMore? currentJob?.description.substring(0,100)+"..." : currentJob?.description : currentJob?.description}
+                                    text={readMore? !showMore? currJob?.description.substring(0,100)+"..." : currJob?.description : currJob?.description}
                                   /> 
                                 </Text>      
                                 {readMore && (

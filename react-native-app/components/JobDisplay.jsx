@@ -3,7 +3,7 @@ import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { Heart } from "lucide-react-native";
 import { updateSaved } from '@/lib/api';
 import { useGlobalContext } from '@/context/GlobalProvider';
-const JobDisplay = ({image,containerStyles,item,imageStyles,nameStyle,titleStyle,dateStyle,handleProfile, createing, handleSave}) => {
+const JobDisplay = ({image,containerStyles,item,imageStyles,nameStyle,titleStyle,dateStyle,handleProfile, createing, handleSave, handleModal}) => {
   const {setJobs}= useGlobalContext();
   const animatedValue = useRef(new Animated.Value(0.5)).current;
   const handleClick = async () => {
@@ -27,6 +27,7 @@ const JobDisplay = ({image,containerStyles,item,imageStyles,nameStyle,titleStyle
         await updateSaved(isLiked,item.id);
         setJobs((prevJobs) => prevJobs.map((job) => job.id !== item.id ? job : {...job, profiles: [{isApplied: false, saveForLater: isLiked}]}));
         if(handleSave) handleSave(isLiked);
+        handleModal(isLiked);
     }
   return (
         <View className={`rounded-3xl px-2 justify-center ${containerStyles}`}>

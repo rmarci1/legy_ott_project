@@ -10,6 +10,9 @@ import { Entypo, Ionicons } from '@expo/vector-icons';
 import ShowJob from '@/components/ShowJob';
 import CustomButton from '@/components/CustomButton';
 import EmptyView from '@/components/EmptyView';
+import EmptyState from '@/components/EmptyState';
+import FilterView from '@/components/FilterView';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const pref = () => {
   const {jobs} = useGlobalContext();
@@ -21,10 +24,13 @@ const pref = () => {
   const query = useLocalSearchParams();
   const [queryState,setQueryState] = useState(null);
   const [isLoading,setIsLoading] = useState(false);
+  const [preferences, setPreferences] = useState(null);
   useEffect(() => {
     setIsLoading(true);
     let parsedData = query ? JSON.parse(query.data) : null;
     setQueryState(parsedData);
+    setPreferences(parsedData);
+
     filteringJobs(parsedData);
     setIsLoading(false);
   }, [])
@@ -35,7 +41,6 @@ const pref = () => {
     else router.push(`/profileSearch/${username}`);
   }
   const filteringJobs = (query) => {
-    console.log(query?.datebetween.end);
     const date = query?.date? new Date(query.date) : null;
     setFilterJobs(jobs.filter((curr) => {
       const matchesDate = date ? curr.date.split('T')[0] === date.toISOString().split('T')[0] : true;
@@ -76,6 +81,7 @@ const pref = () => {
   )
   return (
     <SafeAreaView className='h-full relative'>
+      <GestureHandlerRootView className='flex-1'>
       <ScrollView className='flex-1'>
         <View className='w-[90%] min-h-[100vh] self-center'>
         <FlashList
@@ -111,10 +117,9 @@ const pref = () => {
         )}
         ListEmptyComponent={() => (
           <View
-            className='min-h-full items-center justify-center'
+            className='min-h-[80%] items-center justify-center'
           > 
-            {isLoading? <ActivityIndicator size={60}/> :  <EmptyView
-              close={true}
+            {isLoading? <ActivityIndicator size={60}/> :  <EmptyState
               title="Sajnos nem találtunk ilyen lehetőséget"
             />}
           </View>
@@ -130,7 +135,7 @@ const pref = () => {
         <ShowJob
           currentJob={currentJob}
           readMore={readMore}
-          handleProfile={(username) => handleProfile(username)}      
+          handleProfile={(username) => handleProfile(username, toggleModal)}      
           toggleModal={() => toggleModal()}
           title="Jelentkezés"
         />
@@ -143,7 +148,21 @@ const pref = () => {
           />
         </View>
       </Modal>
+      <Modal
+        animationType='slide'  
+        transparent={true}
+        visible={isFilterModalVisible}
+        onRequestClose={toggleFilterModal}
+      >
+        <ScrollView className='h-full'>
+          <FilterView
+            toggleFilterModal={toggleFilterModal}
+            currPreferences={preferences}
+          />
+        </ScrollView>
+      </Modal>
       </ScrollView>
+      </GestureHandlerRootView> 
     </SafeAreaView>
   )
 }

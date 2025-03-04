@@ -50,7 +50,7 @@ const list = () => {
     }
   }
   const toggleModal = () => {
-    setIsModalVisible(!isModalVisible);
+    setIsModalVisible((prev) => !prev);
   }
   const handleProfile = (username) => {
       toggleModal();
@@ -143,7 +143,7 @@ const list = () => {
         <ShowJob
           currentJob={currentJob}
           readMore={readMore}
-          handleProfile={(username) => handleProfile(username)}      
+          handleProfile={(username) => handleProfile(username, () => toggleModal)}      
           toggleModal={() => toggleModal()}      
         />
         {

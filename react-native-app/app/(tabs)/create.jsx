@@ -30,7 +30,7 @@ const create = () => {
   const [isModalVisible,setIsModalVisible] = useState(false);
   const [undoStates, setUndoStates] = useState([""]);
   const toggleModal = () => {
-    setIsModalVisible(!isModalVisible);
+    setIsModalVisible((prev) => !prev);
   }
   const handleConfirm = (selectedDate) => {
     setForm({...form,date : selectedDate});

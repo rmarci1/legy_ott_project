@@ -19,7 +19,7 @@ const welcome = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isModalVisible,setIsModalVisible] = useState(false);
   const toggleModal = () => {
-    setIsModalVisible(!isModalVisible);
+    setIsModalVisible((prev) => !prev);
   }
   const checking = () => {
     if(!form.name || !form.username){

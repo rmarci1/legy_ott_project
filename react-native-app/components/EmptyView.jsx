@@ -7,7 +7,7 @@ import { router } from 'expo-router';
 const EmptyView = ({title, close}) => {
   return (
     <View className='min-h-full items-center justify-center'>
-        {close && <View className='absolute top-[5%] left-5'>
+        {close && <View className='absolute top-[5%] left-0'>
                       <TouchableOpacity
                           onPress={() => {
                               router.replace('/(tabs)/home');

@@ -8,14 +8,14 @@ import Formfield from './Formfield';
 import CustomButton from './CustomButton';
 import { router, usePathname } from 'expo-router';
 
-const FilterView = ({toggleFilterModal}) => {
-    const [preferences, setPreferences] = useState({
+const FilterView = ({toggleFilterModal, currPreferences}) => {
+    const [preferences, setPreferences] = useState(currPreferences || {
         location : "",
         date : "",
-        datebetween: { start: null, end: null }
+        datebetween: { start: null, end: null },
+        betweenDay : " "
     })
     const [focused, setFocused] = useState("");
-    const [currentButtonFocused,setCurrentButtonFocused] = useState("");
     const handlePreference = () => {
         if(!preferences.location && !preferences.date && !preferences.datebetween.start){
             Alert.alert("Hiba","Kérjük válassz egy feltételt!");
@@ -24,6 +24,7 @@ const FilterView = ({toggleFilterModal}) => {
         toggleFilterModal();
         router.push({ pathname: `/preferenceSearch/pref`, params : { data : JSON.stringify(preferences)}, });
     }
+    const list = ["Budapest","Debrecen","Szeged","Győr","Veszprém"]
     return (
         <View className='items-center justify-center min-h-[98%]'>
                 <LinearGradient
@@ -50,88 +51,40 @@ const FilterView = ({toggleFilterModal}) => {
                 </View>
                 <View className='flex-row flex-wrap w-[85%] mt-5 self-center gap-2 gap-y-4'>
                     <PreferenceButton
-                    title="Budapest"
-                    handlePress={() => setPreferences({...preferences, location : "Budapest"})}
-                    />
-                    <PreferenceButton
-                    title="Debrecen"
-                    handlePress={() => setPreferences({...preferences, location : "Debrecen"})}
-                    />
-                    <PreferenceButton
-                    title="Szeged"
-                    handlePress={() => setPreferences({...preferences, location : "Szeged"})}
-                    />
-                    <PreferenceButton
-                    title="Győr"
-                    handlePress={() => setPreferences({...preferences, location : "Győr"})}
-                    />
-                    <PreferenceButton
-                    title="Veszprém"
-                    handlePress={() => setPreferences({...preferences, location : "Veszprém"})}
+                        titles={list}
+                        handlePress={(location) => setPreferences({...preferences, location : location})}
+                        type="location"
                     />
                 </View>
                 <View className='w-[90%] self-center'>
                     <Text className='text-white font-psemibold mt-8 text-lg'>Dátum</Text>
                     <Formfield
-                    otherStyles="mt-3"
-                    bgcolor="bg-[#292929]"
-                    bordercolor="border-white"
-                    dateColor="white"
-                    date={true}
-                    dateTextStyles="text-white"
-                    handleChangeText={(e) => {
-                        setPreferences({...preferences, date: e, datebetween: { start:null, end:null }});
-                        setCurrentButtonFocused("");
-                    }}
-                    value={preferences.date}
+                        otherStyles="mt-3"
+                        bgcolor="bg-[#292929]"
+                        bordercolor="border-white"
+                        dateColor="white"
+                        date={true}
+                        dateTextStyles="text-white"
+                        handleChangeText={(e) => {
+                            setPreferences({...preferences, betweenDay: "", date: e, datebetween: { start:null, end:null }});
+                        }}
+                        value={preferences.date}
                     />
                     <View className='flex-row flex-wrap mt-4 gap-2 gap-y-4'>
                     <PreferenceButton
-                        title="Következő 3 nap"
-                        isFocused={currentButtonFocused === "3 nap"}
-                        handlePress={() => {
-                        const endDate = new Date();
-                        endDate.setDate(endDate.getDate() + 3)
-                        setPreferences({...preferences, date: null, datebetween:{ start: new Date(), end: endDate}})
-                        setCurrentButtonFocused("3 nap");
+                        titles={["3 nap", "1 hét", "2 hét", "1 hónap"]}
+                        givenDay={preferences.betweenDay}
+                        handlePress={(day,title) => {
+                            const endDate = new Date();
+                            endDate.setDate(endDate.getDate() + day)
+                            if(title){
+                                setPreferences({...preferences,betweenDay: title, date: null, datebetween:{ start: new Date(), end: endDate}})
+                            }
+                            else{
+                                setPreferences({...preferences, betweenDay: "", date:null, datebetween: { start : null, end: null }});
+                            }
                         }}
-                    />
-                    <PreferenceButton
-                        title="1 hét"
-                        isFocused={currentButtonFocused === "1 hét"}
-                        handlePress={() => {
-                        const endDate = new Date();
-                        endDate.setDate(endDate.getDate() + 7)
-                        setPreferences({...preferences, date:null, datebetween:{ start: new Date(), end: endDate}})
-                        setCurrentButtonFocused("1 hét");
-                        }}
-                    />
-                    <PreferenceButton
-                        title="2 hét"
-                        isFocused={currentButtonFocused === "2 hét"}
-                        handlePress={() => {
-                        const endDate = new Date();
-                        endDate.setDate(endDate.getDate() + 14)
-                        setPreferences({...preferences,date:null,datebetween:{ start: new Date(), end: endDate}})
-                        setCurrentButtonFocused("2 hét");
-                        }}
-                    />
-                    <PreferenceButton
-                        title="1 hónap"
-                        isFocused={currentButtonFocused === "1 hónap"}
-                        handlePress={() => {
-                        const endDate = new Date();
-                        endDate.setDate(endDate.getDate() + 31);
-                        setPreferences({...preferences,date:null,datebetween:{ start: new Date(), end: endDate}});
-                        setCurrentButtonFocused("1 hónap");
-                        }}
-                    />
-                    <PreferenceButton
-                        title="X"
-                        handlePress={() => {
-                        setPreferences({...preferences, date:null, datebetween: { start : null, end: null }});
-                        setCurrentButtonFocused("");
-                        }}
+                        type="date"
                     />
                     </View>
                 </View>

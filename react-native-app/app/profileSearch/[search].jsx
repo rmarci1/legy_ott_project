@@ -16,6 +16,9 @@ const profileSearch = () => {
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible)
   }
+  useEffect(() => {
+    getProfile();
+  }, []);
   const getProfile = async () => {
     try {
       setIsLoading(true);
@@ -29,9 +32,6 @@ const profileSearch = () => {
       setIsLoading(false);
     }
   }
-  useEffect(() => {
-    getProfile();
-  }, [])
   return (
     <View className='h-full relative'>
       <ScrollView className='flex-1' keyboardShouldPersistTaps='handled'>

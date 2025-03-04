@@ -248,7 +248,7 @@ export const updateSaved = async (update, jobId) => {
         throw new Error(error.message);
     }
 }
-export const getProfileView = async () => {
+export const getProfileView = async (username) => {
     try{
         const response = await fetch(`${API_URL}/profiles/view/${username}`,{
             method: 'GET',

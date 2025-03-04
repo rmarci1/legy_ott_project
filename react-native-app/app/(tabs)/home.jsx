@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, TouchableOpacity, Modal, TouchableWithoutFeedback, Keyboard, RefreshControl, Alert } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import React, {useState } from 'react'
+import React, {useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useGlobalContext } from '@/context/GlobalProvider';
 import images from '@/constants/images';
@@ -17,7 +17,7 @@ import FilterView from '@/components/FilterView';
 import { getJobs } from '@/lib/api';
 
 const home = () => {
-  const {user,jobs,setJobs,handleSubmit} = useGlobalContext();
+  const {user,jobs,setJobs,handleSubmit,handleProfile} = useGlobalContext();
   console.log(jobs.length);
   const query = "";
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -25,16 +25,13 @@ const home = () => {
   const [currentJob,setCurrentJob] = useState(null);
   const [readMore,setReadMore] = useState(false);
   const [refreshing,setRefreshing] = useState(false);
+
   const toggleModal = () => {
-    setIsModalVisible(!isModalVisible);
+    setIsModalVisible((prev) => !prev);
   }
   const toggleFilterModal = () => {
     setIsFilterModalVisible(!isFilterModalVisible);
   } 
-  const handleProfile = (username) => {
-    toggleModal();
-    router.push(`/profileSearch/${username}`);
-  }
   const renderItem = ({item}) => (
     <View key={item}>
         <TouchableOpacity
@@ -118,7 +115,7 @@ const home = () => {
         <ShowJob
           currentJob={currentJob}
           readMore={readMore}
-          handleProfile={(username) => handleProfile(username)}      
+          handleProfile={(username) => handleProfile(username, () => toggleModal())}      
           toggleModal={() => toggleModal()}
           title="Jelentkezés"
         />

@@ -1,4 +1,5 @@
 import { attending, getJobs, getSaved, getToken, getUser} from "@/lib/api";
+import { router } from "expo-router";
 import {createContext, useContext, useEffect, useState} from "react"
 import { Alert } from "react-native";
 
@@ -73,6 +74,10 @@ const GlobalProvider = ({children}) => {
             Alert.alert(error.message);
         }
     }
+    const handleProfile = (username, toggleModal) => {
+        toggleModal();
+        router.push(`/profileSearch/${username}`);
+      }
     return (
         <GlobalContext.Provider
             value = {{
@@ -94,7 +99,8 @@ const GlobalProvider = ({children}) => {
                 setSaved,
                 isSavedIn,
                 setIsSavedIn,
-                handleSubmit
+                handleSubmit,
+                handleProfile
             }}
         >
             {children}
