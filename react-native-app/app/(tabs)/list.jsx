@@ -9,11 +9,11 @@ import images from '@/constants/images'
 import { FlashList } from '@shopify/flash-list'
 import EmptyState from '@/components/EmptyState'
 import CustomButton from '@/components/CustomButton'
-import ShowJob from '@/components/ShowJob'
+import ShowJob from '@/components/views/ShowJob'
 import { router } from 'expo-router'
 
 const list = () => {
-  const {saved,handleSubmit} = useGlobalContext();
+  const {saved,handleSubmit,handleProfile} = useGlobalContext();
   const [filterJobs,setFilterJobs] = useState([]);
   const [currentJob,setCurrentJob] = useState(null);
   const [readMore,setReadMore] = useState(false);
@@ -51,10 +51,6 @@ const list = () => {
   }
   const toggleModal = () => {
     setIsModalVisible((prev) => !prev);
-  }
-  const handleProfile = (username) => {
-      toggleModal();
-      router.push(`/profileSearch/${username}`);
   }
   const onRefresh = async () => {
     setRefreshing(true);

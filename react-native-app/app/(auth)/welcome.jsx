@@ -1,6 +1,6 @@
 import { View, Text, SafeAreaView,Alert, Modal } from 'react-native'
 import React, { useState } from 'react'
-import Formfield from '@/components/Formfield'
+import Formfield from '@/components/inputFields/Formfield'
 import Swiper from 'react-native-swiper'
 import CustomButton from '@/components/CustomButton'
 import { useGlobalContext } from '@/context/GlobalProvider'

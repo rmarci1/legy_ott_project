@@ -1,7 +1,7 @@
 import { View,ScrollView} from 'react-native'
 import React from 'react'
 import { useGlobalContext } from '@/context/GlobalProvider'
-import ProfileView from '@/components/ProfileView';
+import ProfileView from '@/components/views/ProfileView';
 
 const profile = () => {
   const {user,setUser} = useGlobalContext();

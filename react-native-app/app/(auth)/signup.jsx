@@ -1,14 +1,13 @@
 import { View, Text, SafeAreaView, TouchableOpacity, Image, Alert,Animated, Easing } from 'react-native'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import Formfield from '@/components/Formfield'
+import Formfield from '@/components/inputFields/Formfield'
 import CustomButton from '@/components/CustomButton';
 import images from '@/constants/images';
 import { router } from 'expo-router';
 import { useGlobalContext } from '@/context/GlobalProvider';
-import { registerpart1 } from '@/lib/api';
 
 const signup = () => {
-  const {formpart,setFormPart,user,setUser} = useGlobalContext();
+  const {setFormPart} = useGlobalContext();
 
   const [form,setForm] = useState({
     email : '',
@@ -52,8 +51,14 @@ const signup = () => {
   }
   const submit = async () => {
     try{
-      await registerpart1(form.email,form.password,form.confirmPassword)
-      
+      if(!form.email && !form.password && !form.confirmPassword){
+        Alert.alert("Hiba", "Az összes mezőt ki kell tölteni!");
+        return;
+      }
+      if(form.password !== form.confirmPassword){
+        Alert.alert("Hiba", "A jelszók nem egyeznek meg");
+        return;
+      }
       if(progress != 5){
         Alert.alert("Hiba", currentProblem);
         return;
@@ -88,6 +93,7 @@ const signup = () => {
       backgroundColor: getActiveColor(message)
     };
   }, [animatedValue,message]);
+
   return (
     <SafeAreaView className='h-full'>
       <View className='w-full min-h-[85vh] flex-1 justify-center items-center'>

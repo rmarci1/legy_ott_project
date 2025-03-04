@@ -3,12 +3,12 @@ import React, { useState } from 'react'
 import { LinearGradient } from 'expo-linear-gradient';
 import { AntDesign, Fontisto } from '@expo/vector-icons';
 import { TextInput } from 'react-native-gesture-handler';
-import PreferenceButton from './PreferenceButton';
-import Formfield from './Formfield';
-import CustomButton from './CustomButton';
+import PreferenceButton from '../PreferenceButton';
+import Formfield from '../inputFields/Formfield';
+import CustomButton from '../CustomButton';
 import { router, usePathname } from 'expo-router';
 
-const FilterView = ({toggleFilterModal, currPreferences}) => {
+const FilterView = ({toggleFilterModal, currPreferences, handleReload}) => {
     const [preferences, setPreferences] = useState(currPreferences || {
         location : "",
         date : "",
@@ -16,13 +16,18 @@ const FilterView = ({toggleFilterModal, currPreferences}) => {
         betweenDay : " "
     })
     const [focused, setFocused] = useState("");
+    const pathname = usePathname();
     const handlePreference = () => {
         if(!preferences.location && !preferences.date && !preferences.datebetween.start){
             Alert.alert("Hiba","Kérjük válassz egy feltételt!");
             return;
         }
         toggleFilterModal();
-        router.push({ pathname: `/preferenceSearch/pref`, params : { data : JSON.stringify(preferences)}, });
+        if(pathname.startsWith("/preferenceSearch")) {
+            router.setParams({data : JSON.stringify(preferences)});
+            handleReload();
+        }
+        else router.push({ pathname: `/preferenceSearch/pref`, params : { data : JSON.stringify(preferences)}, });
     }
     const list = ["Budapest","Debrecen","Szeged","Győr","Veszprém"]
     return (

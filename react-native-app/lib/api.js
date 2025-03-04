@@ -38,24 +38,6 @@ export const pflogin = async (email,password) => {
         throw new Error(error.message);
     }
 }
-export const registerpart1 = async (email,password,passwordAgain) => {
-    try{
-        const response = await fetch(`${API_URL}/reg1`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email,password,passwordAgain}),
-            credentials: 'include'
-        })
-        const data = await response.json();
-        if(!response.ok){
-            throw new Error(typeof data.message == "string" ? data.message : data.message[0])
-        }   
-        return data;
-    }
-    catch(error){
-        throw new Error(error.message);
-    }
-}
 export const getUser = async () => {
     try{ 
         const response = await fetch(`${API_URL}/auth/check-auth`,{

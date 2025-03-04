@@ -1,14 +1,14 @@
 import { View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { LinearGradient } from 'expo-linear-gradient'
-import JobDisplay from './JobDisplay'
+import JobDisplay from '../JobDisplay'
 import { AntDesign, Feather } from '@expo/vector-icons'
 import images from '@/constants/images'
-import CustomButton from './CustomButton'
-import ConvertText from './ConvertText'
+import CustomButton from '../CustomButton'
+import ConvertText from '../inputFields/ConvertText'
 import { FlashList } from '@shopify/flash-list'
 import { getReviews } from '@/lib/api'
-import Rating from './Rating'
+import Rating from '../Rating'
 import EmptyView from './EmptyView'
 
 const ShowJob = ({currentJob,readMore,toggleModal, handlePress, title, handleProfile,create}) => {

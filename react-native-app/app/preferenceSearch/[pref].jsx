@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity, Modal } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, Modal, RefreshControl, ActivityIndicator } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { router, useLocalSearchParams, usePathname } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -7,15 +7,14 @@ import { FlashList } from '@shopify/flash-list';
 import JobDisplay from '@/components/JobDisplay';
 import images from '@/constants/images';
 import { Entypo, Ionicons } from '@expo/vector-icons';
-import ShowJob from '@/components/ShowJob';
+import ShowJob from '@/components/views/ShowJob';
 import CustomButton from '@/components/CustomButton';
-import EmptyView from '@/components/EmptyView';
 import EmptyState from '@/components/EmptyState';
-import FilterView from '@/components/FilterView';
+import FilterView from '@/components/views/FilterView';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const pref = () => {
-  const {jobs} = useGlobalContext();
+  const {jobs,handleProfile} = useGlobalContext();
   const [filterJobs, setFilterJobs] = useState(null);
   const [currentJob,setCurrentJob] = useState(null);
   const [readMore,setReadMore] = useState(false);
@@ -25,20 +24,21 @@ const pref = () => {
   const [queryState,setQueryState] = useState(null);
   const [isLoading,setIsLoading] = useState(false);
   const [preferences, setPreferences] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const [refreshed, setRefreshed] = useState(false);
   useEffect(() => {
+    if(!refreshed) loadingData();
+    setRefreshed(true);
+  }, [refreshed])
+  const loadingData = () =>{
     setIsLoading(true);
     let parsedData = query ? JSON.parse(query.data) : null;
+    console.log(parsedData);
     setQueryState(parsedData);
     setPreferences(parsedData);
 
     filteringJobs(parsedData);
     setIsLoading(false);
-  }, [])
-  const pathname = usePathname();
-  const handleProfile = (username) => {
-    toggleModal();
-    if(pathname.startsWith("/profileSearch")) router.setParams({username});
-    else router.push(`/profileSearch/${username}`);
   }
   const filteringJobs = (query) => {
     const date = query?.date? new Date(query.date) : null;
@@ -49,6 +49,16 @@ const pref = () => {
       return matchesDate && matchesLocation && matchesLocationBetween
     }
     ));
+  }
+  const onRefresh = async () => {
+    try{
+      setRefreshing(true);
+      await loadingData();
+      setRefreshing(false);
+    }
+    catch(error){
+      throw new Error("Hiba",error.message);
+    }
   }
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
@@ -80,9 +90,8 @@ const pref = () => {
     </View>
   )
   return (
-    <SafeAreaView className='h-full relative'>
+    <SafeAreaView className='h-full'>
       <GestureHandlerRootView className='flex-1'>
-      <ScrollView className='flex-1'>
         <View className='w-[90%] min-h-[100vh] self-center'>
         <FlashList
           data={filterJobs}
@@ -114,8 +123,8 @@ const pref = () => {
                 {new Date(queryState?.datebetween.start).toISOString().split('T')[0]} - {new Date(queryState?.datebetween.end).toISOString().split('T')[0]}</Text></Text>}
              </View>
             </View>
-        )}
-        ListEmptyComponent={() => (
+          )}
+          ListEmptyComponent={() => (
           <View
             className='min-h-[80%] items-center justify-center'
           > 
@@ -123,7 +132,11 @@ const pref = () => {
               title="Sajnos nem találtunk ilyen lehetőséget"
             />}
           </View>
-        )}
+          )}
+          ListFooterComponent={<View style={{height: 60}}/>}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>
+          }
         />
         </View>
         <Modal
@@ -158,10 +171,10 @@ const pref = () => {
           <FilterView
             toggleFilterModal={toggleFilterModal}
             currPreferences={preferences}
+            handleReload={() => {setRefreshed(false)}}
           />
         </ScrollView>
       </Modal>
-      </ScrollView>
       </GestureHandlerRootView> 
     </SafeAreaView>
   )

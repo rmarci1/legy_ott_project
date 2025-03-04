@@ -1,24 +1,22 @@
 import { View, Text, ScrollView, TouchableOpacity, Modal, TouchableWithoutFeedback, Keyboard, RefreshControl, Alert } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import React, {useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useGlobalContext } from '@/context/GlobalProvider';
 import images from '@/constants/images';
-import { router } from 'expo-router';
-import ShowJob from '@/components/ShowJob';
+import ShowJob from '@/components/views/ShowJob';
 import { Ionicons } from '@expo/vector-icons';
-import SearchInput from '@/components/SearchInput';
-import { StatusBar } from 'expo-status-bar';
+import SearchInput from '@/components/inputFields/SearchInput';
 import EmptyState from '@/components/EmptyState';
 import { FlashList } from "@shopify/flash-list";
 import JobDisplay from '@/components/JobDisplay';
 import CustomButton from '@/components/CustomButton';
-import FilterView from '@/components/FilterView';
+import FilterView from '@/components/views/FilterView';
 import { getJobs } from '@/lib/api';
+import RenderJob from '@/components/RenderJob';
 
 const home = () => {
   const {user,jobs,setJobs,handleSubmit,handleProfile} = useGlobalContext();
-  console.log(jobs.length);
   const query = "";
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isFilterModalVisible,setIsFilterModalVisible] = useState(false);
@@ -33,27 +31,12 @@ const home = () => {
     setIsFilterModalVisible(!isFilterModalVisible);
   } 
   const renderItem = ({item}) => (
-    <View key={item}>
-        <TouchableOpacity
-          onPress={() => {
-            let curr = item.description.length;
-            if(curr > 100){
-              setReadMore(true);
-            }
-            setCurrentJob(item);
-            toggleModal();
-          }}
-          activeOpacity={0.5}
-        > 
-            <JobDisplay
-               key={item}
-               item={item}
-               image={images.google}
-               imageStyles="w-20 h-20 bg-orange-100"
-               containerStyles="border border-primary mt-6"
-            />
-        </TouchableOpacity>
-    </View>
+    <RenderJob
+      item={item}
+      toggleModal={() => toggleModal()}
+      handleCurrentJob={(job) => setCurrentJob(job)}
+      handleReadMore={(readMore) => setReadMore(readMore)}
+    />
   )
   const onRefresh = async () => {
     try{
@@ -72,7 +55,7 @@ const home = () => {
     >
     <SafeAreaView className='h-full items-center justify-center'>
       <GestureHandlerRootView className='flex-1'>
-      <StatusBar style='dark'/>
+      {/* <StatusBar style='dark'/> */ }
       <View className='w-[90%] min-h-[100vh] self-center'>
       <View>
           <Text className='font-pmedium mt-5'>Szia, <Text className='font-pbold'>{user.name}!</Text></Text>

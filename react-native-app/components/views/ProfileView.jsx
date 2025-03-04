@@ -1,13 +1,13 @@
 import { View, Text, Animated, TouchableOpacity, TextInput, Image, Modal, Alert } from 'react-native'
 import React, { useRef, useState,useEffect } from 'react'
-import CustomButton from './CustomButton'
+import CustomButton from '../CustomButton'
 import { AntDesign, Entypo, Feather, FontAwesome, Ionicons } from '@expo/vector-icons'
-import ConvertType from './ConvertType'
+import ConvertType from '../ConvertType'
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router'
 import { createReview, getAverageRating, getCanReview, updateProfile, UpdateProfilePic } from '@/lib/api'
 import { useGlobalContext } from '@/context/GlobalProvider'
-import ConvertText from './ConvertText'
+import ConvertText from '../inputFields/ConvertText'
 
 const ProfileView = ({isView, viewed_user, handleModal}) => {
   const {user, setUser} = useGlobalContext();
