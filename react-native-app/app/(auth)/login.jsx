@@ -1,6 +1,6 @@
 import { View, Text, SafeAreaView, TouchableOpacity, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import Formfield from '@/components/Formfield'
+import Formfield from '@/components/inputFields/Formfield'
 import CustomButton from '@/components/CustomButton';
 import images from '@/constants/images';
 import { router } from 'expo-router';
@@ -25,7 +25,7 @@ const login = () => {
             if(result){
                 setIsloggedIn(true);
                 setUser(result);
-                getJobs(result.username)
+                getJobs()
                 .then((jobs) => {
                 if(jobs){
                   setJobs(jobs);

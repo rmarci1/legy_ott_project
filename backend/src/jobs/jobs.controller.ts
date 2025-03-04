@@ -98,7 +98,7 @@ export class JobsController {
   @Patch('/updateSave/:jobId')
   @UseGuards(AuthGuard)
   updateSave(@Request() req: Request, @Param('jobId') id: string, @Body() body : {update : boolean}){
-    return this.jobsService.updateSave(req['profile']['username'], +id, +req['profile']['id'].username.id, body);
+    return this.jobsService.updateSave(req['profile']['username'], +id, +req['profile']['id'], body);
   }
   @ApiOperation({
     summary: 'Changes isApplied property to what the frontend sends for job(by Id) that the user(by username) wants to alter'
@@ -147,4 +147,12 @@ export class JobsController {
     return this.jobsService.findOne(+id);
   }
 
+  @ApiOperation({
+    summary: 'Returns true or false depending on if the user can review that profile based on previous archived jobs'
+  })
+  @UseGuards(AuthGuard)
+  @Get('/review/:reviewed_username')
+  canreview(@Request() req: Request, @Param('reviewed_username') reviewed_username){
+    return this.jobsService.canReview(req['profile']['username'], reviewed_username);
+  }
 }

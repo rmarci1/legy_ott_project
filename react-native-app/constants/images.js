@@ -11,4 +11,6 @@ import fetch from "../assets/images/fetch.jpg"
 import blur from "../assets/images/blur.png"
 import empty from "../assets/images/empty.png"
 import search from "../assets/images/search.png"
-export default { welcomebg, growing, communication, logo, dot, active_dot, expand, google, test, fetch, blur, empty, search};
+import emptyStar from "../assets/images/emptyStar.png"
+import activeStar from "../assets/images/activeStar.png"
+export default { welcomebg, growing, communication, logo, dot, active_dot, expand, google, test, fetch, blur, empty, search, emptyStar, activeStar};

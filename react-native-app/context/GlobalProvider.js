@@ -1,5 +1,7 @@
-import { getJobs, getSaved, getToken, getUser} from "@/lib/api";
+import { attending, getJobs, getSaved, getToken, getUser} from "@/lib/api";
+import { router } from "expo-router";
 import {createContext, useContext, useEffect, useState} from "react"
+import { Alert } from "react-native";
 
 const GlobalContext = createContext()
 
@@ -14,10 +16,9 @@ const GlobalProvider = ({children}) => {
     const [jobs,setJobs] = useState(null);
     const [isJobsIn,setIsJobsIn] = useState(false);
     const [queryReturn,setQueryReturn] = useState(null);
-    const [historys,setHistorys] = useState(null);
+    const [attendedJobs, setAttendedJobs] = useState(null);
     const [saved, setSaved] = useState(null);
     const [isSavedIn, setIsSavedIn] = useState(false);
-    const [token,setToken] = useState(null);
 
     useEffect(() => {
         getUser()
@@ -26,7 +27,7 @@ const GlobalProvider = ({children}) => {
             if(result){
                 setIsloggedIn(true);
                 setUser(result);
-                getJobs(result.username)
+                getJobs()
                 .then((jobs) => {
                     if(jobs){
                         setJobs(jobs);
@@ -63,6 +64,20 @@ const GlobalProvider = ({children}) => {
             setIsLoading(false);
         })
     }, [])
+
+    const handleSubmit = async (update,jobId) => {
+        try{    
+            await attending(jobId,update);
+            setJobs((prevJobs) => prevJobs.filter((job) => job.id !== jobId));
+        }
+        catch(error){
+            Alert.alert(error.message);
+        }
+    }
+    const handleProfile = (username, toggleModal) => {
+        toggleModal();
+        router.push(`/profileSearch/${username}`);
+      }
     return (
         <GlobalContext.Provider
             value = {{
@@ -80,14 +95,12 @@ const GlobalProvider = ({children}) => {
                 setIsJobsIn,
                 queryReturn,
                 setQueryReturn,
-                historys,
-                setHistorys,
-                token,
-                setToken,
                 saved,
                 setSaved,
                 isSavedIn,
-                setIsSavedIn
+                setIsSavedIn,
+                handleSubmit,
+                handleProfile
             }}
         >
             {children}

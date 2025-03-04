@@ -1,34 +1,43 @@
-import { View, Text, Animated, TouchableOpacity, TextInput, Image } from 'react-native'
+import { View, Text, Animated, TouchableOpacity, TextInput, Image, Modal, Alert } from 'react-native'
 import React, { useRef, useState,useEffect } from 'react'
-import CustomButton from './CustomButton'
-import { AntDesign, Entypo, Feather } from '@expo/vector-icons'
-import ConvertType from './ConvertType'
+import CustomButton from '../CustomButton'
+import { AntDesign, Entypo, Feather, FontAwesome, Ionicons } from '@expo/vector-icons'
+import ConvertType from '../ConvertType'
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router'
-import { getAverageRating } from '@/lib/api'
+import { createReview, getAverageRating, getCanReview, updateProfile, UpdateProfilePic } from '@/lib/api'
 import { useGlobalContext } from '@/context/GlobalProvider'
-import ConvertText from './ConvertText'
+import ConvertText from '../inputFields/ConvertText'
 
-const ProfileView = ({isView, user, handleModal}) => {
-  const {setUser} = useGlobalContext();
+const ProfileView = ({isView, viewed_user, handleModal}) => {
+  const {user, setUser} = useGlobalContext();
   const [selection, setSelection] = useState({
       start: 0,
       end : 0
   });
+  const [reviewForm,setReviewForm] = useState({
+    rating : 0,
+    desc : ""
+  })
   const [stashed, setStashed] = useState("");
   const [undoStates,setUndoStates] = useState([]);
   const [typingTimeout,setTypingTimeout] = useState(null);
   const [showMore,setshowMore] = useState(false);
   const [isExpand,setIsExpand] = useState(false); 
   const [editing,setEditing] = useState("");
+  const [animating,setAnimating] = useState(false);
   const [readMore,setReadMore] = useState(false);
   const [pressed, setPressed] = useState("");
   const [rating, setRating] = useState(0);
+  const [isModalVisible,setIsModalVisible] = useState(false);
+  const [editingState,setEditingState] = useState("");
+  const [canProfileReview, setCanProfileReview] = useState(false);
+  
   useEffect(() => {
-    if(user.description.length > 50){
+    if(viewed_user.description.length > 50){
       setReadMore(true);
     }
-    getAverageRating(user.username).then((res) => {
+    getAverageRating(viewed_user.username).then((res) => {
       if(res){
         setRating(res);
       }
@@ -38,6 +47,10 @@ const ProfileView = ({isView, user, handleModal}) => {
     }).catch((error) => {
       throw new Error(error);
     })
+    canReview()
+    .catch((error) => {
+      Alert.alert("Hiba",error);
+    });
   },[])
   const slideAnim = useState(new Animated.Value(400))[0];
   const imageSlide = useRef(new Animated.Value(0.3)).current;
@@ -59,14 +72,14 @@ const ProfileView = ({isView, user, handleModal}) => {
     setIsExpand(!isExpand);
   }
   const toggleSlide = (curr) => {
+    setAnimating(true);
     if (!pressed) {
+      setPressed(curr);
       Animated.timing(slideAnim, {
         toValue: 0,
         duration: 800,
         useNativeDriver: true,
-      }).start(() => {
-        setPressed(curr);
-      });
+      }).start(() => setAnimating(false));
     } 
     else{
       if(curr != pressed){
@@ -80,7 +93,7 @@ const ProfileView = ({isView, user, handleModal}) => {
               toValue: 0,
               duration: 800,
               useNativeDriver: true,
-            }).start();
+            }).start(() => setAnimating(false));
           })
       }
       else{
@@ -89,9 +102,23 @@ const ProfileView = ({isView, user, handleModal}) => {
           duration: 800,
           useNativeDriver: true,
         }).start(() => {
+          setAnimating(false);
           setPressed("");
         });
       }
+    }
+  }
+  const toggleModal = () => {
+    setIsModalVisible(!isModalVisible);
+  }
+  const canReview = async () => {
+    try{
+      const res = await getCanReview(viewed_user);
+      setCanProfileReview(res);
+    }
+    catch(error){
+      console.log(error);
+      throw new Error(error.message);
     }
   }
   const openPicker = async () => {
@@ -102,8 +129,12 @@ const ProfileView = ({isView, user, handleModal}) => {
             quality : 0.3,
           })
       if (!result.canceled) {
-        setUser({...user, profileImg : result.assets[0].uri});
+        await UpdateProfilePic(result.assets[0].uri);
+        setUser({...viewed_user, profileImg : result.assets[0].uri});
       }
+  }
+  const reviewSubmit = async () => {
+    await createReview({reviewed_un : viewed_user.username, reviewer_un: user.username, desc: reviewForm.desc, review: reviewForm.rating},viewed_user.username);
   }
   return (
     <View>
@@ -118,7 +149,7 @@ const ProfileView = ({isView, user, handleModal}) => {
               }), 
             }}>
               <Image
-                source={{uri : user.profileImg}}
+                source={{uri : viewed_user?.profileImg}}
                 resizeMode='cover'
                 className='w-full h-full'
               />
@@ -145,17 +176,28 @@ const ProfileView = ({isView, user, handleModal}) => {
                 <View className='w-[80%]'>
                   {
                     editing !== "name" ?<View className='flex-row'>
-                    <Text className='font-pregular text-xl text-black'>{user.name}</Text>
-                    {!isView && <TouchableOpacity onPress={() => setEditing("name")} className='font-pbold text-lg'>
+                    <Text className='font-pregular text-xl text-black'>{viewed_user.name}</Text>
+                    {!isView && <TouchableOpacity onPress={() => {                    
+                          setEditing("name");
+                          setEditingState(viewed_user?.name);
+                        }} 
+                        className='font-pbold text-lg'
+                      >
                       <AntDesign name="edit" size={24} color="black" />
                     </TouchableOpacity> }
                   </View> : <View className='flex-row items-center'>
                   <TextInput
                       className='font-pregular flex-1 text-lg border rounded-xl'
-                      value={user?.name || ""}
+                      value={viewed_user?.name || ""}
                       onChangeText={(e) => setUser((prevUser) => ({...prevUser, name: e}))}
                     />
-                    <TouchableOpacity onPress={() => setEditing("")} className='font-pbold text-lg'>
+                    <TouchableOpacity onPress={() => {
+                        if(editingState !== viewed_user?.name){
+                          updateProfile(viewed_user.name,"name");
+                        };
+                        setEditingState("");
+                        setEditing("");
+                      }} className='font-pbold text-lg'>
                       <AntDesign name="edit" size={20} color="gray" />
                     </TouchableOpacity>
                   </View>
@@ -163,36 +205,65 @@ const ProfileView = ({isView, user, handleModal}) => {
                   
                   { editing !== "username" ?
                   <View className='flex-row'>
-                    <Text className='font-plight text-sm'>{user.username}</Text>
-                    {!isView && <TouchableOpacity onPress={() => setEditing("username")} className='font-pbold text-lg'>
+                    <Text className='font-plight text-sm'>{viewed_user.username}</Text>
+                    {!isView && <TouchableOpacity onPress={() => {
+                      setEditing("username");
+                      setEditingState(viewed_user?.username);
+                      }} className='font-pbold text-lg'>
                         <AntDesign name="edit" size={16} color="gray" />
                     </TouchableOpacity>}
                   </View> : <View className='flex-row items-center'>
                     <TextInput
                       className='font-plight flex-1 text-sm underline border'
-                      value={user?.username || ""}
+                      value={viewed_user?.username || ""}
                       onChangeText={(e) => setUser((prevUser) => ({...prevUser, username: e}))}
                     />
-                    <TouchableOpacity onPress={() => setEditing("")} className='font-pbold text-lg'>
+                    <TouchableOpacity onPress={() => {
+                        if(editingState!==viewed_user?.username){
+                          updateProfile(viewed_user?.username,"username");
+                        }
+                        setEditing("");
+                        setEditingState("");
+                      }} 
+                      className='font-pbold text-lg'>
                       <AntDesign name="edit" size={20} color="green" />
                     </TouchableOpacity>
                   </View>
                   }
                 </View>
-                {rating >= 1 && <TouchableOpacity
-                  onPress={handleModal}
-                  activeOpacity={0.8}
-                >
-                  <Text className='font-pregular text-lg mt-2'>
-                  <AntDesign name="star" size={16} color="orange" />{rating.toFixed(2)}</Text>
-                  </TouchableOpacity>}
+                {rating >= 1 && 
+                <View className='items-center justify-center'>
+                  <TouchableOpacity
+                    onPress={handleModal}
+                    activeOpacity={0.8}
+                  >
+                    <Text className='font-pregular text-lg mt-2'>
+                    <AntDesign name="star" size={16} color="orange" />{rating.toFixed(2)}</Text>
+                    </TouchableOpacity>
+                    {
+                      canProfileReview &&  <TouchableOpacity
+                        onPress={toggleModal}
+                        activeOpacity={0.4}
+                        className='rounded-xl flex-row items-center'
+                      >
+                        <Text className='font-plight mt-2 text-primary'>Értékelés</Text>
+                        <Ionicons name="create" size={24} color="black" className='ml-1' />
+                      </TouchableOpacity>
+                    }
+                </View>
+                  }
               </View>
               {
                 editing !== "description" ? <View>
                 <ConvertText
-                  text={((readMore && !showMore)) ? user?.description.substring(0,100)+"..." : user?.description}
+                  text={((readMore && !showMore)) ? viewed_user?.description.substring(0,100)+"..." : viewed_user?.description}
                 />
-                {(!isView) && <TouchableOpacity onPress={() => setEditing("description")} className='font-pbold text-lg'>
+                {(!isView) && <TouchableOpacity onPress={() => {
+                    setEditing("description");
+                    setEditingState(viewed_user?.description);
+                    }} 
+                    className='font-pbold text-lg'
+                  >
                   <AntDesign name="edit" size={24} color="black" />
                 </TouchableOpacity>}
                 {readMore && <TouchableOpacity
@@ -205,8 +276,8 @@ const ProfileView = ({isView, user, handleModal}) => {
                   <View className='border-b border-gray-300 mt-4'/>
                     <ConvertType
                       selection={selection}
-                      description={user?.description || ""}
-                      handleForm={(e) =>setUser({...user, description: e})}
+                      description={viewed_user?.description || ""}
+                      handleForm={(e) =>setUser({...viewed_user, description: e})}
                       undoStates={undoStates}
                       handleSelection={(e) => setSelection(e)}
                       handleUndoStates={(e) => setSelection(e)}
@@ -216,7 +287,7 @@ const ProfileView = ({isView, user, handleModal}) => {
                   <View className='border-b border-gray-300'/>
                   <TextInput
                     className='flex-1 font-pmedium mt-5'
-                    value={user?.description || ""}
+                    value={viewed_user?.description || ""}
                     onChangeText={(e) => {
                       setUser((prevUser) => ({...prevUser, description : e}))
                       if(typingTimeout){
@@ -237,19 +308,27 @@ const ProfileView = ({isView, user, handleModal}) => {
                     multiline
                   />
                   <CustomButton
-                    handlePress={() => setEditing("")}
+                    handlePress={() => {
+                      if(editingState !== viewed_user?.description){
+                        updateProfile(viewed_user?.description,"description");
+                      }
+                      setEditing("");
+                      setEditingState("");
+                    }}
                     title="Módosítás"
                   />
                 </View>
               }
               <View className='flex-row mt-4 justify-between'>
                   <TouchableOpacity
+                    disabled={animating}
                     className='w-[45%] bg-primary rounded-xl h-[35px] items-center justify-center'
                     onPress={() => toggleSlide("onkentes")}
                   >
                     <Text className='text-white font-pregular'>Önkéntes</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
+                    disabled={animating}
                     onPress={() => toggleSlide("hirdeto")}
                     className='w-[45%] bg-orange-400 rounded-xl h-[35px] items-center justify-center'
                   >
@@ -271,6 +350,68 @@ const ProfileView = ({isView, user, handleModal}) => {
                 </Animated.View>
               }
             </View>
+          </View>
+          <View className='flex-1 justify-end items-center'>
+            <Modal
+              animationType='slide'
+              transparent={true}
+              visible={isModalVisible}
+              onRequestClose={toggleModal}
+            >
+              <View className='min-h-[40vh] bg-white absolute bottom-0 w-full rounded-t-2xl'>
+                <View className='w-[85%] self-center'>
+                  <TouchableOpacity
+                    onPress={toggleModal}
+                    className=''
+                  >
+                    <Text className='text-xl font-pmedium text-center mt-4'>Írd meg az értékelésedet</Text>
+                  </TouchableOpacity>
+                  <View className='flex-row self-center items-center justify-center gap-x-2 my-4'>
+                      <TouchableOpacity
+                        onPress={() => setReviewForm({...reviewForm, rating: 1})}
+                      >
+                        <FontAwesome name="star" size={56} color="#FFD02B"/>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => setReviewForm({...reviewForm, rating : 2})}
+                      >
+                        <FontAwesome name="star" size={56} color={reviewForm.rating >= 2 ? "#FFD02B" : "gray"} className='mx-1' />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => setReviewForm({...reviewForm, rating : 3 })}
+                      >
+                        <FontAwesome name="star" size={56} color={reviewForm.rating >= 3 ? "#FFD02B" : "gray"} />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => setReviewForm({...reviewForm, rating : 4 })}
+                      >
+                        <FontAwesome name="star" size={56} color={reviewForm.rating >= 4 ? "#FFD02B" : "gray"} className='mx-1' />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() =>setReviewForm({...reviewForm, rating : 5 })}
+                      >
+                        <FontAwesome name="star" size={56} color={reviewForm.rating >= 5? "#FFD02B" : "gray"} />
+                      </TouchableOpacity>
+                  </View>
+                  <View className='h-[100px] rounded-xl border border-[#E5F0EA]'>
+                    <TextInput
+                      className='font-rmedium'
+                      placeholder='Írd meg az értékelésedet'
+                      onChangeText={(e) => {
+                        setReviewForm({...reviewForm, desc: e})
+                      }}
+                      multiline
+                    />
+                  </View>
+                  <CustomButton
+                    handlePress={reviewSubmit}
+                    containerStyles="bg-black mt-8"
+                    textStyles="text-white"
+                    title="Értékelés elkészítése"
+                  />
+                </View>
+              </View>
+            </Modal>
           </View>
     </View>
   )

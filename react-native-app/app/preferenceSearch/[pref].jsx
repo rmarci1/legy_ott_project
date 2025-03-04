@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity, Modal } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, Modal, RefreshControl, ActivityIndicator } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { router, useLocalSearchParams, usePathname } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -7,12 +7,14 @@ import { FlashList } from '@shopify/flash-list';
 import JobDisplay from '@/components/JobDisplay';
 import images from '@/constants/images';
 import { Entypo, Ionicons } from '@expo/vector-icons';
-import ShowJob from '@/components/ShowJob';
+import ShowJob from '@/components/views/ShowJob';
 import CustomButton from '@/components/CustomButton';
-import EmptyView from '@/components/EmptyView';
+import EmptyState from '@/components/EmptyState';
+import FilterView from '@/components/views/FilterView';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const pref = () => {
-  const {jobs} = useGlobalContext();
+  const {jobs,handleProfile} = useGlobalContext();
   const [filterJobs, setFilterJobs] = useState(null);
   const [currentJob,setCurrentJob] = useState(null);
   const [readMore,setReadMore] = useState(false);
@@ -20,20 +22,25 @@ const pref = () => {
   const [isModalVisible,setIsModalVisible] = useState(false);
   const query = useLocalSearchParams();
   const [queryState,setQueryState] = useState(null);
-  console.log(query);
+  const [isLoading,setIsLoading] = useState(false);
+  const [preferences, setPreferences] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const [refreshed, setRefreshed] = useState(false);
   useEffect(() => {
+    if(!refreshed) loadingData();
+    setRefreshed(true);
+  }, [refreshed])
+  const loadingData = () =>{
+    setIsLoading(true);
     let parsedData = query ? JSON.parse(query.data) : null;
+    console.log(parsedData);
     setQueryState(parsedData);
+    setPreferences(parsedData);
+
     filteringJobs(parsedData);
-  }, [])
-  const pathname = usePathname();
-  const handleProfile = (username) => {
-    toggleModal();
-    if(pathname.startsWith("/profileSearch")) router.setParams({username});
-    else router.push(`/profileSearch/${username}`);
+    setIsLoading(false);
   }
   const filteringJobs = (query) => {
-    console.log(query?.datebetween.end);
     const date = query?.date? new Date(query.date) : null;
     setFilterJobs(jobs.filter((curr) => {
       const matchesDate = date ? curr.date.split('T')[0] === date.toISOString().split('T')[0] : true;
@@ -42,6 +49,16 @@ const pref = () => {
       return matchesDate && matchesLocation && matchesLocationBetween
     }
     ));
+  }
+  const onRefresh = async () => {
+    try{
+      setRefreshing(true);
+      await loadingData();
+      setRefreshing(false);
+    }
+    catch(error){
+      throw new Error("Hiba",error.message);
+    }
   }
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
@@ -73,8 +90,8 @@ const pref = () => {
     </View>
   )
   return (
-    <SafeAreaView className='h-full relative'>
-      <ScrollView className='flex-1'>
+    <SafeAreaView className='h-full'>
+      <GestureHandlerRootView className='flex-1'>
         <View className='w-[90%] min-h-[100vh] self-center'>
         <FlashList
           data={filterJobs}
@@ -106,12 +123,20 @@ const pref = () => {
                 {new Date(queryState?.datebetween.start).toISOString().split('T')[0]} - {new Date(queryState?.datebetween.end).toISOString().split('T')[0]}</Text></Text>}
              </View>
             </View>
-        )}
-        ListEmptyComponent={() => (
-            <EmptyView
+          )}
+          ListEmptyComponent={() => (
+          <View
+            className='min-h-[80%] items-center justify-center'
+          > 
+            {isLoading? <ActivityIndicator size={60}/> :  <EmptyState
               title="Sajnos nem találtunk ilyen lehetőséget"
-            />
-        )}
+            />}
+          </View>
+          )}
+          ListFooterComponent={<View style={{height: 60}}/>}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>
+          }
         />
         </View>
         <Modal
@@ -123,7 +148,7 @@ const pref = () => {
         <ShowJob
           currentJob={currentJob}
           readMore={readMore}
-          handleProfile={(username) => handleProfile(username)}      
+          handleProfile={(username) => handleProfile(username, toggleModal)}      
           toggleModal={() => toggleModal()}
           title="Jelentkezés"
         />
@@ -136,7 +161,21 @@ const pref = () => {
           />
         </View>
       </Modal>
-      </ScrollView>
+      <Modal
+        animationType='slide'  
+        transparent={true}
+        visible={isFilterModalVisible}
+        onRequestClose={toggleFilterModal}
+      >
+        <ScrollView className='h-full'>
+          <FilterView
+            toggleFilterModal={toggleFilterModal}
+            currPreferences={preferences}
+            handleReload={() => {setRefreshed(false)}}
+          />
+        </ScrollView>
+      </Modal>
+      </GestureHandlerRootView> 
     </SafeAreaView>
   )
 }

@@ -3,8 +3,8 @@ import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { Heart } from "lucide-react-native";
 import { updateSaved } from '@/lib/api';
 import { useGlobalContext } from '@/context/GlobalProvider';
-const JobDisplay = ({image,containerStyles,item,imageStyles,handleUpdate,nameStyle,titleStyle,dateStyle,handleProfile, createing}) => {
-  const {setJobs,setSaved,user}= useGlobalContext();
+const JobDisplay = ({image,containerStyles,item,imageStyles,nameStyle,titleStyle,dateStyle,handleProfile, createing, handleSave, handleModal}) => {
+  const {setJobs}= useGlobalContext();
   const animatedValue = useRef(new Animated.Value(0.5)).current;
   const handleClick = async () => {
      Animated.sequence([
@@ -24,13 +24,11 @@ const JobDisplay = ({image,containerStyles,item,imageStyles,handleUpdate,nameSty
      await update(item.profiles[0]?.saveForLater ? !item.profiles[0]?.saveForLater : true);
     }
     const update = async (isLiked) => {
-        await updateSaved(isLiked,item.id,user.id,user.username);
-        if(!isLiked) setSaved((curr) => curr.filter((savedItem) => savedItem.id !== item.id))
-        else {
-          setSaved((curr) => [...curr,{...item, profiles:[{isApplied: curr.isApplied,saveForLater:isLiked}]}]);
-        }
+        await updateSaved(isLiked,item.id);
         setJobs((prevJobs) => prevJobs.map((job) => job.id !== item.id ? job : {...job, profiles: [{isApplied: false, saveForLater: isLiked}]}));
-  }
+        if(handleSave) handleSave(isLiked);
+        handleModal(isLiked);
+    }
   return (
         <View className={`rounded-3xl px-2 justify-center ${containerStyles}`}>
           <View className='flex-row mt-2'>
@@ -67,7 +65,7 @@ const JobDisplay = ({image,containerStyles,item,imageStyles,handleUpdate,nameSty
                 <Text className={`font-pbold text-lg ${titleStyle}`}>{item.name}</Text>
                 <Text className={`font-pregula text-base ${dateStyle}`}><Text className='text-blue-400'>
                   {typeof item.date === 'object' ? item.date.toISOString().split('T')[0] : item.date.split('T')[0]}</Text> × {item.current_attending} / {item.max_attending} fő
-                  </Text>
+                </Text>
             </View>
         </View>
     </View>

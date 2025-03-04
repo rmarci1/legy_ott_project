@@ -45,7 +45,7 @@ export class ProfilesService {
       throw new NotFoundException("Nem létezik ilyen profil");
     }
   }
-  async update(username: string, updateProfileDto: UpdateProfileDto) {
+  async update(username: string, updateProfileDto: UpdateProfileDto): Promise<{access_token: string, refresh_token: string}> {
     try{
       const profile = await this.db.profile.update({
         where:{
@@ -53,6 +53,8 @@ export class ProfilesService {
         },
         data: updateProfileDto
       });
+
+      profile.password = null;
 
       return {
         access_token: await this.jwtService.signAsync(profile, {
@@ -69,7 +71,7 @@ export class ProfilesService {
     }
   }
 
-  async uploadProfilePic(username: string, file: Buffer){
+  async uploadProfilePic(username: string, file: Buffer): Promise<{access_token: string, refresh_token: string}> {
     try{
         const readStream = Readable.from(file)
         const profile = await this.db.profile.findUnique({
@@ -83,14 +85,7 @@ export class ProfilesService {
           await this.cloudinary.destroyImage(publicId);
         }
         const newPicUrl = await this.cloudinary.uploadImage(readStream);
-        const update = this.db.profile.update({
-          where: {
-            username
-          },
-          data: {
-            profileImg: newPicUrl.url
-          }
-        });
+        const update = this.update(username,{profileImg: newPicUrl.url});
         return update;
       }
     catch (err) {
@@ -110,5 +105,5 @@ export class ProfilesService {
       throw new Error("Nem létezik ilyen profil")
     }
   }
-  
+
 }

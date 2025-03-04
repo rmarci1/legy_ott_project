@@ -1,14 +1,14 @@
 import { View, Text, ScrollView, TouchableOpacity, Alert, Image, TextInput, Modal } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import Formfield from '@/components/Formfield'
+import Formfield from '@/components/inputFields/Formfield'
 import { Entypo, Feather} from '@expo/vector-icons'
 import { router } from 'expo-router'
 import * as ImagePicker from 'expo-image-picker';
 import { createJob, CreateProfilePic } from '@/lib/api'
 import { useGlobalContext } from '@/context/GlobalProvider'
 import CustomButton from '@/components/CustomButton'
-import ShowJob from '@/components/ShowJob'
+import ShowJob from '@/components/views/ShowJob'
 import ConvertType from '@/components/ConvertType'
 
 const create = () => {
@@ -30,7 +30,7 @@ const create = () => {
   const [isModalVisible,setIsModalVisible] = useState(false);
   const [undoStates, setUndoStates] = useState([""]);
   const toggleModal = () => {
-    setIsModalVisible(!isModalVisible);
+    setIsModalVisible((prev) => !prev);
   }
   const handleConfirm = (selectedDate) => {
     setForm({...form,date : selectedDate});
@@ -61,7 +61,7 @@ const create = () => {
           <View className='flex-row mt-10'>
             <TouchableOpacity
               onPress={() => {
-                router.push('/(tabs)/home');
+                router.replace('/(tabs)/home');
               }}
             >
               <Entypo name="chevron-thin-left" size={24} color="black" />

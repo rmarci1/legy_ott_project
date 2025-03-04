@@ -1,45 +1,53 @@
-import { View, Text, ScrollView, TouchableOpacity, Alert, Modal } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, Alert, Modal, ActivityIndicator } from 'react-native'
 import React,{ useState,useEffect } from 'react'
 import { useLocalSearchParams } from 'expo-router';
-import ProfileView from '@/components/ProfileView';
+import ProfileView from '@/components/views/ProfileView';
 import { getProfileView } from '@/lib/api';
 import { AntDesign } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import EmptyView from '@/components/EmptyView';
+import EmptyView from '@/components/views/EmptyView';
 
 const profileSearch = () => {
   const [profile,setProfile] = useState(null);
   const [isModalVisible,setIsModalVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const query = useLocalSearchParams();
-
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible)
   }
+  useEffect(() => {
+    getProfile();
+  }, []);
   const getProfile = async () => {
     try {
+      setIsLoading(true);
       const res = await getProfileView(query.search);
       setProfile(res);
     }
     catch(error){
       Alert.alert(error.message);
     }
+    finally{
+      setIsLoading(false);
+    }
   }
-  useEffect(() => {
-    getProfile();
-  }, [])
   return (
     <View className='h-full relative'>
       <ScrollView className='flex-1' keyboardShouldPersistTaps='handled'>
         {
           profile? <ProfileView
             handleModal={() => toggleModal()}
-            user={profile}
+            viewed_user={profile}
             isView={true}
           /> :
-          <EmptyView
-            close={true}
-            title="Nem találtunk ilyen profilt!"
-          />
+          <View
+            className='min-h-full items-center justify-center'
+          > 
+            {isLoading? <ActivityIndicator size={60}/> :  <EmptyView
+              close={true}
+              title="Nem találtunk ilyen profilt!"
+            />}
+          </View>
         }
       </ScrollView>
       <Modal
@@ -59,15 +67,15 @@ const profileSearch = () => {
               borderRadius: 30
             }}
           > 
-          <View className='w-[90%] self-center'>
-            <TouchableOpacity
-              onPress={toggleModal}
-              className='absolute right-0 top-4 h-7 w-7 bg-[rgb(93,84,122)] opacity-70 rounded-3xl items-center justify-center'
-            >
-              <AntDesign name="close" size={18} color="white"/>
-            </TouchableOpacity>
-            <Text className='text-3xl font-pbold text-white mt-8 text-center'>Értékelések</Text>
-          </View>
+            <View className='w-[90%] self-center'>
+              <TouchableOpacity
+                onPress={toggleModal}
+                className='absolute right-0 top-4 h-7 w-7 bg-[rgb(93,84,122)] opacity-70 rounded-3xl items-center justify-center'
+              >
+                <AntDesign name="close" size={18} color="white"/>
+              </TouchableOpacity>
+              <Text className='text-3xl font-pbold text-white mt-8 text-center'>Értékelések</Text>
+            </View>
           </LinearGradient>
         </View> 
       </ScrollView>
