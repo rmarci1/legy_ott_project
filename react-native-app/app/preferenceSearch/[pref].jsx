@@ -4,14 +4,13 @@ import { router, useLocalSearchParams, usePathname } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useGlobalContext } from '@/context/GlobalProvider';
 import { FlashList } from '@shopify/flash-list';
-import JobDisplay from '@/components/JobDisplay';
-import images from '@/constants/images';
 import { Entypo, Ionicons } from '@expo/vector-icons';
 import ShowJob from '@/components/views/ShowJob';
 import CustomButton from '@/components/CustomButton';
 import EmptyState from '@/components/EmptyState';
 import FilterView from '@/components/views/FilterView';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import RenderJob from '@/components/RenderJob';
 
 const pref = () => {
   const {jobs,handleProfile} = useGlobalContext();
@@ -67,27 +66,12 @@ const pref = () => {
     setIsFilterModalVisible(!isFilterModalVisible);
   }
   const renderItem = ({item}) => (
-    <View key={item}>
-        <TouchableOpacity
-          onPress={() => {
-            let curr = item.description.length;
-            if(curr > 100){
-              setReadMore(true);
-            }
-            setCurrentJob(item);
-            toggleModal();
-          }}
-          activeOpacity={0.5}
-        > 
-            <JobDisplay
-               key={item}
-               item={item}
-               image={images.google}
-               imageStyles="w-20 h-20 bg-orange-100"
-               containerStyles="border border-primary mt-6"
-            />
-        </TouchableOpacity>
-    </View>
+    <RenderJob
+      item={item}
+      toggleModal={() => toggleModal()}
+      handleCurrentJob={(job) => setCurrentJob(job)}
+      handleReadMore={(readMore) => setReadMore(readMore)}
+    />
   )
   return (
     <SafeAreaView className='h-full'>

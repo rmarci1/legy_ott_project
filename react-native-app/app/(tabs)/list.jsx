@@ -4,13 +4,11 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { useGlobalContext } from '@/context/GlobalProvider'
 import { Entypo, FontAwesome, Fontisto } from '@expo/vector-icons'
 import { getApplied, getHistorys, getSaved } from '@/lib/api'
-import JobDisplay from '@/components/JobDisplay'
-import images from '@/constants/images'
 import { FlashList } from '@shopify/flash-list'
 import EmptyState from '@/components/EmptyState'
 import CustomButton from '@/components/CustomButton'
 import ShowJob from '@/components/views/ShowJob'
-import { router } from 'expo-router'
+import RenderJob from '@/components/RenderJob'
 
 const list = () => {
   const {saved,handleSubmit,handleProfile} = useGlobalContext();
@@ -65,35 +63,14 @@ const list = () => {
         data={filterJobs}
         keyExtractor={(item,index) => index.toString()}
         estimatedItemSize={40}
-        renderItem={({item}) => (
-          <View className='w-[90%] self-center'>
-            <TouchableOpacity
-                onPress={() => {
-                  let curr = item.description.length;
-                  if(curr > 100){
-                    setReadMore(true);
-                  }
-                  setCurrentJob(item);
-                  toggleModal();
-                }}
-                activeOpacity={0.5}
-                className=''
-              >
-                <JobDisplay
-                  item={item}
-                  image={images.google}
-                  imageStyles="w-20 h-20 bg-orange-100"
-                  containerStyles="border border-primary mt-6"
-                  handleSave={async (isLiked) => {
-                    if(!isLiked){
-                      await sleep(600);
-                    }
-                    handleClick(currentPage);
-                  }}
-                />
-              </TouchableOpacity>
-          </View>
-        )}
+        renderItem={({item}) => 
+          <RenderJob
+            item={item}
+            toggleModal={() => toggleModal()}
+            handleCurrentJob={(job) => setCurrentJob(job)}
+            handleReadMore={(readMore) => setReadMore(readMore)}
+          />
+        }
         ListHeaderComponent={() => (
           <View className='flex-row justify-between mt-5'>
             <TouchableOpacity

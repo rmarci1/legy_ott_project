@@ -3,13 +3,11 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useGlobalContext } from '@/context/GlobalProvider';
-import images from '@/constants/images';
 import ShowJob from '@/components/views/ShowJob';
 import { Ionicons } from '@expo/vector-icons';
 import SearchInput from '@/components/inputFields/SearchInput';
 import EmptyState from '@/components/EmptyState';
 import { FlashList } from "@shopify/flash-list";
-import JobDisplay from '@/components/JobDisplay';
 import CustomButton from '@/components/CustomButton';
 import FilterView from '@/components/views/FilterView';
 import { getJobs } from '@/lib/api';

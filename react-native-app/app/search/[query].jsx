@@ -1,39 +1,13 @@
-import { View, Text, ScrollView, Modal, FlatList, TouchableOpacity } from 'react-native'
+import { View, Text, Modal, TouchableOpacity } from 'react-native'
 import React, {useState } from 'react'
 import { router, useLocalSearchParams } from 'expo-router'
 import { useGlobalContext } from '@/context/GlobalProvider';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import JobDisplay from '@/components/JobDisplay';
-import images from '@/constants/images';
 import SearchInput from '@/components/inputFields/SearchInput';
 import { Entypo } from '@expo/vector-icons';
 import ShowJob from '@/components/views/ShowJob';
 import { FlashList } from '@shopify/flash-list';
-const renderItem = ({item}) => {
-  return (
-    <View>
-      <TouchableOpacity
-          onPress={() => {
-            let curr = item.description.length;
-            if(curr > 100){
-              setReadMore(true);
-            }
-            setCurrentJob(item);
-            toggleModal();
-          }}
-          activeOpacity={0.5}
-          className=''
-      >
-        <JobDisplay
-          item={item}
-          image={images.google}
-          imageStyles="w-20 h-20 bg-orange-100"
-          containerStyles="border border-primary mt-6"
-        />
-      </TouchableOpacity>
-    </View>
-  )
-}
+import RenderJob from '@/components/RenderJob';
 const query = () => {
   const {user, queryReturn} = useGlobalContext();
   const [isModalVisible,setIsModalVisible] = useState(false);
@@ -43,6 +17,14 @@ const query = () => {
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
   }
+  const renderItem = ({item}) => (
+    <RenderJob
+      item={item}
+      toggleModal={() => toggleModal}
+      handleCurrentJob={(job) => setCurrentJob(job)}
+      handleReadMore={(readMore) => setReadMore(readMore)}
+    />
+  )
   return (
     <SafeAreaView className='h-full items-center justify-center'>
       <View className='w-[90%] flex-1'>

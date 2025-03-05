@@ -1,7 +1,7 @@
 import { View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { LinearGradient } from 'expo-linear-gradient'
-import JobDisplay from '../JobDisplay'
+import JobDisplay from './JobDisplay'
 import { AntDesign, Feather } from '@expo/vector-icons'
 import images from '@/constants/images'
 import CustomButton from '../CustomButton'

@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity } from 'react-native'
 import React from 'react'
-import JobDisplay from './JobDisplay';
+import JobDisplay from './views/JobDisplay';
 
 const RenderJob = ({item,toggleModal,handleReadMore,handleCurrentJob}) => {
   return (

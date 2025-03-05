@@ -3,7 +3,7 @@ import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { Heart } from "lucide-react-native";
 import { updateSaved } from '@/lib/api';
 import { useGlobalContext } from '@/context/GlobalProvider';
-const JobDisplay = ({image,containerStyles,item,imageStyles,nameStyle,titleStyle,dateStyle,handleProfile, createing, handleSave, handleModal}) => {
+const JobDisplay = ({containerStyles,item,imageStyles,nameStyle,titleStyle,dateStyle,handleProfile, createing, handleSave, handleModal}) => {
   const {setJobs}= useGlobalContext();
   const animatedValue = useRef(new Animated.Value(0.5)).current;
   const handleClick = async () => {
@@ -34,9 +34,9 @@ const JobDisplay = ({image,containerStyles,item,imageStyles,nameStyle,titleStyle
           <View className='flex-row mt-2'>
             <View className={`rounded-full items-center justify-center ${imageStyles}`}>
                 <Image
-                    source={image}
+                    source={{uri : item.img}}
                     resizeMode='cover'
-                    className='w-10 h-10 mt-1 rounded-full'
+                    className='w-14 h-14 mt-1 rounded-full'
                 />
             </View>
             <View className='ml-2 w-[75%]'>
