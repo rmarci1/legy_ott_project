@@ -1,8 +1,8 @@
-import { attending, getJobs, getSaved, getToken, getUser} from "@/lib/api";
+import { attending, getJobs, getSaved, getUser} from "@/lib/api";
 import { router } from "expo-router";
-import {createContext, useContext, useEffect, useState} from "react"
+import { createContext, useContext, useEffect, useState} from "react"
 import { Alert } from "react-native";
-
+import * as ImagePicker from 'expo-image-picker';
 const GlobalContext = createContext()
 
 export const useGlobalContext = () => useContext(GlobalContext)
@@ -76,7 +76,18 @@ const GlobalProvider = ({children}) => {
     const handleProfile = (username, toggleModal) => {
         toggleModal();
         router.push(`/profileSearch/${username}`);
-      }
+    }
+    const openPicker = async (handleChange) => {
+          let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: 'images',
+                allowsEditing: true,
+                aspect: [2,3],
+                quality : 0.3,
+              })
+          if (!result.canceled) {
+            handleChange(result.assets[0].uri);
+          }
+      } 
     return (
         <GlobalContext.Provider
             value = {{
@@ -104,6 +115,7 @@ const GlobalProvider = ({children}) => {
                 handleProfile,
                 query,
                 setQuery,
+                openPicker
             }}
         >
             {children}

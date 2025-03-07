@@ -153,12 +153,14 @@ const ProfileView = ({isView, viewed_user, handleModal}) => {
                 className='w-full h-full'
               />
           </Animated.View>
-        {!isView ? <TouchableOpacity
-          onPress={openPicker}
-          className='absolute top-[15%] right-4 flex-row border p-2 items-center'
-        >
-          <Feather name="upload" size={20} color="black" />
-        </TouchableOpacity> : 
+        {!isView ? 
+          <TouchableOpacity
+            onPress={() => router.push('/additions/settings')}
+            className='absolute top-[15%] left-4 flex-row p-2 items-center'
+          >
+            <Feather name="settings" size={30} color="black" />
+          </TouchableOpacity>
+        : 
         <TouchableOpacity
           onPress={() => {
             router.replace('/(tabs)/home');
@@ -230,27 +232,29 @@ const ProfileView = ({isView, viewed_user, handleModal}) => {
                   </View>
                   }
                 </View>
-                {rating >= 1 && 
-                <View className='items-center justify-center'>
-                  <TouchableOpacity
-                    onPress={handleModal}
-                    activeOpacity={0.8}
-                  >
-                    <Text className='font-pregular text-lg mt-2'>
-                    <AntDesign name="star" size={16} color="orange" />{rating.toFixed(2)}</Text>
-                    </TouchableOpacity>
-                    {
-                      canProfileReview &&  <TouchableOpacity
-                        onPress={toggleModal}
-                        activeOpacity={0.4}
-                        className='rounded-xl flex-row items-center'
+                  <View className='flex-row'>
+                    {rating >= 0 && 
+                    <View className='items-center justify-center'>
+                      <TouchableOpacity
+                        onPress={handleModal}
+                        activeOpacity={0.8}
                       >
-                        <Text className='font-plight mt-2 text-primary'>Értékelés</Text>
-                        <Ionicons name="create" size={24} color="black" className='ml-1' />
-                      </TouchableOpacity>
+                        <Text className='font-pregular text-lg mt-2'>
+                        <AntDesign name="star" size={16} color="orange" />{rating.toFixed(2)}</Text>
+                        </TouchableOpacity>
+                        {
+                          canProfileReview &&  <TouchableOpacity
+                            onPress={toggleModal}
+                            activeOpacity={0.4}
+                            className='rounded-xl flex-row items-center'
+                          >
+                            <Text className='font-plight mt-2 text-primary'>Értékelés</Text>
+                            <Ionicons name="create" size={24} color="black" className='ml-1' />
+                          </TouchableOpacity>
+                        }
+                    </View>
                     }
-                </View>
-                  }
+                  </View>
               </View>
               {
                 editing !== "description" ? <View>
