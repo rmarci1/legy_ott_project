@@ -5,7 +5,7 @@ import Formfield from '@/components/inputFields/Formfield'
 import { Entypo, Feather} from '@expo/vector-icons'
 import { router, useFocusEffect, useLocalSearchParams, useNavigation } from 'expo-router'
 import * as ImagePicker from 'expo-image-picker';
-import { createJob } from '@/lib/api'
+import { createJob, updateJob } from '@/lib/api'
 import { useGlobalContext } from '@/context/GlobalProvider'
 import CustomButton from '@/components/CustomButton'
 import ShowJob from '@/components/views/ShowJob'
@@ -29,23 +29,21 @@ const create = () => {
   const [selection, setSelection] = useState({ start: 0, end: 0});
   const [isModalVisible,setIsModalVisible] = useState(false);
   const [undoStates, setUndoStates] = useState([""]);
-  const [unsavedChanges,setUnsavedChanges] = useState(false)
+  const [unsavedChanges,setUnsavedChanges] = useState(query? true : false);
   const [initialize,setInitialize] = useState(false);
-  useEffect(() => {
-    console.log("saved: ",unsavedChanges);
-  }, [unsavedChanges])
-  const navigation = useNavigation();
+  const [modify, setModify] = useState(false);
   useFocusEffect(
     useCallback(() => {
       return () => {
-        if (query || unsavedChanges) {
+        if (unsavedChanges) {
+          console.log(unsavedChanges);
           Alert.alert(
             "Elvéted a változtatásokat?",
             "Vannak nem mentett változtatásaid, biztosan el akarsz menni?",
             [
-              { text: "Cancel", style: "cancel", onPress: () => {router.push('/create')} },
+              { text: "Vissza", style: "cancel", onPress: () => {router.push('/create')} },
               {
-                text: "Discard",
+                text: "Elvet",
                 style: "destructive",
                 onPress: () => {
                   setForm({name: "", max_attending : 1, date : new Date(), address : "",
@@ -59,17 +57,23 @@ const create = () => {
           );
         }
       }
-    }, [unsavedChanges, navigation])
+    }, [unsavedChanges])
   );
   useEffect(() => {
-    if(!unsavedChanges && initialize){
+    console.log("test:", !unsavedChanges && initialize && !modify);
+    if(!unsavedChanges && initialize && !modify){
       setUnsavedChanges(true);
     }
   }, [form])
+  
   useEffect(() => {
-    if(query) setForm({...query, date : new Date(query.date)});
+    if(query) {
+      setForm({...query, date : new Date(query.date), max_attending: parseInt(query.max_attending), current_attending: parseInt(query.current_attending)});
+      setModify(true);
+    }
     setInitialize(true);
   }, [query])
+
   const toggleModal = () => {
     setIsModalVisible((prev) => !prev);
   }
@@ -93,6 +97,40 @@ const create = () => {
     }
     catch(error){
       Alert.alert("Hiba",error.message)
+    }
+  }
+  const handleDelete = async () => {
+    try{
+    }
+    catch(error){
+      Alert.alert("Hiba", error.message);
+    }
+  }
+  const handleUpdate = async () => {
+    try{
+      const updatedFields = Object.fromEntries(
+        Object.entries(form).filter(([key,value]) => {
+          if(key === "date"){
+            return new Date(value).toISOString() !== new Date(query[key]).toISOString()
+          }
+          
+          return value !== query[key];
+        })
+      );
+      if(Object.keys(updatedFields).length === 0){
+        Alert.alert("Nincs változás","Változtass meg benne valamit");
+        return;
+      }
+      updateJob(query?.id,updatedFields);
+      await setForm({name: "", max_attending : 1, date : new Date(), address : "",
+        description : "", img : null, from : user.username, current_attending: 0});
+      await setQuery(null);
+      await setUnsavedChanges(false);
+      await toggleModal();
+      setModify(false);
+    }
+    catch(error){
+      Alert.alert("Hiba", error.message);
     }
   }
   return (
@@ -255,7 +293,7 @@ const create = () => {
         <View className='w-full p-5 self-center bg-gray-50 relative flex-1'>
           <CustomButton
             title={query ? "Szerkesztés" : "Véglegesítése"}
-            handlePress={submit}
+            handlePress={query? handleUpdate : submit}
             textStyles="text-white"
             containerStyles={`${query ? "bg-teal-400" : "bg-primary"} w-[95%] rounded-full`}
           />

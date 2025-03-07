@@ -366,3 +366,16 @@ export const attending = async (jobId, update) => {
         throw new Error(error.message);
     }
 }
+export const updateJob = async (jobId,update) => {
+    try{
+        const response = await fetch(`${API_URL}/jobs`,{
+            method : 'PATCH',
+            headers: {'Content-Type' : 'application/json'},
+            body: JSON.stringify(update),
+            credentials : "include"
+        })
+    }
+    catch(error){
+        throw new Error(error.message);
+    }
+}
