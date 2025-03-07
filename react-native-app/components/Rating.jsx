@@ -1,8 +1,10 @@
 import { View, Text, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
+import { useGlobalContext } from '@/context/GlobalProvider';
 
 const Rating = ({item,handleProfile}) => {
+  const {user} = useGlobalContext();
   const [showMoreRating,setShowMoreRating] = useState(false);
   const [readMoreRating,setReadMoreRating] = useState(false);
   useEffect(() => {
@@ -14,6 +16,7 @@ const Rating = ({item,handleProfile}) => {
     <View key={item} className='mt-5 w-[90%] self-center'>
       <View className='flex-row justify-between items-center'>
       <TouchableOpacity
+        disabled={user.username === item.reviewer_un}
         className='w-[70%]'
         onPress={() => handleProfile(item.reviewer_un)}
       >

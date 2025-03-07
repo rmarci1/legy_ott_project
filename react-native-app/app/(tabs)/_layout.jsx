@@ -34,7 +34,7 @@ const TabIcon = ({color,name,focused,containerStyles}) =>{
 const _layout = () => {
   return (
     <>  
-    <StatusBar style='auto'/>
+    <StatusBar style='dark'/>
         <Tabs
             screenOptions={{
                 tabBarShowLabel: false,
@@ -92,13 +92,9 @@ const _layout = () => {
                         transform: [{ rotate: '45deg' }],
                         }}
                     >   
-                        <TouchableOpacity
-                            onPress={() => router.push('/(tabs)/create')}
-                        >
                         <View style={{transform: [{rotate: '-45deg'}]}}>
                             <AntDesign name="plus" size={30} color="white" />
                         </View>
-                        </TouchableOpacity>
                     </View>
                 </View>
             ),

@@ -194,6 +194,22 @@ export const getSaved = async () => {
         throw new Error(error.message);
     }
 }
+export const getCreated = async () => {
+    try{
+        const response = await fetch(`${API_URL}/jobs/ads`,{
+            method: 'GET',
+            credentials : 'include'
+        })
+        const data = await response.json();
+        if(!response.ok){
+            throw new Error(data.message);
+        }
+        return data;
+    }   
+    catch(error){
+        throw new Error(error.message)
+    }
+}
 export const createJob = async (job) => {
     try{
         const response = await fetch(`${API_URL}/jobs`,{
@@ -317,7 +333,6 @@ export const updateProfile = async (update,type) => {
 }
 export const getCanReview = async (username) => {
     try{
-        console.log("first")
         const response = await fetch(`${API_URL}/jobs/review/${username}`,{
             method: 'GET',
             credentials: 'include'

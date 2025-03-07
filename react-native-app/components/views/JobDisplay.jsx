@@ -3,8 +3,8 @@ import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { Heart } from "lucide-react-native";
 import { updateSaved } from '@/lib/api';
 import { useGlobalContext } from '@/context/GlobalProvider';
-const JobDisplay = ({containerStyles,item,imageStyles,nameStyle,titleStyle,dateStyle,handleProfile, createing, handleSave, handleModal}) => {
-  const {setJobs}= useGlobalContext();
+const JobDisplay = ({containerStyles,item,imageStyles,nameStyle,titleStyle,dateStyle,handleJobProfile, createing, handleSave, handleModal, showJob, created}) => {
+  const {setJobs,user}= useGlobalContext();
   const animatedValue = useRef(new Animated.Value(0.5)).current;
   const handleClick = async () => {
      Animated.sequence([
@@ -21,7 +21,7 @@ const JobDisplay = ({containerStyles,item,imageStyles,nameStyle,titleStyle,dateS
          useNativeDriver: false,
        })
      ]).start();
-     await update(item.profiles[0]?.saveForLater ? !item.profiles[0]?.saveForLater : true);
+     await update(item.profiles? !item.profiles[0]?.saveForLater : true);
     }
     const update = async (isLiked) => {
         await updateSaved(isLiked,item.id);
@@ -34,7 +34,7 @@ const JobDisplay = ({containerStyles,item,imageStyles,nameStyle,titleStyle,dateS
           <View className='flex-row mt-2'>
             <View className={`rounded-full items-center justify-center ${imageStyles}`}>
                 <Image
-                    source={{uri : item.img}}
+                    source={{uri : item?.img}}
                     resizeMode='cover'
                     className='w-14 h-14 mt-1 rounded-full'
                 />
@@ -42,12 +42,13 @@ const JobDisplay = ({containerStyles,item,imageStyles,nameStyle,titleStyle,dateS
             <View className='ml-2 w-[75%]'>
                 <View className='flex-row justify-between'>
                   <TouchableOpacity
-                    onPress={() => handleProfile(item.from)}
+                    disabled={item?.from === user?.username || !showJob}
+                    onPress={() => handleJobProfile(item.from)}
                     activeOpacity={0.7}
                   >
-                    <Text className={`font-pregular ${nameStyle}`}>{item.from}</Text>
+                    <Text className={`font-pregular ${nameStyle}`}>{item?.from.length>20 && !showJob ? item.from?.substring(0,20)+"...": item?.from}</Text>
                   </TouchableOpacity>
-                  {!createing && <TouchableWithoutFeedback
+                  {(!createing && !created) && <TouchableWithoutFeedback
                     onPress={handleClick}
                   >
                   <Animated.View style={{
@@ -58,13 +59,13 @@ const JobDisplay = ({containerStyles,item,imageStyles,nameStyle,titleStyle,dateS
                       })
                     }]
                   }} pointerEvents="box-none">
-                    <Heart size={20} color={item.profiles[0]?.saveForLater ? "red" : "gray"} fill={item.profiles[0]?.saveForLater ? "red" : "none"} className='h-full'/>
+                    <Heart size={22} color={item.profiles && item.profiles[0]?.saveForLater ? "red" : "gray"} fill={item.profiles && item.profiles[0]?.saveForLater ? "red" : "none"} className='h-full'/>
                   </Animated.View>
                   </TouchableWithoutFeedback>}
                 </View>
-                <Text className={`font-pbold text-lg ${titleStyle}`}>{item.name}</Text>
+                <Text className={`font-pbold text-lg ${titleStyle}`}>{item?.name}</Text>
                 <Text className={`font-pregula text-base ${dateStyle}`}><Text className='text-blue-400'>
-                  {typeof item.date === 'object' ? item.date.toISOString().split('T')[0] : item.date.split('T')[0]}</Text> × {item.current_attending} / {item.max_attending} fő
+                  {typeof item?.date === 'object' ? item?.date.toISOString().split('T')[0] : item?.date.split('T')[0]}</Text> × {item?.current_attending} / {item?.max_attending} fő
                 </Text>
             </View>
         </View>

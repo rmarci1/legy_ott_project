@@ -1,17 +1,14 @@
-import { View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { LinearGradient } from 'expo-linear-gradient'
 import JobDisplay from './JobDisplay'
-import { AntDesign, Feather } from '@expo/vector-icons'
+import { AntDesign } from '@expo/vector-icons'
 import images from '@/constants/images'
-import CustomButton from '../CustomButton'
 import ConvertText from '../inputFields/ConvertText'
 import { FlashList } from '@shopify/flash-list'
 import { getReviews } from '@/lib/api'
 import Rating from '../Rating'
-import EmptyView from './EmptyView'
-
-const ShowJob = ({currentJob,readMore,toggleModal, handlePress, title, handleProfile,create}) => {
+const ShowJob = ({currentJob,readMore,toggleModal, handlingProfile,create,created}) => {
   const [whichButton,setWhichButton] = useState("description");
   const [showMore,setShowMore] = useState(false);
   const [isLoading,setIsLoading] = useState(false);
@@ -59,14 +56,15 @@ const ShowJob = ({currentJob,readMore,toggleModal, handlePress, title, handlePro
                         <View className='w-[95%]'>
                           <JobDisplay
                             item={currJob}
-                            image={images.google}
-                            handleProfile={(username) => handleProfile(username)}
+                            handleJobProfile={(username) => handlingProfile(username)}
                             handleModal={(isLiked) => setCurrJob({...currJob, profiles: [{isApplied: false, saveForLater: isLiked}]})}
                             imageStyles="w-16 h-16 bg-white"
                             nameStyle="text-green-400 text-sm"
                             titleStyle="text-white"
                             dateStyle="text-white"
                             createing={create}
+                            showJob={true}
+                            created={created}
                           />
                         </View>
                         <View className='w-[90%]'>
@@ -104,7 +102,7 @@ const ShowJob = ({currentJob,readMore,toggleModal, handlePress, title, handlePro
                                 </TouchableOpacity>
                                 )}                
                               </View>
-                            </View> : <View>
+                            </View> : 
                                 <FlashList
                                   data={ratings}
                                   renderItem={renderItem}
@@ -112,16 +110,16 @@ const ShowJob = ({currentJob,readMore,toggleModal, handlePress, title, handlePro
                                   estimatedItemSize={10}
                                   ListEmptyComponent={() => (
                                     <View
-                                      className='min-h-full items-center justify-center'
+                                      className='min-h-full items-center justify-center pt-[25%]'
                                     > 
-                                    {isLoading? <ActivityIndicator size={60}/> : <EmptyView
-                                      close={true}
-                                      title="Nem találtunk ilyen profilt!"
-                                    />}
+                                    {isLoading? <ActivityIndicator size={60}/> : <View>
+                                        <Text className='text-3xl text-white font-rlight text-center'>Nincs még értékelése ennek a felhasználónak</Text>
+                                      </View>
+                                    }
                                    </View>
                                   )}
                                 />
-                              </View>}
+                              }
                         </View>
                       </View>
                       <TouchableOpacity

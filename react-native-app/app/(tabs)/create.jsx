@@ -1,18 +1,18 @@
 import { View, Text, ScrollView, TouchableOpacity, Alert, Image, TextInput, Modal } from 'react-native'
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Formfield from '@/components/inputFields/Formfield'
 import { Entypo, Feather} from '@expo/vector-icons'
-import { router } from 'expo-router'
+import { router, useFocusEffect, useLocalSearchParams, useNavigation } from 'expo-router'
 import * as ImagePicker from 'expo-image-picker';
-import { createJob, CreateProfilePic } from '@/lib/api'
+import { createJob } from '@/lib/api'
 import { useGlobalContext } from '@/context/GlobalProvider'
 import CustomButton from '@/components/CustomButton'
 import ShowJob from '@/components/views/ShowJob'
 import ConvertType from '@/components/ConvertType'
 
 const create = () => {
-  const {user} = useGlobalContext();
+  const {user, query, setQuery} = useGlobalContext();
   const [readMore,setReadMore] = useState(false);
   const [typingTimeout, setTypingTimeout] = useState(null);
   const [stashed,setStashed] = useState("");
@@ -29,6 +29,47 @@ const create = () => {
   const [selection, setSelection] = useState({ start: 0, end: 0});
   const [isModalVisible,setIsModalVisible] = useState(false);
   const [undoStates, setUndoStates] = useState([""]);
+  const [unsavedChanges,setUnsavedChanges] = useState(false)
+  const [initialize,setInitialize] = useState(false);
+  useEffect(() => {
+    console.log("saved: ",unsavedChanges);
+  }, [unsavedChanges])
+  const navigation = useNavigation();
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        if (query || unsavedChanges) {
+          Alert.alert(
+            "Elvéted a változtatásokat?",
+            "Vannak nem mentett változtatásaid, biztosan el akarsz menni?",
+            [
+              { text: "Cancel", style: "cancel", onPress: () => {router.push('/create')} },
+              {
+                text: "Discard",
+                style: "destructive",
+                onPress: () => {
+                  setForm({name: "", max_attending : 1, date : new Date(), address : "",
+                    description : "", img : null, from : user.username, current_attending: 0});
+                  setInitialize(false);
+                  setUnsavedChanges(false);
+                  setQuery(null);
+                }
+              },
+            ]
+          );
+        }
+      }
+    }, [unsavedChanges, navigation])
+  );
+  useEffect(() => {
+    if(!unsavedChanges && initialize){
+      setUnsavedChanges(true);
+    }
+  }, [form])
+  useEffect(() => {
+    if(query) setForm({...query, date : new Date(query.date)});
+    setInitialize(true);
+  }, [query])
   const toggleModal = () => {
     setIsModalVisible((prev) => !prev);
   }
@@ -71,7 +112,9 @@ const create = () => {
           <Text className='text-xl font-semibold mt-3 ml-2'>Cím</Text>
           <Formfield
             value={form.name}
-            handleChangeText={(e) => setForm({...form, name: e})}
+            handleChangeText={(e) => {
+              setForm({...form, name: e});
+            }}
             otherStyles="mt-2"
           />
           <Text className='text-xl font-semibold mt-3 ml-2'>Nap</Text>
@@ -157,7 +200,7 @@ const create = () => {
           > 
             {form.img? (
               <Image
-                source={{uri : form.img}}
+                source={{uri: form.img}}
                 resizeMode='cover'
                 className='w-full h-64 rounded-2xl'
               />
@@ -187,6 +230,13 @@ const create = () => {
             containerStyles="bg-primary my-5"
             textStyles="text-white"
           />
+          {query && <CustomButton
+            title="Törlés"
+            handlePress={submit}
+            textStyles="text-white"
+            containerStyles="bg-red-400 w-[95%] rounded-full mb-5"
+          />
+        }
         </View>
       </ScrollView>
       <Modal
@@ -204,10 +254,10 @@ const create = () => {
         />
         <View className='w-full p-5 self-center bg-gray-50 relative flex-1'>
           <CustomButton
-            title="Véglegesítés"
+            title={query ? "Szerkesztés" : "Véglegesítése"}
             handlePress={submit}
             textStyles="text-white"
-            containerStyles="bg-primary w-[95%] rounded-full"
+            containerStyles={`${query ? "bg-teal-400" : "bg-primary"} w-[95%] rounded-full`}
           />
         </View>
       </Modal>

@@ -32,7 +32,6 @@ const pref = () => {
   const loadingData = () =>{
     setIsLoading(true);
     let parsedData = query ? JSON.parse(query.data) : null;
-    console.log(parsedData);
     setQueryState(parsedData);
     setPreferences(parsedData);
 

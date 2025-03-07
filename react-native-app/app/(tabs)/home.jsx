@@ -96,7 +96,7 @@ const home = () => {
         <ShowJob
           currentJob={currentJob}
           readMore={readMore}
-          handleProfile={(username) => handleProfile(username, () => toggleModal())}      
+          handlingProfile={(username) => handleProfile(username, () => toggleModal())}      
           toggleModal={() => toggleModal()}
           title="Jelentkezés"
         />
