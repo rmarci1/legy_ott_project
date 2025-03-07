@@ -5,7 +5,7 @@ import Formfield from '@/components/inputFields/Formfield'
 import { Entypo, Feather} from '@expo/vector-icons'
 import { router, useFocusEffect, useLocalSearchParams, useNavigation } from 'expo-router'
 import * as ImagePicker from 'expo-image-picker';
-import { createJob, updateJob } from '@/lib/api'
+import { createJob, deleteJob, updateJob } from '@/lib/api'
 import { useGlobalContext } from '@/context/GlobalProvider'
 import CustomButton from '@/components/CustomButton'
 import ShowJob from '@/components/views/ShowJob'
@@ -45,13 +45,7 @@ const create = () => {
               {
                 text: "Elvet",
                 style: "destructive",
-                onPress: () => {
-                  setForm({name: "", max_attending : 1, date : new Date(), address : "",
-                    description : "", img : null, from : user.username, current_attending: 0});
-                  setInitialize(false);
-                  setUnsavedChanges(false);
-                  setQuery(null);
-                }
+                onPress: () => defaultSet()
               },
             ]
           );
@@ -73,7 +67,13 @@ const create = () => {
     }
     setInitialize(true);
   }, [query])
-
+  const defaultSet = () => {
+    setForm({name: "", max_attending : 1, date : new Date(), address : "",
+      description : "", img : null, from : user.username, current_attending: 0});
+    setInitialize(false);
+    setUnsavedChanges(false);
+    setQuery(null);
+  }
   const toggleModal = () => {
     setIsModalVisible((prev) => !prev);
   }
@@ -88,7 +88,7 @@ const create = () => {
       quality : 0.3,
     })
     if (!result.canceled) {
-      setForm({...form, img : result.assets[0].uri})  ;
+      setForm({...form, img : result.assets[0].uri});
     }
   }
   const submit = async () => {
@@ -101,6 +101,16 @@ const create = () => {
   }
   const handleDelete = async () => {
     try{
+      Alert.alert("Törlés","Biztos vagy benne?", [
+        {text : "Vissza", style: "cancel"},
+        {text : "Törlés", style: "destructive",
+          onPress: async () => {
+            await deleteJob(query?.id,query?.from);
+            await defaultSet();
+            setModify(false);
+          }
+        }
+      ])
     }
     catch(error){
       Alert.alert("Hiba", error.message);
@@ -121,12 +131,9 @@ const create = () => {
         Alert.alert("Nincs változás","Változtass meg benne valamit");
         return;
       }
-      updateJob(query?.id,updatedFields);
-      await setForm({name: "", max_attending : 1, date : new Date(), address : "",
-        description : "", img : null, from : user.username, current_attending: 0});
-      await setQuery(null);
-      await setUnsavedChanges(false);
-      await toggleModal();
+      updateJob(query?.id,updatedFields,query?.from);
+      toggleModal();
+      await defaultSet();
       setModify(false);
     }
     catch(error){
@@ -270,7 +277,7 @@ const create = () => {
           />
           {query && <CustomButton
             title="Törlés"
-            handlePress={submit}
+            handlePress={handleDelete}
             textStyles="text-white"
             containerStyles="bg-red-400 w-[95%] rounded-full mb-5"
           />

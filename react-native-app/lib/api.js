@@ -366,14 +366,33 @@ export const attending = async (jobId, update) => {
         throw new Error(error.message);
     }
 }
-export const updateJob = async (jobId,update) => {
+export const updateJob = async (jobId,update,from) => {
     try{
-        const response = await fetch(`${API_URL}/jobs`,{
+        const response = await fetch(`${API_URL}/jobs/${jobId}/${from}`,{
             method : 'PATCH',
             headers: {'Content-Type' : 'application/json'},
             body: JSON.stringify(update),
             credentials : "include"
         })
+        const data = await response.json();
+        if(!response.ok){
+            throw new Error(data.message);
+        }
+    }
+    catch(error){
+        throw new Error(error.message);
+    }
+}
+export const deleteJob = async (jobId,from) => {
+    try{
+        const response = await fetch(`${API_URL}/jobs/${jobId}/${from}`,{
+            method: 'DELETE',
+            credentials: 'include'
+        })
+        const data = await response.json();
+        if(!response.ok){
+            throw new Error(data.message);
+        }
     }
     catch(error){
         throw new Error(error.message);

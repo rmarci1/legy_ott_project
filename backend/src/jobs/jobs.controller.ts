@@ -110,10 +110,14 @@ export class JobsController {
   }
 
   @ApiOperation({
-    summary: 'Alter job by id'
+    summary: 'Alter job by id and checking if the user username equals to who created the job'
   })
-  @Patch('/:id')
-  update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto) {
+  @Patch('/:id/:from')
+  @UseGuards(AuthGuard)
+  update(@Param('id') id: string, @Param('from') from : string, @Body() updateJobDto: UpdateJobDto, @Request() req:Request) {
+    if(req['profile']['username'] !== from){
+      throw new Error("Nem authorizált ehhez a változtatáshoz!");
+    }
     return this.jobsService.update(+id, updateJobDto);
   }
 
@@ -124,10 +128,14 @@ export class JobsController {
   }
 
   @ApiOperation({
-    summary: 'Delete job by id'
+    summary: 'Delete job by id and checking if the user username equals to who created the job'
   })
-  @Delete('/:id')
-  remove(@Param('id') id: string) {
+  @Delete('/:id/:from')
+  @UseGuards(AuthGuard)
+  remove(@Param('id') id: string, @Param('from') from : string, @Request() req:Request) {
+    if(req['profile']['username'] !== from){
+      throw new Error("Nem authorizált ehhez a változtatáshoz!");
+    }
     return this.jobsService.remove(+id);
   }
   @ApiOperation({
