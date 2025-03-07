@@ -146,57 +146,9 @@ export const FilterJobsByName = async (name,username) => {
         throw new Error(error.message);
     }
 }
-export const getHistorys = async () => {
+export const getAdvertisement = async (endpoint) => {
     try{
-        const response = await fetch(`${API_URL}/jobs/archived`,{
-            method: 'GET',
-            credentials: 'include'
-        })
-        const data = await response.json();
-        if(!response.ok){
-            throw new Error(data.message);
-        }
-        return data;
-    }   
-    catch(error){
-        throw new Error(error.message);
-    }
-}
-export const getApplied = async () => {
-    try{
-        const response = await fetch(`${API_URL}/jobs/selected`,{
-            method: 'GET',
-            credentials: 'include'
-        })
-        const data = await response.json();
-        if(!response.ok){
-            throw new Error(data.message);
-        }
-        return data;
-    }
-    catch(error){
-        throw new Error(error.message);
-    }
-}
-export const getSaved = async () => {
-    try{
-        const response = await fetch(`${API_URL}/jobs/savedForLater`,{
-            method : "GET",
-            credentials: "include",
-        });
-        const data = await response.json();
-        if(!response.ok){
-            throw new Error(data.message);
-        }
-        return data;
-    }   
-    catch(error){
-        throw new Error(error.message);
-    }
-}
-export const getCreated = async () => {
-    try{
-        const response = await fetch(`${API_URL}/jobs/ads`,{
+        const response = await fetch(`${API_URL}/jobs/${endpoint}`,{
             method: 'GET',
             credentials : 'include'
         })
@@ -205,9 +157,9 @@ export const getCreated = async () => {
             throw new Error(data.message);
         }
         return data;
-    }   
+    }
     catch(error){
-        throw new Error(error.message)
+        throw new Error(error.message);
     }
 }
 export const createJob = async (job) => {

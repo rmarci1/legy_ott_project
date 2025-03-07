@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useGlobalContext } from '@/context/GlobalProvider'
 import { Entypo, FontAwesome, Fontisto, MaterialIcons } from '@expo/vector-icons'
-import { getApplied, getCreated, getHistorys, getSaved } from '@/lib/api'
+import { getAdvertisement } from '@/lib/api'
 import { FlashList } from '@shopify/flash-list'
 import EmptyState from '@/components/EmptyState'
 import CustomButton from '@/components/CustomButton'
@@ -16,7 +16,7 @@ const list = () => {
   const [filterJobs,setFilterJobs] = useState([]);
   const [currentJob,setCurrentJob] = useState(null);
   const [readMore,setReadMore] = useState(false);
-  const [currentPage,setCurrentPage] = useState("saved");
+  const [currentPage,setCurrentPage] = useState("savedForLater");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [refreshing,setRefreshing] = useState(false);
   if(!user){
@@ -26,18 +26,7 @@ const list = () => {
     handleClick(currentPage);
   },[])
   const pageStatus = async (title) => {
-    if(title === "saved"){
-      return await getSaved();
-    }
-    else if(title === "history"){
-      return await getHistorys();
-    }
-    else if(title === "created"){
-      return getCreated();
-    }
-    else {
-      return await getApplied();
-    }
+      return await getAdvertisement(title);
   }
   const handleClick = async (title) => {
     try{
@@ -78,32 +67,32 @@ const list = () => {
             toggleModal={() => toggleModal()}
             handleCurrentJob={(job) => setCurrentJob(job)}
             handleReadMore={(readMore) => setReadMore(readMore)}
-            created={currentPage === "created"}
+            created={currentPage === "ads"}
           />
         }
         ListHeaderComponent={() => (
           <View>
             <View className='flex-row justify-between mt-5 rounded-3xl bg-slate-100 w-[85%] h-16 self-center px-6'>
               <TabIcon
-                handlePress={() => handleClick("history")}
-                icon={<FontAwesome name="history" size={30} color={currentPage === "history" ? "aqua" : "gray"}/>}
+                handlePress={() => handleClick("archived")}
+                icon={<FontAwesome name="history" size={30} color={currentPage === "archived" ? "aqua" : "gray"}/>}
               />
               <TabIcon
-                handlePress={() => handleClick("created")}
-                icon={<MaterialIcons name="published-with-changes" size={30} color={currentPage === "created" ? "aqua" : "gray"} />}
+                handlePress={() => handleClick("ads")}
+                icon={<MaterialIcons name="published-with-changes" size={30} color={currentPage === "ads" ? "aqua" : "gray"} />}
               />
               <TabIcon
-                handlePress={() => handleClick("current")}
-                icon={<Fontisto name="radio-btn-active" size={26} color={currentPage === "current" ? "aqua" : "gray"} />}
+                handlePress={() => handleClick("selected")}
+                icon={<Fontisto name="radio-btn-active" size={26} color={currentPage === "selected" ? "aqua" : "gray"} />}
               />
               <TabIcon
-                handlePress={() => handleClick("saved")}
-                icon={<Entypo name="save" size={30} color={currentPage === "saved" ? "aqua" : "gray"} />}
+                handlePress={() => handleClick("savedForLater")}
+                icon={<Entypo name="save" size={30} color={currentPage === "savedForLater" ? "aqua" : "gray"} />}
               />
             </View>
             <View className='mt-5'>
-              <Text className='text-center text-3xl text-indigo-950'>{currentPage === "saved" ? "Elmentett hírdetések" : currentPage === "current" ? 
-              "Jelentkezett hírdetések" : currentPage === "history" ? "Előzmények" : "Készített hírdetések"}
+              <Text className='text-center text-3xl text-indigo-950'>{currentPage === "savedForLater" ? "Elmentett hírdetések" : currentPage === "selected" ? 
+              "Jelentkezett hírdetések" : currentPage === "archived" ? "Előzmények" : "Készített hírdetések"}
               </Text>
             </View>
           </View>
@@ -128,11 +117,11 @@ const list = () => {
           readMore={readMore}
           handleProfile={(username) => handleProfile(username, () => toggleModal)}      
           toggleModal={() => toggleModal()}      
-          created={currentPage === "created"}
+          created={currentPage === "ads"}
           create={false}
         />
         {
-          (currentPage !== "history" && currentPage !== "created") && <View className='w-full p-5 self-center bg-gray-50 relative flex-1'>
+          (currentPage !== "archived" && currentPage !== "ads") && <View className='w-full p-5 self-center bg-gray-50 relative flex-1'>
             <CustomButton
               title={currentJob?.profiles && currentJob?.profiles[0].isApplied ? "Lemondás" : "Jelentkezés"}
               handlePress={async () => {
@@ -145,7 +134,7 @@ const list = () => {
             />
           </View>
         }
-        {currentPage === "created" && <View className='w-full p-5 self-center bg-gray-50 relative flex-1'>
+        {currentPage === "ads" && <View className='w-full p-5 self-center bg-gray-50 relative flex-1'>
             <CustomButton
               title="Szerkesztés"
               handlePress={() => {
