@@ -6,7 +6,7 @@ import { FilterJobsByName } from '@/lib/api';
 import { useGlobalContext } from '@/context/GlobalProvider';
 
 const SearchInput = ({initialQuery}) => {
-  const {user,setQueryReturn} = useGlobalContext();
+  const {user,setQueryReturn, showToast} = useGlobalContext();
   const [query,setQuery] = useState(initialQuery || "")
   const [isFocused,setIsFocused] = useState(false);
   const pathname = usePathname();
@@ -26,7 +26,7 @@ const SearchInput = ({initialQuery}) => {
         <TouchableOpacity
             onPress={async () => {
                 if (query === ""){
-                    return Alert.alert("Nincs Keresés","Valamit Írj be hogy megtaláljuk neked a legjobb lehetőségeket!")
+                    return showToast("error","Nincs keresés","Valamit Írj be hogy megtaláljuk neked a legjobb lehetőségeket!")
                 }
                 const res = await FilterJobsByName(query,user.username);
                 setQueryReturn(res);

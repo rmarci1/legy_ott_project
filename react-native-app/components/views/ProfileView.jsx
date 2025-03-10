@@ -34,10 +34,10 @@ const ProfileView = ({isView, viewed_user, handleModal}) => {
   const [canProfileReview, setCanProfileReview] = useState(false);
   
   useEffect(() => {
-    if(viewed_user.description.length > 50){
+    if(viewed_user?.description.length > 50){
       setReadMore(true);
     }
-    getAverageRating(viewed_user.username).then((res) => {
+    getAverageRating(viewed_user?.username).then((res) => {
       if(res){
         setRating(res);
       }
@@ -120,20 +120,8 @@ const ProfileView = ({isView, viewed_user, handleModal}) => {
       throw new Error(error.message);
     }
   }
-  const openPicker = async () => {
-      let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: 'images',
-            allowsEditing: true,
-            aspect: [2,3],
-            quality : 0.3,
-          })
-      if (!result.canceled) {
-        await UpdateProfilePic(result.assets[0].uri);
-        setUser({...viewed_user, profileImg : result.assets[0].uri});
-      }
-  }
   const reviewSubmit = async () => {
-    await createReview({reviewed_un : viewed_user.username, reviewer_un: user.username, desc: reviewForm.desc, review: reviewForm.rating},viewed_user.username);
+    await createReview({reviewed_un : viewed_user?.username, reviewer_un: user.username, desc: reviewForm.desc, review: reviewForm.rating},viewed_user?.username);
   }
   return (
     <View>
@@ -177,7 +165,7 @@ const ProfileView = ({isView, viewed_user, handleModal}) => {
                 <View className='w-[80%]'>
                   {
                     editing !== "name" ?<View className='flex-row'>
-                    <Text className='font-pregular text-xl text-black'>{viewed_user.name}</Text>
+                    <Text className='font-pregular text-xl text-black'>{viewed_user?.name}</Text>
                     {!isView && <TouchableOpacity onPress={() => {                    
                           setEditing("name");
                           setEditingState(viewed_user?.name);
@@ -194,7 +182,7 @@ const ProfileView = ({isView, viewed_user, handleModal}) => {
                     />
                     <TouchableOpacity onPress={() => {
                         if(editingState !== viewed_user?.name){
-                          updateProfile(viewed_user.name,"name");
+                          updateProfile(viewed_user?.name,"name");
                         };
                         setEditingState("");
                         setEditing("");
@@ -206,7 +194,7 @@ const ProfileView = ({isView, viewed_user, handleModal}) => {
                   
                   { editing !== "username" ?
                   <View className='flex-row'>
-                    <Text className='font-plight text-sm'>{viewed_user.username}</Text>
+                    <Text className='font-plight text-sm'>{viewed_user?.username}</Text>
                     {!isView && <TouchableOpacity onPress={() => {
                       setEditing("username");
                       setEditingState(viewed_user?.username);
@@ -233,7 +221,7 @@ const ProfileView = ({isView, viewed_user, handleModal}) => {
                   }
                 </View>
                   <View className='flex-row'>
-                    {rating >= 0 && 
+                    {rating > 0 && 
                     <View className='items-center justify-center'>
                       <TouchableOpacity
                         onPress={handleModal}
