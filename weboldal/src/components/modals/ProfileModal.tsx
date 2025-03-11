@@ -1,94 +1,96 @@
-import {User} from "../../Types/User.ts";
-import {useEffect} from "react";
-import {useAuth} from "../../context/AuthContext.tsx";
+import { User } from "../../Types/User.ts";
+import { useEffect } from "react";
+import { useAuth } from "../../context/AuthContext.tsx";
 import { FaStar } from "react-icons/fa";
 import ReviewCard from "../cards/ReviewCard.tsx";
+import {IoClose} from "react-icons/io5";
 
-interface profileModalProps {
-    user?: User,
-    setModal: (value: boolean) => void,
-    setJobModal: (value: boolean) => void,
-    username: string
+interface ProfileModalProps {
+    user?: User;
+    setModal: (value: boolean) => void;
+    setJobModal: (value: boolean) => void;
+    username: string;
 }
 
-export default function ProfileModal({setModal, setJobModal}: profileModalProps){
-    const {advertiser} = useAuth();
-    //TODO: Implement reviews
+export default function ProfileModal({ setModal, setJobModal }: ProfileModalProps) {
+    const { advertiser } = useAuth();
 
     useEffect(() => {
         setJobModal(false);
-        if (!advertiser){
-            alert('Nem létezik ilyen profil!')
+        if (!advertiser) {
+            alert("Nem létezik ilyen profil!");
             setModal(false);
             setJobModal(true);
         }
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Escape") {
+                setModal(false);
+                setJobModal(true);
+            }
+        };
+
+        document.addEventListener("keydown", handleKeyDown);
+        document.body.style.overflow = "hidden";
+        return () => {
+            document.body.style.overflow = "auto";
+            document.addEventListener("keydown", handleKeyDown);
+        };
     }, []);
 
-    return <>
-        {
-            advertiser &&(
-        <div tabIndex={-1}
-             className="text-white overflow-x-hidden fixed justify-center h-5/6 items-center w-fit justify-self-center md:inset-0">
-            <div className="relative p-4 w-full max-w-2xl max-h-full">
-                <div className="relative bg-indigo-950 rounded-lg shadow-sm ">
-                    <div className="flex flex-col items-center justify-between p-4 md:p-5 rounded-t">
-                        <div className="flex flex-row w-full items-center">
-                            <img src={advertiser.profileImg} alt="profile picture" className="w-1/5 rounded-full"/>
-                            <div className="flex flex-col pl-2">
-                                <h3 className="text-xl font-semibold">
-                                    {advertiser.name}
-                                </h3>
-                                <p className="text-gray-400">
-                                    @{advertiser.username}
-                                </p>
-                                <div className="flex flex-row items-center">
-                                    <p>
-                                        {advertiser.averageRating}
-                                    </p>
-                                    <FaStar size={20} color={"yellow"}/>
+    if (!advertiser) return null;
+
+    return (
+        <>
+            <div
+                className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center text-white z-50"
+                onClick={() => {
+                    setModal(false);
+                    setJobModal(true);
+                }}
+            >
+                <div
+                    className="relative bg-indigo-950 rounded-lg shadow-sm p-6 w-full max-w-2xl h-3/4 max-h-4xl"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <div className="flex justify-between items-center mb-4">
+                        <div className="flex items-center">
+                            <img src={advertiser.profileImg} alt="profile picture" className="w-16 h-16 rounded-full"/>
+                            <div className="ml-4">
+                                <h3 className="text-xl font-semibold text-white">{advertiser.name}</h3>
+                                <p className="text-gray-400">@{advertiser.username}</p>
+                                <div className="flex items-center">
+                                    <p className="text-white">{advertiser.averageRating}</p>
+                                    <FaStar size={20} color={"yellow"} className="ml-1"/>
                                 </div>
                             </div>
-                            <button type="button"
-                                    className="text-gray-400 bg-transparent rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center hover:bg-gray-600 hover:text-white"
-                                    onClick={() => {
-                                        setModal(false)
-                                        setJobModal(true)
-                                    }}>
-                                <svg className="w-3 h-3" aria-hidden="true"
-                                     xmlns="http://www.w3.org/2000/svg" fill="none"
-                                     viewBox="0 0 14 14">
-                                    <path stroke="currentColor" strokeLinecap="round"
-                                          strokeLinejoin="round" strokeWidth="2"
-                                          d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                                </svg>
-                            </button>
                         </div>
-                        <div>
-                            <p>
-                                {advertiser.description}
-                            </p>
-                        </div>
-                        <div className="w-11/12 m-3">
-                            <hr />
-                        </div>
-                        <div className="w-full  overflow-y-auto">
-                            <p className="font-medium text-xl">
-                                Értékelések
-                            </p>
-                            <ul>
-                                {
-                                    (advertiser.reviews.map((item) => (
-                                        <li className="m-1 list-none">
-                                            <ReviewCard review={item} />
-                                        </li>
-                                    )))
-                                }
-                            </ul>
-                        </div>
+
+                        <button
+                            type="button"
+                            className="text-gray-400 bg-transparent rounded-lg text-sm w-8 h-8  hover:bg-gray-600 hover:text-white"
+                            onClick={() => {
+                                setModal(false)
+                                setJobModal(true)
+                            }}
+                        >
+                            <IoClose className="place-self-center" size={25}/>
+                        </button>
+                    </div>
+                    <p className="text-white">{advertiser.description}</p>
+                    <div className="w-full my-4 border-t border-gray-600"></div>
+                    <p className="font-medium text-xl text-white mb-2">Értékelések</p>
+                    <div className="w-full overflow-y-auto h-full max-h-64">
+
+                        <ul>
+                        {advertiser.reviews.map((item, index) => (
+                                <li key={index} className="m-1 list-none">
+                                    <ReviewCard review={item}/>
+                                </li>
+                            ))}
+                        </ul>
                     </div>
                 </div>
             </div>
-        </div>
-            )}
-    </>
+        </>
+    );
 }
