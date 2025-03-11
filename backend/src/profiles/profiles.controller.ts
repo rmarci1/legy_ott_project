@@ -92,7 +92,7 @@ export class ProfilesController {
       sameSite: false
     })
 
-    return token;
+    return token.profile;
   }
   
   @ApiOperation({

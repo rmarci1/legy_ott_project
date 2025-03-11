@@ -45,7 +45,7 @@ export class ProfilesService {
       throw new NotFoundException("Nem létezik ilyen profil");
     }
   }
-  async update(username: string, updateProfileDto: UpdateProfileDto): Promise<{access_token: string, refresh_token: string}> {
+  async update(username: string, updateProfileDto: UpdateProfileDto): Promise<{access_token: string, refresh_token: string, profile}> {
     try{
       const profile = await this.db.profile.update({
         where:{
@@ -64,7 +64,8 @@ export class ProfilesService {
         refresh_token: this.jwtService.sign(profile, {
           expiresIn: '1d',
           secret: `${process.env.refresh_secret}`,
-        })
+        }),
+        profile: profile
       };
     }catch(err){
       throw new Error("Error:" + err);

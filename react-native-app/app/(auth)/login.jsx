@@ -4,19 +4,18 @@ import Formfield from '@/components/inputFields/Formfield'
 import CustomButton from '@/components/CustomButton';
 import images from '@/constants/images';
 import { router } from 'expo-router';
-import { getJobs, getSaved, getUser, pflogin } from '@/lib/api';
+import { getJobs, getUser, pflogin } from '@/lib/api';
 import { useGlobalContext } from '@/context/GlobalProvider';
 
 const login = () => {
-  const {setIsLoading,setIsloggedIn,setUser,isLoggedIn,user,isLoading,isJobsIn,setIsJobsIn,setJobs,setIsSavedIn,isSavedIn,setSaved} = useGlobalContext();
+  const {setIsLoading,setIsloggedIn,setUser,isLoggedIn,user,isLoading,isJobsIn,setIsJobsIn,setJobs} = useGlobalContext();
   useEffect(() => {
-    if(isLoggedIn && !isLoading && isJobsIn && user && isSavedIn) router.push('/(tabs)/home');
-  },[isLoggedIn,user,isJobsIn,isLoading,isSavedIn])
+    if(isLoggedIn && !isLoading && isJobsIn && user) router.push('/(tabs)/home');
+  },[isLoggedIn,user,isJobsIn,isLoading])
   const [form,setForm] = useState({
     email : '', 
     password : ''
   });
-
   const submit = async () => {
       await pflogin(form.email,form.password).then((res) => {
           setIsLoading(true);
@@ -35,18 +34,7 @@ const login = () => {
                   setJobs(null);
                   setIsJobsIn(false);
                 }
-                });
-                getSaved(result.username)
-                .then((save) => {
-                if(save){
-                  setSaved(save);
-                  setIsSavedIn(true);
-                }
-                else{
-                  setSaved(null);
-                  setIsSavedIn(false);
-                }
-              })
+              });
             }
             else{
                 setIsloggedIn(false);

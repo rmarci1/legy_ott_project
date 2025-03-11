@@ -3,16 +3,15 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Formfield from '@/components/inputFields/Formfield'
 import { Entypo, Feather} from '@expo/vector-icons'
-import { router, useFocusEffect, useLocalSearchParams, useNavigation } from 'expo-router'
-import * as ImagePicker from 'expo-image-picker';
+import { router, useFocusEffect } from 'expo-router'
 import { createJob, deleteJob, updateJob } from '@/lib/api'
 import { useGlobalContext } from '@/context/GlobalProvider'
 import CustomButton from '@/components/CustomButton'
 import ShowJob from '@/components/views/ShowJob'
 import ConvertType from '@/components/ConvertType'
-
+import Toast from "react-native-toast-message";
 const create = () => {
-  const {user, query, setQuery} = useGlobalContext();
+  const {user, query, setQuery, openPicker, showToast} = useGlobalContext();
   const [readMore,setReadMore] = useState(false);
   const [typingTimeout, setTypingTimeout] = useState(null);
   const [stashed,setStashed] = useState("");
@@ -29,23 +28,29 @@ const create = () => {
   const [selection, setSelection] = useState({ start: 0, end: 0});
   const [isModalVisible,setIsModalVisible] = useState(false);
   const [undoStates, setUndoStates] = useState([""]);
-  const [unsavedChanges,setUnsavedChanges] = useState(query? true : false);
-  const [initialize,setInitialize] = useState(false);
-  const [modify, setModify] = useState(false);
+  const [unsavedChanges,setUnsavedChanges] = useState(false);
+
   useFocusEffect(
     useCallback(() => {
       return () => {
-        if (unsavedChanges) {
-          console.log(unsavedChanges);
+        console.log(isModalVisible);
+        if (unsavedChanges && !isModalVisible) {
           Alert.alert(
             "Elvéted a változtatásokat?",
             "Vannak nem mentett változtatásaid, biztosan el akarsz menni?",
             [
-              { text: "Vissza", style: "cancel", onPress: () => {router.push('/create')} },
+              { text: "Vissza", 
+                style: "cancel", 
+                onPress: () => {
+                  router.push('/create');    
+                } 
+              },
               {
                 text: "Elvet",
                 style: "destructive",
-                onPress: () => defaultSet()
+                onPress: () => {
+                  defaultSet();
+                }
               },
             ]
           );
@@ -53,47 +58,32 @@ const create = () => {
       }
     }, [unsavedChanges])
   );
-  useEffect(() => {
-    console.log("test:", !unsavedChanges && initialize && !modify);
-    if(!unsavedChanges && initialize && !modify){
-      setUnsavedChanges(true);
-    }
-  }, [form])
   
   useEffect(() => {
     if(query) {
       setForm({...query, date : new Date(query.date), max_attending: parseInt(query.max_attending), current_attending: parseInt(query.current_attending)});
-      setModify(true);
+      setUnsavedChanges(true);
     }
-    setInitialize(true);
   }, [query])
   const defaultSet = () => {
+    setUnsavedChanges(false);
     setForm({name: "", max_attending : 1, date : new Date(), address : "",
       description : "", img : null, from : user.username, current_attending: 0});
-    setInitialize(false);
-    setUnsavedChanges(false);
     setQuery(null);
   }
   const toggleModal = () => {
     setIsModalVisible((prev) => !prev);
   }
   const handleConfirm = (selectedDate) => {
+    handleChanges();
     setForm({...form,date : selectedDate});
   }
-  const openPicker = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: 'images',
-      allowsEditing: true,
-      aspect: [2,3],
-      quality : 0.3,
-    })
-    if (!result.canceled) {
-      setForm({...form, img : result.assets[0].uri});
-    }
+  const handleImage = async (image) => {
+    setForm({...form, img : image});
   }
   const submit = async () => {
     try{
-        await createJob(form);
+      await createJob(form);
     }
     catch(error){
       Alert.alert("Hiba",error.message)
@@ -106,8 +96,7 @@ const create = () => {
         {text : "Törlés", style: "destructive",
           onPress: async () => {
             await deleteJob(query?.id,query?.from);
-            await defaultSet();
-            setModify(false);
+            defaultSet();
           }
         }
       ])
@@ -131,13 +120,17 @@ const create = () => {
         Alert.alert("Nincs változás","Változtass meg benne valamit");
         return;
       }
-      updateJob(query?.id,updatedFields,query?.from);
+      await updateJob(query?.id,updatedFields,query?.from);
+      showToast("success","Sikeres szerkesztés");
       toggleModal();
-      await defaultSet();
-      setModify(false);
     }
     catch(error){
       Alert.alert("Hiba", error.message);
+    }
+  }
+  const handleChanges = () =>{
+    if(!unsavedChanges){
+      setUnsavedChanges(true);
     }
   }
   return (
@@ -158,6 +151,7 @@ const create = () => {
           <Formfield
             value={form.name}
             handleChangeText={(e) => {
+              handleChanges();
               setForm({...form, name: e});
             }}
             otherStyles="mt-2"
@@ -187,7 +181,10 @@ const create = () => {
               <View className='w-[20%]'>
                 <Formfield
                   value={form.max_attending}
-                  handleChangeText={(e) => setForm({...form, max_attending: parseInt(e)})}
+                  handleChangeText={(e) => {
+                    setForm({...form, max_attending: parseInt(e)})
+                    handleChanges();
+                  }}
                   keyboardType={true}
                   inputType={true}
                 />
@@ -198,7 +195,10 @@ const create = () => {
               <View className='w-[70%]'>
                 <Formfield
                   value={form.address}
-                  handleChangeText={(e) => setForm({...form, address: e})}
+                  handleChangeText={(e) => {
+                    setForm({...form, address: e});
+                    handleChanges();
+                  }}
                 />
               </View>
           </View>
@@ -207,7 +207,10 @@ const create = () => {
               <ConvertType
                 selection={selection}
                 description={form.description}
-                handleForm={(e) =>setForm({...form,description: e})}
+                handleForm={(e) => {
+                  setForm({...form,description: e});
+                  handleChanges();
+                }}
                 undoStates={undoStates}
                 handleSelection={(e) => setSelection(e)}
                 handleUndoStates={(e) => setSelection(e)}
@@ -220,6 +223,7 @@ const create = () => {
                 className='flex-1 text-white'
                 value={form.description}
                 onChangeText={(e) => {
+                  handleChanges();
                   setForm({...form,description : e})
                   if(typingTimeout){
                     clearTimeout(typingTimeout);
@@ -240,7 +244,10 @@ const create = () => {
               />
           </View>
           <TouchableOpacity
-            onPress={openPicker}
+            onPress={() => openPicker((image) => {
+              handleImage(image);
+              handleChanges();
+            })}
             className='mt-6'
           > 
             {form.img? (
@@ -306,6 +313,7 @@ const create = () => {
           />
         </View>
       </Modal>
+      <Toast/>
     </SafeAreaView>
   )
 }

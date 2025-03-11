@@ -56,10 +56,12 @@ export class AuthController {
   }
 
   @Post('logout')
-  async logout(@Res({ passthrough: true }) response: Response,): Promise<{ access_token: string; refresh_token: string }> {
+  async logout(@Res({ passthrough: true }) response: Response,){
     response.clearCookie('ac');
     response.clearCookie('refreshToken');
-    return;
+    return response
+      .status(200)
+      .json({message: "asd"});
   }
 
   @Post('refresh')

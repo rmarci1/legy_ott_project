@@ -1,4 +1,4 @@
-//const API_URL = 'http://192.168.11.82:3000' // webváltó host nete;
+//const API_URL = 'http://192.168.11.40:3000' // webváltó host nete;
 const API_URL = 'http://192.168.10.89:3000' // webváltó ethernet;
 //const API_URL = 'http://192.168.11.142:3000' // webváltó alap wifi;
 export const register = async (name,username, password, email)=> {
@@ -19,7 +19,7 @@ export const register = async (name,username, password, email)=> {
         throw new Error(error.message);
     }
 };
-export const pflogin = async (email,password) => {
+export const pflogin = async (email,password) => {  
     try{
         const response = await fetch(`${API_URL}/auth/login`, {
             method: 'POST',
@@ -265,12 +265,12 @@ export const createReview = async (review,username) => {
         throw new Error(error.message);
     }
 }
-export const updateProfile = async (update,type) => {
+export const updateProfile = async (update) => {
     try{
         const response = await fetch(`${API_URL}/profiles`,{
             method: 'PATCH',
             headers: {'Content-Type' : 'application/json'},
-            body: JSON.stringify( type === "name" ? {name : update} : type === "username" ? {username: update} : {description: update}),
+            body: JSON.stringify(update),
             credentials: "include"
         })
         const data = await response.json();
@@ -348,5 +348,23 @@ export const deleteJob = async (jobId,from) => {
     }
     catch(error){
         throw new Error(error.message);
+    }
+}
+export const logout = async () => {
+    try{
+        const response = await fetch(`${API_URL}/auth/logout`,{
+            method: 'POST',
+            headers: {'Content-Type' : 'application/json'},
+            body: JSON.stringify(),
+            credentials: 'include'
+        })
+        const data = await response.json();
+        if (!response.ok){
+            throw new Error(data.message);
+        }
+        return data;
+    }
+    catch(error){
+        throw new Error(error.message)
     }
 }
