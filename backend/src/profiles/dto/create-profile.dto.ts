@@ -50,7 +50,7 @@ export class CreateProfileDto {
     required: false
   })
   @IsBoolean()
-  advertiser: boolean = false;
+  isAdmin: boolean = false;
 
   @ApiProperty({
     description: 'Users description',

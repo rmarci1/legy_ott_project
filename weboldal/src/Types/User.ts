@@ -6,4 +6,5 @@ export interface User{
     password: string; 
     profileImg: string;
     bejelentkezett?: boolean;
+    isAdmin: boolean;
 }

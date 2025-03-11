@@ -1,6 +1,6 @@
 import {createContext, ReactNode, useContext, useState} from "react";
-import {User} from "../../Types/User";
-import {Job} from "../../Types/Job.ts";
+import {User} from "../Types/User.ts";
+import {Job} from "../Types/Job.ts";
 import {
     attend,
     getAdvertised,
@@ -10,8 +10,8 @@ import {
     getSelectedJobs,
     getUser,
     saveForLater
-} from "../../api.ts";
-import {Advertiser} from "../../Types/Advertiser.ts";
+} from "../lib/api.ts";
+import {Advertiser} from "../Types/Advertiser.ts";
 
 interface AuthContextType {
     user: User | null,
@@ -73,7 +73,8 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
             email: newUser.email,
             password: newUser.password,
             bejelentkezett: true,
-            profileImg: newUser.profileImg
+            profileImg: newUser.profileImg,
+            isAdmin: newUser.isAdmin
         });
 
         await resetJobs();

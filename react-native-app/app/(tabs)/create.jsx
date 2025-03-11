@@ -22,7 +22,7 @@ const create = () => {
     address : "",
     description : "",
     img : null,
-    from : user.username,
+    from : user?.username,
     current_attending: 0
   })
   const [selection, setSelection] = useState({ start: 0, end: 0});

@@ -1,8 +1,8 @@
 import { useState} from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router"
-import {getUser, pflogin} from '../../api'
-import {useAuth} from "../Context/AuthContext.tsx";
+import {getUser, pflogin} from '../../lib/api.ts'
+import {useAuth} from "../../context/AuthContext.tsx";
 
 
 export default function Login(){
@@ -34,6 +34,10 @@ export default function Login(){
             })
             console.log(user);
             bejelentkezes(user);
+            if(user.isAdmin){
+                navigate('/admin');
+                return;
+            }
             navigate("/")
         }
         catch(error){

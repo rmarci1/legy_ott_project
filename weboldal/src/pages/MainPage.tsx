@@ -1,7 +1,7 @@
 import "../index.css"
-import {useAuth} from "./Context/AuthContext.tsx";
+import {useAuth} from "../context/AuthContext.tsx";
 import {Job} from "../Types/Job.ts";
-import JobCard from "./JobCard/JobCard.tsx";
+import JobCard from "../components/cards/JobCard.tsx";
 import {useEffect} from "react";
 
 export default function MainPage() {

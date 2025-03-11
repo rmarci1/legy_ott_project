@@ -1,6 +1,6 @@
 import {useState} from "react";
-import {useAuth} from "../Context/AuthContext.tsx";
-import ListingComponent from "./Component/ListingComponent.tsx";
+import {useAuth} from "../context/AuthContext.tsx";
+import ListingComponent from "../components/ListingComponent.tsx";
 
 export default function InteractedJobs(){
     const [saved, setSaved] = useState(false)
