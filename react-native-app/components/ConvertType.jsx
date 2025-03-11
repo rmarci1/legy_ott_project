@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, Alert } from 'react-native'
 import React from 'react'
 import { Feather, Ionicons, Octicons } from '@expo/vector-icons';
 
-const ConvertType = ({handleStash,selection,undoStates,handleUndoStates,handleSelection,handleForm,description,stashed}) => {
+const ConvertType = ({handleStash,selection,undoStates,handleUndoStates,handleSelection,handleForm,description,stashed,iconColor}) => {
     const converting = (part) => {
         let temp = undoStates;
         temp.push(description);
@@ -27,13 +27,13 @@ const ConvertType = ({handleStash,selection,undoStates,handleUndoStates,handleSe
                   onPress={() => converting("**")}
                   className='ml-2'
                 >
-                    <Feather name="bold" size={24} color="black" />
+                    <Feather name="bold" size={24} color={iconColor? iconColor : "black"} />
                 </TouchableOpacity>
                 <TouchableOpacity 
                   onPress={() => converting("*")}
                   className='ml-4' 
                 >
-                  <Feather name="italic" size={24} color="black" />
+                  <Feather name="italic" size={24} color={iconColor ? iconColor : "black"} />
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
@@ -54,7 +54,7 @@ const ConvertType = ({handleStash,selection,undoStates,handleUndoStates,handleSe
                   }}
                   className='ml-6'
                 >
-                  <Octicons name="heading" size={24} color="black" />
+                  <Octicons name="heading" size={24} color={iconColor ? iconColor : "black"} />
                 </TouchableOpacity>
         </View>
         <View>
@@ -72,8 +72,8 @@ const ConvertType = ({handleStash,selection,undoStates,handleUndoStates,handleSe
                     }}
             >
                 {undoStates.length > 0 ? 
-                    <Ionicons name="arrow-undo" size={24} color="black" /> :
-                    <Ionicons name="arrow-undo-outline" size={24} color="black" />
+                    <Ionicons name="arrow-undo" size={24} color={iconColor? iconColor : "black"} /> :
+                    <Ionicons name="arrow-undo-outline" size={24} color={iconColor ? iconColor : "black"} />
                 }
             </TouchableOpacity>
         </View>

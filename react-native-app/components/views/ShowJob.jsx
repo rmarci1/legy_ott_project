@@ -8,7 +8,9 @@ import ConvertText from '../inputFields/ConvertText'
 import { FlashList } from '@shopify/flash-list'
 import { getReviews } from '@/lib/api'
 import Rating from '../Rating'
+import { useGlobalContext } from '@/context/GlobalProvider'
 const ShowJob = ({currentJob,readMore,toggleModal, handlingProfile,create,created}) => {
+  const {handleProfile} = useGlobalContext();
   const [whichButton,setWhichButton] = useState("description");
   const [showMore,setShowMore] = useState(false);
   const [isLoading,setIsLoading] = useState(false);
@@ -21,7 +23,7 @@ const ShowJob = ({currentJob,readMore,toggleModal, handlingProfile,create,create
   }, [])
   const renderItem = ({item}) => (
     <Rating
-      handleProfile={(username) => handleProfile(username)}
+      handleProfile={(username) => handleProfile(username, () => toggleModal())}
       item={item}
     />
   )

@@ -12,9 +12,10 @@ import CustomButton from '@/components/CustomButton';
 import FilterView from '@/components/views/FilterView';
 import { getJobs } from '@/lib/api';
 import RenderJob from '@/components/RenderJob';
+import Toast from 'react-native-toast-message';
 
 const home = () => {
-  const {user,jobs,setJobs,handleSubmit,handleProfile} = useGlobalContext();
+  const {user,jobs,setJobs,handleSubmit,handleProfile,toastConfig} = useGlobalContext();
   const query = "";
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isFilterModalVisible,setIsFilterModalVisible] = useState(false);
@@ -56,7 +57,7 @@ const home = () => {
       {/* <StatusBar style='dark'/> */ }
       <View className='w-[90%] min-h-[100vh] self-center'>
       <View>
-          <Text className='font-pmedium mt-5'>Szia, <Text className='font-pbold'>{user.name}!</Text></Text>
+          <Text className='font-pmedium mt-5'>Szia, <Text className='font-pbold'>{user?.name}!</Text></Text>
               <Text className='mt-2 text-2xl font-psemibold text-primary'>Találj egy Jó lehetőséget</Text>
             <View className='flex-row items-center mt-4'>
             <SearchInput
@@ -126,6 +127,7 @@ const home = () => {
       </Modal>
       </View>
     </GestureHandlerRootView> 
+    <Toast config={toastConfig}/>
     </SafeAreaView>
   </TouchableWithoutFeedback>
   )

@@ -541,14 +541,8 @@ export class JobsService {
                 isApplied: true
               }
             },
-            from: review_username
-          },
-          {
-            OR: [
-              {
-                date: { lt: currDate },
-              }
-            ],
+            from: review_username,
+            date: { lt: currDate },
           },
         ],
       },
