@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router";
-import {register} from '../../api'
+import {register} from '../../lib/api'
 
 export default function Register(){
 

@@ -1,8 +1,8 @@
-import {User} from "../../../Types/User.ts";
+import {User} from "../../Types/User.ts";
 import {useEffect} from "react";
-import {useAuth} from "../../Context/AuthContext.tsx";
+import {useAuth} from "../../context/AuthContext.tsx";
 import { FaStar } from "react-icons/fa";
-import ReviewCard from "../../ReviewCard/ReviewCard.tsx";
+import ReviewCard from "../cards/ReviewCard.tsx";
 
 interface profileModalProps {
     user?: User,

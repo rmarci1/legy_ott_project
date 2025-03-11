@@ -1,7 +1,7 @@
-import {Job} from "../../../Types/Job.ts";
-import {User} from "../../../Types/User.ts";
+import {Job} from "../../Types/Job.ts";
+import {User} from "../../Types/User.ts";
 import {useEffect} from "react";
-import {useAuth} from "../../Context/AuthContext.tsx";
+import {useAuth} from "../../context/AuthContext.tsx";
 
 interface JobModalProps{
     job: Job,

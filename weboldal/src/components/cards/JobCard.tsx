@@ -1,9 +1,9 @@
 import { Job } from "../../Types/Job.ts";
 import {useEffect, useState} from "react";
 import { PiHeartLight, PiHeartFill } from "react-icons/pi";
-import {useAuth} from "../Context/AuthContext.tsx";
-import JobModal from "./Modals/JobModal.tsx";
-import ProfileModal from "./Modals/ProfileModal.tsx";
+import {useAuth} from "../../context/AuthContext.tsx";
+import JobModal from "../modals/JobModal.tsx";
+import ProfileModal from "../modals/ProfileModal.tsx";
 
 interface jobProps{
     Job: Job,

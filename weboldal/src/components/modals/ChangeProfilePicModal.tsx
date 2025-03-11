@@ -1,6 +1,6 @@
-import {profilePicChange} from "../../../api.ts";
+import {profilePicChange} from "../../lib/api.ts";
 import {ChangeEvent, useState} from "react";
-import {useAuth} from "../../Context/AuthContext.tsx";
+import {useAuth} from "../../context/AuthContext.tsx";
 
 interface ChangeProfilePicModalProps{
     setModal: (value: boolean) => void

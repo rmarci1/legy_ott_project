@@ -2,12 +2,12 @@ import { useEffect } from 'react';
 import './index.css';
 import Navbar from './components/Navbar';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Login from './components/LoginRegister/Login';
-import Register from './components/LoginRegister/Register';
-import ProfilePage from './components/Profile/ProfilePage.tsx';
-import { AuthProvider } from './components/Context/AuthContext';
-import MainPage from "./components/MainPage.tsx";
-import InteractedJobs from "./components/Interacted/InteractedJobs.tsx";
+import Login from './pages/auth/Login.tsx';
+import Register from './pages/auth/Register.tsx';
+import ProfilePage from './pages/ProfilePage.tsx';
+import { AuthProvider } from './context/AuthContext.tsx';
+import MainPage from "./pages/MainPage.tsx";
+import InteractedJobs from "./components/InteractedJobs.tsx";
 
 function App() {
   useEffect(() => {

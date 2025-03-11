@@ -1,6 +1,6 @@
 import {GoTriangleDown, GoTriangleRight} from "react-icons/go";
-import {Job} from "../../../Types/Job.ts";
-import JobCard from "../../JobCard/JobCard.tsx";
+import {Job} from "../Types/Job.ts";
+import JobCard from "./cards/JobCard.tsx";
 
 interface ListingComponentProps {
     show: boolean,

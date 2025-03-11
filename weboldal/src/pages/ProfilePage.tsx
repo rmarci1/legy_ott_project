@@ -1,9 +1,9 @@
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router";
-import {useAuth} from "../Context/AuthContext.tsx";
-import JobCard from "../JobCard/JobCard.tsx";
-import {Job} from "../../Types/Job.ts";
-import ChangeProfilePicModal from "./Modal/ChangeProfilePicModal.tsx";
+import {useAuth} from "../context/AuthContext.tsx";
+import JobCard from "../components/cards/JobCard.tsx";
+import {Job} from "../Types/Job.ts";
+import ChangeProfilePicModal from "../components/modals/ChangeProfilePicModal.tsx";
 
 export default function ProfilePage(){
     const {user, checkUser, isLoading, selectedJobs, ads} = useAuth();
