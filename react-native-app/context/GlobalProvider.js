@@ -17,7 +17,6 @@ const GlobalProvider = ({children}) => {
     const [jobs,setJobs] = useState(null);
     const [isJobsIn,setIsJobsIn] = useState(false);
     const [queryReturn,setQueryReturn] = useState(null);
-    const [forwardTo, setForwardTo] = useState(null);
     const [query, setQuery] = useState(null);
     useEffect(() => {
         getUser()
@@ -125,8 +124,6 @@ const GlobalProvider = ({children}) => {
                 setIsJobsIn,
                 queryReturn,
                 setQueryReturn,
-                forwardTo,
-                setForwardTo,
                 handleSubmit,
                 handleProfile,
                 query,

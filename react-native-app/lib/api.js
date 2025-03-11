@@ -1,4 +1,4 @@
-//const API_URL = 'http://192.168.11.82:3000' // webváltó host nete;
+//const API_URL = 'http://192.168.11.40:3000' // webváltó host nete;
 const API_URL = 'http://192.168.10.89:3000' // webváltó ethernet;
 //const API_URL = 'http://192.168.11.142:3000' // webváltó alap wifi;
 export const register = async (name,username, password, email)=> {

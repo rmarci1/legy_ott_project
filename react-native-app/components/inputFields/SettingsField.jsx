@@ -2,17 +2,18 @@ import { View, Text, TextInput, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import { AntDesign, Ionicons } from '@expo/vector-icons'
 
-const SettingsField = ({title, value, handleChangeText, containerStyles, multiline, handleUpdate, editable, showArrow, handleArrowPress}) => {
+const SettingsField = ({title, value, handleChangeText, containerStyles, multiline, handleUpdate, editable, showArrow, handleArrowPress, handleSelection}) => {
   const [arrowState,setArrowState] = useState(false);
   return (
     <View className={`${containerStyles}`}>
-        <Text className='text-xl font-extrabold text-white'>{title}</Text>
+        {title && <Text className='text-xl font-extrabold text-white'>{title}</Text>}
         <View className={`relative bg-gray-800 border-b-2 border-x border-white rounded-xl p-2 mt-4 ${!multiline && "h-[64px]"}`}>
         <TextInput
             editable= {editable}
             value={value}
             onChangeText={(e) => handleChangeText(e)}
             className={`text-white text-lg ml-2 font-plight pr-10 flex-1`}
+            onSelectionChange={({nativeEvent : {selection}}) => handleSelection(selection)}
             multiline={multiline}
         />
         {(!showArrow || arrowState) &&
