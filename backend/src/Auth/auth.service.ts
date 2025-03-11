@@ -75,7 +75,7 @@ export class AuthService {
       username: string,
       email: string,
       name: string,
-      advertiser: boolean,
+      isAdmin: boolean,
       profileImg: string
     }
     const payload: ProfileDataWithoutPassword = {
@@ -83,7 +83,7 @@ export class AuthService {
       username: decodedToken.username,
       email: decodedToken.email,
       name: decodedToken.name,
-      advertiser: decodedToken.advertiser,
+      isAdmin: decodedToken.isAdmin,
       profileImg: decodedToken.profileImg
     }
     return {

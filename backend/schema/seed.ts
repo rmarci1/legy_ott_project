@@ -15,7 +15,8 @@ const main = async () => {
               email: faker.internet.email(),
               password: await bcrypt.hash('Asd1234@', 10),
               description: faker.lorem.lines(10),
-              profileImg: defaultProfilePicUrl
+              profileImg: defaultProfilePicUrl,
+              isAdmin: faker.datatype.boolean()
             }
           }, )
         )

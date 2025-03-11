@@ -8,9 +8,9 @@ import { NotFoundException } from '@nestjs/common';
 describe('ProfilesController', () => {
   let controller: ProfilesController;
   let service: ProfilesService;
-  const profiles: any = [{name: "Laci", username: "laci.laci", email: "lacilaci@gmail.com", password: "123456Ab@", profileImg:"", advertiser: false}];
-  const profile: any = {name: "Laci", username: "laci.laci", email: "lacilaci@gmail.com", password: "123456Ab@", profileImg:"", advertiser: false}
-  const profileUpdated: any = {name: "Károly", username: "laci.laci", email: "lacilaci@gmail.com", password: "123456Ab@", profileImg:"", advertiser: false}
+  const profiles: any = [{name: "Laci", username: "laci.laci", email: "lacilaci@gmail.com", password: "123456Ab@", profileImg:"", isAdmin: false}];
+  const profile: any = {name: "Laci", username: "laci.laci", email: "lacilaci@gmail.com", password: "123456Ab@", profileImg:"", isAdmin: false}
+  const profileUpdated: any = {name: "Károly", username: "laci.laci", email: "lacilaci@gmail.com", password: "123456Ab@", profileImg:"", isAdmin: false}
 
 
   beforeEach(async () => {

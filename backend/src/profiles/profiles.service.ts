@@ -36,7 +36,7 @@ export class ProfilesService {
           username: true,
           reviews: true,
           description: true,
-          advertiser: true,
+          isAdmin: true,
           profileImg: true
         }
       });

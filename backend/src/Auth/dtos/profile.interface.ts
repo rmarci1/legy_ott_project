@@ -5,5 +5,5 @@ export interface ProfileInterface{
   email: string,
   profileImg: string,
   password: string,
-  advertiser: boolean
+  isAdmin: boolean
 }

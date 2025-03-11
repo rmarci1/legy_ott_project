@@ -32,7 +32,7 @@ export class ProfilesController {
   }
 
   @ApiOperation({
-    summary: 'Returns a profile (name,username,profileImg,description,advertiser) properties for viewing purposes'
+    summary: 'Returns a profile (name,username,profileImg,description,) properties for viewing purposes'
   })
   @Get('/view/:username')
   getProfileView(@Param('username') username: string){

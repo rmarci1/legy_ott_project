@@ -34,7 +34,7 @@ model profile{
   email String @unique
   profileImg String
   password String
-  advertiser Boolean @default(false)
+  isAdmin Boolean @default(false)
   description String?
 
   reviews review[]
