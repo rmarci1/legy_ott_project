@@ -4,6 +4,7 @@ import {useAuth} from "../context/AuthContext.tsx";
 import JobCard from "../components/cards/JobCard.tsx";
 import {Job} from "../Types/Job.ts";
 import ChangeProfilePicModal from "../components/modals/ChangeProfilePicModal.tsx";
+import { logout } from "../lib/api.ts";
 
 export default function ProfilePage(){
     const {user, checkUser, isLoading, selectedJobs, ads} = useAuth();
@@ -44,6 +45,7 @@ export default function ProfilePage(){
                 <div className="justify-center content-center p-3">
                     <h2 className="font-black text-2xl">{user?.name}</h2>
                     <h3>@{user?.username}</h3>
+                    <button onClick={logout}>Kijelentkezés</button>
                 </div>
             </div>
             <div className="basis-full p-3"></div>
