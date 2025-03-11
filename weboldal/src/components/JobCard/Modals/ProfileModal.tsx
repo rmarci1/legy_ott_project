@@ -2,6 +2,7 @@ import {User} from "../../../Types/User.ts";
 import {useEffect} from "react";
 import {useAuth} from "../../Context/AuthContext.tsx";
 import { FaStar } from "react-icons/fa";
+import ReviewCard from "../../ReviewCard/ReviewCard.tsx";
 
 interface profileModalProps {
     user?: User,
@@ -10,9 +11,8 @@ interface profileModalProps {
     username: string
 }
 
-export default function ProfileModal({user, setModal, setJobModal, username}: profileModalProps){
+export default function ProfileModal({setModal, setJobModal}: profileModalProps){
     const {advertiser} = useAuth();
-
     //TODO: Implement reviews
 
     useEffect(() => {
@@ -28,7 +28,7 @@ export default function ProfileModal({user, setModal, setJobModal, username}: pr
         {
             advertiser &&(
         <div tabIndex={-1}
-             className="overflow-y-auto text-white overflow-x-hidden fixed justify-center items-center w-fit h-fit justify-self-center md:inset-0 max-h-full">
+             className="text-white overflow-x-hidden fixed justify-center h-5/6 items-center w-fit justify-self-center md:inset-0">
             <div className="relative p-4 w-full max-w-2xl max-h-full">
                 <div className="relative bg-indigo-950 rounded-lg shadow-sm ">
                     <div className="flex flex-col items-center justify-between p-4 md:p-5 rounded-t">
@@ -43,7 +43,7 @@ export default function ProfileModal({user, setModal, setJobModal, username}: pr
                                 </p>
                                 <div className="flex flex-row items-center">
                                     <p>
-                                        3.5
+                                        {advertiser.averageRating}
                                     </p>
                                     <FaStar size={20} color={"yellow"}/>
                                 </div>
@@ -67,6 +67,23 @@ export default function ProfileModal({user, setModal, setJobModal, username}: pr
                             <p>
                                 {advertiser.description}
                             </p>
+                        </div>
+                        <div className="w-11/12 m-3">
+                            <hr />
+                        </div>
+                        <div className="w-full  overflow-y-auto">
+                            <p className="font-medium text-xl">
+                                Értékelések
+                            </p>
+                            <ul>
+                                {
+                                    (advertiser.reviews.map((item) => (
+                                        <li className="m-1 list-none">
+                                            <ReviewCard review={item} />
+                                        </li>
+                                    )))
+                                }
+                            </ul>
                         </div>
                     </div>
                 </div>

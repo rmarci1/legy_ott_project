@@ -28,8 +28,8 @@ export default function JobCard({Job, attending}: jobProps){
                         <span className="flex-none">
                             {Job.profiles && Job.profiles[0] && Job.profiles[0].saveForLater ?
                                 <PiHeartFill size={40} color="red"
-                                             onClick={() => setSave(Job, user, false)}/> :
-                                <PiHeartLight size={40} onClick={() => setSave(Job, user, true)}/>}
+                                             onClick={() => setSave(Job, false)}/> :
+                                <PiHeartLight size={40} onClick={() => setSave(Job, true)}/>}
                         </span>
                     )}
                 </div>

@@ -1,11 +1,11 @@
-import {createContext, ReactNode, useContext, useEffect, useState} from "react";
+import {createContext, ReactNode, useContext, useState} from "react";
 import {User} from "../../Types/User";
 import {Job} from "../../Types/Job.ts";
 import {
     attend,
     getAdvertised,
     getAllJobs, getArchivedAds, getArchivedJobs,
-    getAvailableJobs,
+    getAvailableJobs, getAverageRating,
     getProfile, getSavedForLater,
     getSelectedJobs,
     getUser,
@@ -28,8 +28,8 @@ interface AuthContextType {
     kijelentkezes: () => void,
     bejelentkezes: (newUser: User) => void,
     profilKepUpdate: (url: string, user: User) => void,
-    setSave: (job: Job, user: User ,value: boolean) => void,
-    attendJob: (id: number, username: string, value: boolean) => void,
+    setSave: (job: Job ,value: boolean) => void,
+    attendJob: (id: number, value: boolean) => void,
     getAll: () => void,
     getAdvertiserProfile: (username: string) => void,
     checkUser: () => void
@@ -55,9 +55,6 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
     const [advertiser, setAdvertiser] = useState<Advertiser | null>(null);
     const [jobs, setJobs] = useState<Job[]>([])
 
-    useEffect(() => {
-    }, []);
-
     const getAll = () => {
         setIsLoading(true)
         getAllJobs()
@@ -79,7 +76,7 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
             profileImg: newUser.profileImg
         });
 
-        await resetJobs(newUser.username);
+        await resetJobs();
         setIsLoading(false)
     }
 
@@ -100,14 +97,14 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
         }
     }
 
-    const resetJobs = async (username: string) => {
+    const resetJobs = async () => {
         setIsLoading(true)
-        setJobs(await getAvailableJobs(username));
-        await userSelectedJobs(username)
-        await userAdvertisedJobs(username);
-        await userSavedJobs(username);
-        await userArchivedJobs(username);
-        await userArchivedAds(username);
+        setJobs(await getAvailableJobs());
+        await userSelectedJobs()
+        await userAdvertisedJobs();
+        await userSavedJobs();
+        await userArchivedJobs();
+        await userArchivedAds();
         setIsLoading(false)
     }
 
@@ -126,57 +123,62 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
         })
         setIsLoading(false)
     }
-    const setSave = async (job: Job, user: User ,value: boolean) => {
+    const setSave = async (job: Job ,value: boolean) => {
         setIsLoading(true)
-        await saveForLater(job.id, user.id, user.username, value);
+        await saveForLater(job.id, value);
 
-        await resetJobs(user.username);
+        await resetJobs();
         setIsLoading(false)
     }
 
-    const attendJob = async (id: number, username: string, value: boolean) => {
+    const attendJob = async (id: number, value: boolean) => {
         setIsLoading(true)
-        await attend(id, username, value);
+        await attend(id, value);
 
-        await resetJobs(username)
+        await resetJobs()
         setIsLoading(false)
     }
 
-    const userSelectedJobs = async (username: string) => {
+    const userSelectedJobs = async () => {
         setIsLoading(true)
-        setSelectedJobs(await getSelectedJobs(username).then((res) => {
+        setSelectedJobs(await getSelectedJobs().then((res) => {
             return res
         }))
         setIsLoading(false)
     }
 
-    const userAdvertisedJobs = async (username: string) => {
+    const userAdvertisedJobs = async () => {
         setIsLoading(true);
-        setAds(await getAdvertised(username));
+        setAds(await getAdvertised());
         setIsLoading(false);
     }
 
-    const userSavedJobs = async (username: string) => {
+    const userSavedJobs = async () => {
         setIsLoading(true);
-        setSavedJobs(await getSavedForLater(username));
+        setSavedJobs(await getSavedForLater());
         setIsLoading(false);
     }
 
-    const userArchivedJobs = async (username: string) => {
+    const userArchivedJobs = async () => {
         setIsLoading(true);
-        setArchivedJobs(await getArchivedJobs(username));
+        setArchivedJobs(await getArchivedJobs());
         setIsLoading(false);
     }
 
-    const userArchivedAds = async (username: string) => {
+    const userArchivedAds = async () => {
         setIsLoading(true);
-        setArchivedAds(await getArchivedAds(username));
+        setArchivedAds(await getArchivedAds());
         setIsLoading(false);
     }
 
     const getAdvertiserProfile = async (username: string) =>{
         setIsLoading(true)
-        setAdvertiser(await getProfile(username));
+        setAdvertiser({
+            ...(await getProfile(username)),
+            averageRating: await getAverageRating(username).then((res) => {
+                return res._avg.review;
+            })
+        });
         setIsLoading(false)
     }
 

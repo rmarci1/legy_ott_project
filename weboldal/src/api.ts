@@ -108,9 +108,9 @@ export const getAllJobs = async () =>{
   }
 }
 
-export const getAvailableJobs = async (username: string) =>{
+export const getAvailableJobs = async () =>{
   try{
-    const response = await fetch(`${API_URL}/jobs/available/${username}`, {
+    const response = await fetch(`${API_URL}/jobs/available`, {
       method: 'GET',
       credentials: 'include',
     })
@@ -128,9 +128,9 @@ export const getAvailableJobs = async (username: string) =>{
   }
 }
 
-export const profilePicChange = async (formData: FormData, username: string) => {
+export const profilePicChange = async (formData: FormData) => {
   try{
-    const result = await fetch(`${API_URL}/profiles/${username}/uploadProfilePic`,
+    const result = await fetch(`${API_URL}/profiles/uploadProfilePic`,
         {
           body: formData,
           method: "post",
@@ -149,9 +149,9 @@ export const profilePicChange = async (formData: FormData, username: string) => 
   }
 }
 
-export const saveForLater = async (jobId: number,profileId: number,username: string, update: boolean) => {
+export const saveForLater = async (jobId: number, update: boolean) => {
   try{
-    const res = await fetch(`${API_URL}/jobs/updateSave/${jobId}/${profileId}/${username}`, {
+    const res = await fetch(`${API_URL}/jobs/updateSave/${jobId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json'},
       body: JSON.stringify({update}),
@@ -171,9 +171,9 @@ export const saveForLater = async (jobId: number,profileId: number,username: str
   }
 }
 
-export const attend = async (id: number, username: string, update: boolean) => {
+export const attend = async (id: number, update: boolean) => {
   try{
-    const res = await fetch(`${API_URL}/jobs/attend/${id}/${username}`,{
+    const res = await fetch(`${API_URL}/jobs/attend/${id}`,{
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json'},
       body: JSON.stringify({update}),
@@ -227,9 +227,9 @@ export const logout = async () => {
   }
 }
 
-export const getSelectedJobs = async (username: string) => {
+export const getSelectedJobs = async () => {
   try{
-    const res = await fetch(`${API_URL}/jobs/selected/${username}`, {
+    const res = await fetch(`${API_URL}/jobs/selected/`, {
       method: 'GET',
       credentials: "include"
     })
@@ -248,9 +248,9 @@ export const getSelectedJobs = async (username: string) => {
   }
 }
 
-export const getAdvertised = async (username: string) => {
+export const getAdvertised = async () => {
   try{
-    const res = await fetch(`${API_URL}/jobs/ads/${username}`, {
+    const res = await fetch(`${API_URL}/jobs/ads/`, {
       method: 'GET',
       credentials: "include"
     })
@@ -269,9 +269,9 @@ export const getAdvertised = async (username: string) => {
   }
 }
 
-export const getSavedForLater = async (username: string) => {
+export const getSavedForLater = async () => {
   try{
-    const res = await fetch(`${API_URL}/jobs/savedForLater/${username}`, {
+    const res = await fetch(`${API_URL}/jobs/savedForLater/`, {
       method: 'GET',
       credentials: "include"
     })
@@ -289,9 +289,9 @@ export const getSavedForLater = async (username: string) => {
   }
 }
 
-export const getArchivedJobs = async (username: string) => {
+export const getArchivedJobs = async () => {
   try{
-    const res = await fetch(`${API_URL}/jobs/archived/${username}`, {
+    const res = await fetch(`${API_URL}/jobs/archived/`, {
       method: 'GET',
       credentials: "include"
     })
@@ -301,7 +301,6 @@ export const getArchivedJobs = async (username: string) => {
     if (!res.ok) {
       throw new Error(data.message as string);
     }
-    console.log(data)
 
     return data;
 
@@ -311,9 +310,9 @@ export const getArchivedJobs = async (username: string) => {
   }
 }
 
-export const getArchivedAds = async (username: string) => {
+export const getArchivedAds = async () => {
   try{
-    const res = await fetch(`${API_URL}/jobs/archivedAds/${username}`, {
+    const res = await fetch(`${API_URL}/jobs/archivedAds/ `, {
       method: 'GET',
       credentials: "include"
     })
@@ -323,10 +322,30 @@ export const getArchivedAds = async (username: string) => {
     if (!res.ok) {
       throw new Error(data.message as string);
     }
-    console.log(data)
 
     return data;
 
+  }
+  catch (e: any){
+    throw new Error(e.message)
+  }
+}
+
+
+export const getAverageRating = async (username: string) => {
+  try{
+    const res = await fetch(`${API_URL}/reviews/average/${username} `, {
+      method: 'GET',
+      credentials: "include"
+    })
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message as string);
+    }
+
+    return data;
   }
   catch (e: any){
     throw new Error(e.message)
