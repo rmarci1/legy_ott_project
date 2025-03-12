@@ -1,4 +1,4 @@
-import {createContext, ReactNode, useContext, useState} from "react";
+import {createContext, ReactNode, useContext, useEffect, useState} from "react";
 import {User} from "../Types/User.ts";
 import {Job} from "../Types/Job.ts";
 import {
@@ -55,6 +55,27 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
     const [advertiser, setAdvertiser] = useState<Advertiser | null>(null);
     const [jobs, setJobs] = useState<Job[]>([])
 
+    useEffect(() => {
+        setIsLoading(true);
+        getUser()
+        .then((result) => {
+            if(result && result.profile){
+                setUser(result.profile);
+                getAllJobs()
+                .then((jobs) => {
+                    if(jobs){
+                        setJobs(jobs);
+                    }
+                })
+            }
+        })
+        .catch((error) => {
+            throw new Error(error.message);
+        })
+        .finally(() => {
+            setIsLoading(false);
+        })
+    },[])
     const getAll = () => {
         setIsLoading(true)
         getAllJobs()
