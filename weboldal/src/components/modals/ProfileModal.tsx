@@ -80,14 +80,22 @@ export default function ProfileModal({ setModal, setJobModal }: ProfileModalProp
                     <div className="w-full my-4 border-t border-gray-600"></div>
                     <p className="font-medium text-xl text-white mb-2">Értékelések</p>
                     <div className="w-full overflow-y-auto h-full max-h-64">
+                        {
+                            advertiser.reviews.length > 0 ? (
+                                <ul>
+                                    {advertiser.reviews.map((item, index) => (
+                                        <li key={index} className="m-1 list-none">
+                                            <ReviewCard review={item}/>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ):
+                                (
+                                    <p className="text-gray-300 italic">Még nincsenek értékelések</p>
+                                )
+                        }
 
-                        <ul>
-                        {advertiser.reviews.map((item, index) => (
-                                <li key={index} className="m-1 list-none">
-                                    <ReviewCard review={item}/>
-                                </li>
-                            ))}
-                        </ul>
+
                     </div>
                 </div>
             </div>
