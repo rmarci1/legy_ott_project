@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Res } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { ApiOperation } from '@nestjs/swagger';
+import { AuthGuard } from '../Auth/guards/Auth-Guard';
+import { Response } from 'express';
 
 @Controller('reviews')
 export class ReviewsController {
@@ -11,9 +13,11 @@ export class ReviewsController {
   @ApiOperation({
     summary: 'Creates a review'
   })
-  @Post('/add/:username')
-  create(@Body() createReviewDto: CreateReviewDto, @Param('username') username : string) {
-    return this.reviewsService.create(createReviewDto,username);
+  @Post('/add')
+  @UseGuards(AuthGuard)
+  create(@Body() createReviewDto: CreateReviewDto, @Request() req: Request) {
+    createReviewDto.reviewer_un = req['profile']['username'];
+    return this.reviewsService.create(createReviewDto);
   }
 
   @ApiOperation({

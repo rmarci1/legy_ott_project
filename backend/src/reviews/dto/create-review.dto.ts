@@ -15,8 +15,6 @@ export class CreateReviewDto {
     description: 'The reviewer profiles username',
     type: 'string'
   })
-  @IsString()
-  @IsNotEmpty()
   reviewer_un: string;
 
   @ApiProperty({

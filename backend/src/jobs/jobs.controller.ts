@@ -160,7 +160,7 @@ export class JobsController {
   })
   @UseGuards(AuthGuard)
   @Get('/review/:reviewed_username')
-  canreview(@Request() req: Request, @Param('reviewed_username') reviewed_username){
+  canReview(@Request() req: Request, @Param('reviewed_username') reviewed_username){
     return this.jobsService.canReview(req['profile']['username'], reviewed_username);
   }
 }
