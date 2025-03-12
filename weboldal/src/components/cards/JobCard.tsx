@@ -19,29 +19,32 @@ export default function JobCard({Job, attending}: jobProps){
     }, []);
 
     return<>
-        <div className="rounded-lg shadow-secondary-1 bg-surface-dark w-1/3 m-4">
-            <img className="rounded-t-lg" src={Job.img} alt="Job picture"/>
-            <div className="p-6 text-surface border-2">
-                <div className="flex flex-row w-full">
-                    <h5 className="mb-2 text-xl font-medium leading-tight flex-grow">{Job.name}</h5>
+        <div className="rounded-lg shadow-secondary-1 bg-surface-dark m-2 cursor-default">
+            <div className="p-6 text-surface border-2 h-[300px] w-[500px]">
+                <div className="flex flex-row w-full items-center">
+                    <h5 className="mb-2 text-xl font-medium leading-tight flex-grow ">{Job.name}</h5>
+                    <img className="rounded mt-3 mb-2 h-20 object-cover aspect-square place-self-center" src={Job.img} alt="Job picture"/>
+                </div>
+                <p className="mb-4 text-base ">
+                    {Job.description}
+                </p>
+                <div className="flex flex-row justify-between">
                     {user && !attending && (
-                        <span className="flex-none">
+                        <span className="flex-none cursor-pointer">
                             {Job.profiles && Job.profiles[0] && Job.profiles[0].saveForLater ?
                                 <PiHeartFill size={40} color="red"
                                              onClick={() => setSave(Job, false)}/> :
                                 <PiHeartLight size={40} onClick={() => setSave(Job, true)}/>}
                         </span>
                     )}
+                    <button
+                        type="button"
+                        className="inline-block rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal shadow-primary-3 transition duration-150 ease-in-out shadow-black/30 hover:shadow-dark-strong focus:shadow-dark-strong active:shadow-dark-strong"
+                        onClick={() => setJobModal(true)}>
+                        További információ
+                    </button>
                 </div>
-                <p className="mb-4 text-base">
-                    {Job.description}
-                </p>
-                <button
-                    type="button"
-                    className="inline-block rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal shadow-primary-3 transition duration-150 ease-in-out shadow-black/30 hover:shadow-dark-strong focus:shadow-dark-strong active:shadow-dark-strong"
-                    onClick={() => setJobModal(true)}>
-                    További információ
-                </button>
+
             </div>
 
             {jobModal && (
@@ -56,10 +59,10 @@ export default function JobCard({Job, attending}: jobProps){
             {
                 profileModal && (
                     user? (
-                        <ProfileModal user={user} setModal={setProfileModal} setJobModal={setJobModal} username={Job.from}/>
+                        <ProfileModal user={user} setModal={setProfileModal} setJobModal={setJobModal}/>
                     ):
                     (
-                        <ProfileModal setModal={setProfileModal} setJobModal={setJobModal} username={Job.from}/>
+                        <ProfileModal setModal={setProfileModal}  setJobModal={setJobModal}/>
                     )
                 )
             }

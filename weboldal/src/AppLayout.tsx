@@ -9,7 +9,7 @@ import ProfilePage from './pages/ProfilePage';
 import AdminPage from './pages/admin/AdminPage';
 
 export default function AppLayout(){
-    const location = useLocation(); // Itt már használható a useLocation
+    const location = useLocation();
 
     return (
       <div className="flex flex-row h-screen w-full overflow-hidden font-poppins">

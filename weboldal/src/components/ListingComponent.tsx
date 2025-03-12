@@ -24,16 +24,22 @@ export default function ListingComponent({title, show, setShow, jobs}: ListingCo
             </p>
             {
                 show && (
-                    <div className="flex flex-row w-dvw justify-center h-fit overflow-x-scroll overscroll-contain">
-                        {
-                            (jobs.map((item: Job) => (
-                                <JobCard key={item.id} attending={true} Job={item}/>
-                            )))
+                    <>
+                        {jobs.length > 0 ?
+                            (
+                                <div className="flex flex-row   h-fit overflow-auto overscroll-contain">
+                                    {jobs.map((item: Job) => (
+                                        <JobCard key={item.id} attending={true} Job={item}/>
+                                    ))}
+                                </div>
+                            ) :
+                            (
+                                <p className="text-xl italic text-gray-600 m-5">Még nincsenek <span className="lowercase">{title}</span>.</p>
+                            )
                         }
-                    </div>
+                    </>
                 )
             }
-
         </div>
     </>
 }
