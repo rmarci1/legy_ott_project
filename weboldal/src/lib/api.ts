@@ -134,9 +134,12 @@ export const profilePicChange = async (formData: FormData) => {
         {
           body: formData,
           method: "post",
+          credentials: "include"
         });
 
-    const data = await result.json();
+    const data = await result.json()
+
+    console.log(data)
 
     if (!result.ok) {
       throw new Error(data.message as string);
@@ -352,4 +355,46 @@ export const getAverageRating = async (username: string) => {
   }
 }
 
+export const createReview = async (reviewed_un: string, desc: string, review: number) => {
+  try{
+    console.log('adatok:')
+    const res = await fetch(`${API_URL}/reviews/add `, {
+      method: 'POST',
+      credentials: "include",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reviewed_un, desc, review })
+    })
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message as string);
+    }
+
+    return data;
+  }
+  catch (e: any){
+    throw new Error(e.message)
+  }
+}
+
+export const canReview = async (username: string) => {
+  try{
+    const res = await fetch(`${API_URL}/jobs/review/${username} `, {
+      method: 'GET',
+      credentials: "include",
+    })
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message as string);
+    }
+
+    return data;
+  }
+  catch (e: any){
+    throw new Error(e.message)
+  }
+}
 

@@ -8,17 +8,17 @@ interface reviewCardProps{
 export default function ReviewCard({review} : reviewCardProps){
     return <>
         <div className="flex flex-col w-full bg-blue-600/25 rounded-3xl shadow-2xl">
-            <div className="p-3">
+            <div className="p-5">
                 <div className="flex flex-row w-full justify-between align-middle">
                     <p className="font-medium">
                         {review.reviewer_un}
                     </p>
-                    <p className="flex flex-row">
+                    <p className="flex flex-row items-center gap-1">
                         {review.review}
                         <FaStar size={20} color={"yellow"}/>
                     </p>
                 </div>
-                <div className="text-gray-300">
+                <div className="text-gray-300 pl-1">
                     {review.desc}
                 </div>
             </div>

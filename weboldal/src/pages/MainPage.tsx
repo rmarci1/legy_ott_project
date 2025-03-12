@@ -12,7 +12,7 @@ export default function MainPage() {
     }, []);
 
     return (
-        <div className="flex flex-wrap h-screen w-dvw justify-center overflow-auto">
+        <div className="flex flex-wrap h-screen w-dvw justify-center overflow-auto cursos-default">
             {
                 user?
                     (jobs.map((item: Job) => (

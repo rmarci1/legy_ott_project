@@ -67,13 +67,17 @@ export default function JobModal({ job, user, attending, setModal, attendJob, se
                         </button>
                     </div>
 
+                    <img className="rounded mt-3 mb-2 h-40 object-cover aspect-square place-self-center" src={job.img}
+                         alt="Job picture"/>
+
                     <p className="text-white">{job.description}</p>
 
                     <p className="text-gray-300 mt-2">Helyszín: {job.address}</p>
 
                     {user && !attending && (
-                        <div className="mt-4">
-                            <button type="button" onClick={() => attendJob(job.id, true)} className="bg-green-700 rounded p-2 w-full text-white">
+                        <div className=" flex mt-4 justify-center w-full">
+                            <button type="button" onClick={() => attendJob(job.id, true)}
+                                    className="bg-green-700 rounded p-2 w-2/3 text-white">
                                 Jelentkezés
                             </button>
                         </div>

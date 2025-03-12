@@ -7,7 +7,7 @@ interface ChangeProfilePicModalProps{
 }
 
 export default function ChangeProfilePicModal({setModal}: ChangeProfilePicModalProps){
-    const {user, profilKepUpdate} = useAuth();
+    const {user, profilKepUpdate, checkUser} = useAuth();
     const [file, setFile] = useState<string | Blob>("");
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -16,15 +16,19 @@ export default function ChangeProfilePicModal({setModal}: ChangeProfilePicModalP
         }
     };
 
-    async function handleSendPic(e: any) {
+    async function handleSendPic (e: any) {
         e.preventDefault();
         const formData = new FormData();
         formData.append('file', file);
         formData.append('username', user?.username || "");
 
-        user && profilePicChange(formData, user?.username).then((res) => {
+        user && await profilePicChange(formData).then((res) => {
             profilKepUpdate(res.profileImg, user);
+
         });
+
+
+        checkUser()
 
         setModal(false)
     }

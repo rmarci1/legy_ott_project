@@ -24,6 +24,7 @@ interface AuthContextType {
     archivedAds: Job[],
     advertiser: Advertiser | null,
     isLoading: boolean,
+    isProfilePicChanged: boolean,
     setIsLoading: (value: boolean)=> void,
     kijelentkezes: () => void,
     bejelentkezes: (newUser: User) => void,
@@ -46,6 +47,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({children} : AuthContextTypeProps) => {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isProfilePicChanged, setIsProfilePicChanged] = useState(false);
     const [allJobs, setAllJobs] = useState<Job[]>([]);
     const [selectedJobs, setSelectedJobs] = useState<Job[]>([])
     const [ads, setAds] = useState<Job[]>([])
@@ -118,10 +120,12 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
 
     const profilKepUpdate = (url: string, user: User) =>{
         setIsLoading(true)
+        setIsProfilePicChanged(false);
         setUser({
             ...user,
             profileImg: url
         })
+        setIsProfilePicChanged(true);
         setIsLoading(false)
     }
     const setSave = async (job: Job ,value: boolean) => {
@@ -192,6 +196,7 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
                 allJobs,
                 advertiser,
                 isLoading,
+                isProfilePicChanged,
                 selectedJobs,
                 ads,
                 savedJobs,
