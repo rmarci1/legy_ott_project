@@ -7,6 +7,7 @@ import Register from './pages/auth/Register';
 import InteractedJobs from './pages/InteractedJobs';
 import ProfilePage from './pages/ProfilePage';
 import AdminPage from './pages/admin/AdminPage';
+import CreateAd from "./pages/CreateAd.tsx";
 
 export default function AppLayout(){
     const location = useLocation();
@@ -21,6 +22,7 @@ export default function AppLayout(){
             <Route path="/register" element={<Register />} />
             <Route path="/interacted" element={<InteractedJobs />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/createAd" element={<CreateAd />} />
             <Route path="/admin" element={<AdminPage />} />
           </Routes>
         </AuthProvider>

@@ -19,7 +19,6 @@ export default function Login(){
     };
     
     const handleLogin = async(e: { preventDefault: () => void; })=>{
-        console.log(emailUsername,password,loginMode)
         e.preventDefault();
         try{
             if(emailUsername.includes("@")){
@@ -53,11 +52,24 @@ export default function Login(){
                 <h5 className="text-xl font-medium text-gray-900 dark:text-white">Bejelentkezés</h5>
                 <div>
                     <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Felhasználónév / Email cím</label>
-                    <input type="text" name="email" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="pelda@gmail.com" value={emailUsername} onChange={(e) =>{setEmailUsername(e.target.value)}} required />
+                    <input type="text"
+                           name="email"
+                           id="email"
+                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                           placeholder="pelda@gmail.com"
+                           value={emailUsername}
+                           onChange={(e) =>{setEmailUsername(e.target.value)}}
+                           required />
                 </div>
                 <div className="relative flex-row">
                     <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Jelszó</label>
-                    <input type={showPassword ? 'text' : 'password'} name="password" id="password" placeholder="••••••••" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" value={password} onChange={(e) =>{setPassword(e.target.value)}} required />
+                    <input type={showPassword ? 'text' : 'password'}
+                           name="password" id="password"
+                           placeholder="••••••••"
+                           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                           value={password}
+                           onChange={(e) =>{setPassword(e.target.value)}}
+                           required />
                     <span onClick={togglePasswordVisibility} className="absolute inset-y-12 right-2 flex items-center cursor-pointer text-gray-600 dark:text-gray-400">
                         {showPassword ? <FaEyeSlash size={30} /> : <FaEye size={30} />}
                     </span>

@@ -27,7 +27,6 @@ export default function ChangeProfilePicModal({setModal}: ChangeProfilePicModalP
 
         });
 
-
         checkUser()
 
         setModal(false)

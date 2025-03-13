@@ -17,12 +17,13 @@ export default function Navbar(){
 
                     </Link>
                 </div>
-                <div className="flex  place-items-center">
-                    <AiOutlinePlus size={40} color="white"/>
-                    <p className="text-white text-2xl overflow-hidden whitespace-nowrap transition-all duration-300 ease-in-out max-w-0 px-0 group-hover:max-w-[10rem] group-hover:px-3">
-                        Létrehozás
-                    </p>
-
+                <div>
+                    <Link to="/createAd" className="flex place-items-center">
+                        <AiOutlinePlus size={40} color="white"/>
+                        <p className="text-white text-2xl overflow-hidden whitespace-nowrap transition-all duration-300 ease-in-out max-w-0 px-0 group-hover:max-w-[10rem] group-hover:px-3">
+                            Létrehozás
+                        </p>
+                    </Link>
                 </div>
                 <div>
                     <Link to="/interacted" className="flex place-items-center">

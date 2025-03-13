@@ -398,3 +398,52 @@ export const canReview = async (username: string) => {
   }
 }
 
+
+export const createAdv = async (name: string, date: Date, description: string, img: string, max_attending: number, address: string) => {
+  try{
+    const res = await fetch(`${API_URL}/jobs `, {
+      method: 'POST',
+      credentials: "include",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, date, description, img, max_attending, address })
+    })
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message as string);
+    }
+
+    return data;
+  }
+  catch (e: any){
+    throw new Error(e.message)
+  }
+}
+
+export const jobPicChange = async (formData: FormData, id: number) => {
+  try{
+    const result = await fetch(`${API_URL}/jobs/${id}/updateJobPic`,
+        {
+          body: formData,
+          method: "POST",
+          credentials: "include"
+        });
+
+    const data = await result.json()
+
+    console.log(data)
+
+    if (!result.ok) {
+      throw new Error(data.message as string);
+    }
+
+    return data;
+  }
+  catch (e: any){
+    throw new Error(e.message);
+  }
+}
+
+
+
