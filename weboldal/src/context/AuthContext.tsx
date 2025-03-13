@@ -2,7 +2,7 @@ import {createContext, ReactNode, useContext, useState} from "react";
 import {User} from "../Types/User.ts";
 import {Job} from "../Types/Job.ts";
 import {
-    attend,
+    attend, deleteJob,
     getAdvertised,
     getAllJobs, getArchivedAds, getArchivedJobs,
     getAvailableJobs, getAverageRating,
@@ -31,6 +31,7 @@ interface AuthContextType {
     profilKepUpdate: (url: string, user: User) => void,
     setSave: (job: Job ,value: boolean) => void,
     attendJob: (id: number, value: boolean) => void,
+    deleteJobById: (id: number, from: string) => void,
     getAll: () => void,
     getAdvertiserProfile: (username: string) => void,
     checkUser: () => void
@@ -187,6 +188,11 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
         setIsLoading(false)
     }
 
+    const deleteJobById = async (id: number, from: string) => {
+        await deleteJob(id, from);
+        await resetJobs();
+    }
+
 
     return (
         <AuthContext.Provider
@@ -209,6 +215,7 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
                 profilKepUpdate,
                 setSave,
                 attendJob,
+                deleteJobById,
                 getAll,
                 getAdvertiserProfile
             }}

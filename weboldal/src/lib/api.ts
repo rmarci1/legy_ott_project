@@ -432,6 +432,28 @@ export const jobPicChange = async (formData: FormData, id: number) => {
 
     const data = await result.json()
 
+    if (!result.ok) {
+      throw new Error(data.message as string);
+    }
+
+    return data;
+  }
+  catch (e: any){
+    throw new Error(e.message);
+  }
+}
+
+
+export const deleteJob = async (id: number, from: string) => {
+  try{
+    const result = await fetch(`${API_URL}/jobs/${id}/${from}`,
+        {
+          method: "DELETE",
+          credentials: "include"
+        });
+
+    const data = await result.json()
+
     console.log(data)
 
     if (!result.ok) {
@@ -444,6 +466,8 @@ export const jobPicChange = async (formData: FormData, id: number) => {
     throw new Error(e.message);
   }
 }
+
+
 
 
 

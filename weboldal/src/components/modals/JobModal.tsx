@@ -3,6 +3,7 @@ import { User } from "../../Types/User.ts";
 import { useEffect } from "react";
 import { useAuth } from "../../context/AuthContext.tsx";
 import { IoClose } from "react-icons/io5";
+import {toast, ToastContainer} from "react-toastify";
 
 interface JobModalProps {
     job: Job;
@@ -15,7 +16,8 @@ interface JobModalProps {
 
 export default function JobModal({ job, user, attending, setModal, attendJob, setProfileModal }: JobModalProps) {
     const date = new Date(job.date);
-    const { getAdvertiserProfile } = useAuth();
+    const today = new Date();
+    const { getAdvertiserProfile, deleteJobById } = useAuth();
 
     useEffect(() => {
         getAdvertiserProfile(job.from);
@@ -34,6 +36,14 @@ export default function JobModal({ job, user, attending, setModal, attendJob, se
             document.addEventListener("keydown", handleKeyDown);
         };
     }, []);
+
+    const handleDelete = async () => {
+        console.log("elkezdodik itt")
+        deleteJobById(job.id, job.from)
+
+        setModal(false);
+        toast('Sikeresen törölve lett!')
+    }
 
     return (
         <>
@@ -83,6 +93,18 @@ export default function JobModal({ job, user, attending, setModal, attendJob, se
                         </div>
                     )}
 
+                    {user && job.from == user.username && date > today && (
+                        <div className=" flex mt-4 justify-center w-full">
+                            <button type="button"
+                                    onClick={() => {
+                                        handleDelete()
+                                    }}
+                                    className="bg-red-800 rounded p-2 w-2/3 text-white">
+                                Törlés
+                            </button>
+                        </div>
+                    )}
+
                     <div className="flex justify-between items-center mt-4">
                         <div>
                             <p className="text-gray-300">Résztvevők:</p>
@@ -91,6 +113,7 @@ export default function JobModal({ job, user, attending, setModal, attendJob, se
                         <p className="text-gray-300">{date.toLocaleDateString()}</p>
                     </div>
                 </div>
+                <ToastContainer/>
             </div>
         </>
     );
