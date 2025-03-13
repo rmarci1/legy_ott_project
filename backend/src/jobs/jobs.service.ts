@@ -521,11 +521,18 @@ export class JobsService {
   }
   async remove(id: number) {
     try{
-      return await this.db.job.delete({
+      const job = await this.db.job.delete({
         where:{
           id
         }
       });
+
+      if(job.img != defaultProfilePicUrl){
+        const publicId = extractPublicId(job.img);
+        await this.cloudinary.destroyImage(publicId);
+      }
+
+      return job;
     }catch(err){
       throw new Error("error: " + err)
     }
