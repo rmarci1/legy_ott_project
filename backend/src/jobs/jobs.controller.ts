@@ -25,8 +25,10 @@ export class JobsController {
   @ApiOperation({
     summary: 'Creates a job'
   })
-  @Post() 
-  create(@Body() createJobDto: CreateJobDto) {
+  @Post()
+  @UseGuards(AuthGuard)
+  create(@Body() createJobDto: CreateJobDto, @Request() req: Request) {
+    createJobDto.from = req['profile']['username']
     return this.jobsService.create(createJobDto);
   }
 

@@ -59,8 +59,6 @@ export class CreateJobDto {
       description: 'The advertisers username',
       type: 'string'
     })
-    @IsString()
-    @IsNotEmpty()
     from: string;
 
     @ApiProperty({

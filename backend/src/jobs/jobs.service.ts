@@ -19,7 +19,8 @@ export class JobsService {
         console.log(createJobDto)
         console.log('received DTO:', createJobDto)
         try{
-          createJobDto.img = "";
+          createJobDto.img = defaultProfilePicUrl;
+          createJobDto.current_attending = 0;
           return await this.db.job.create({
             data: {...createJobDto,
               date: new Date(createJobDto.date)
@@ -482,7 +483,6 @@ export class JobsService {
 
   async updateJobPic(id: number, file: Buffer){
     try{
-      console.log("happen");
       const readStream = Readable.from(file)
       const job = await this.db.job.findUnique({
         where: {id},
@@ -490,13 +490,16 @@ export class JobsService {
           img: true
         }});
 
+      console.log(job.img);
+
       if(job.img != defaultProfilePicUrl){
         const publicId = extractPublicId(job.img);
         await this.cloudinary.destroyImage(publicId);
       }
 
       const newPicUrl = await this.cloudinary.uploadImage(readStream);
-      const update = this.update(id,{img: newPicUrl.ur})
+      const update = await this.update(id,{img: newPicUrl.url})
+      console.log(update)
       return update;
     }
     catch (err) {
