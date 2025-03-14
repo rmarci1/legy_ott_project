@@ -12,7 +12,7 @@ export default function MainPage() {
     }, []);
 
     return (
-        <div className="flex flex-wrap h-screen w-dvw justify-center overflow-auto
+        <div className="flex flex-wrap h-full w-full justify-center overflow-auto
         [&::-webkit-scrollbar]:w-1
         [&::-webkit-scrollbar-track]:rounded-full
         [&::-webkit-scrollbar-track]:bg-gray-100

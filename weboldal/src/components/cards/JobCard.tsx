@@ -27,7 +27,7 @@ export default function JobCard({Job, attending}: jobProps){
 
     return<>
         <div className="rounded-lg shadow-secondary-1 bg-surface-dark m-2 cursor-default">
-            <div className="p-6 text-surface flex flex-col border-2 h-[300px] w-[500px]">
+            <div className="p-6 text-surface flex flex-col border-2 w-dvw lg:h-[300px] lg:w-[500px]">
                 <div className="flex flex-row flex-grow w-full items-center">
                     <h5 className="mb-2 text-xl font-medium leading-tight flex-grow whitespace-pre-wrap break-words">
                         {Job.name}

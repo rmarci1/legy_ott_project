@@ -1,49 +1,25 @@
 import { AiOutlinePlus } from "react-icons/ai";
 import { FaRegCircleUser } from "react-icons/fa6";
 import { IoArchiveOutline, IoHomeOutline } from "react-icons/io5";
-import { Link } from "react-router-dom";
+import NavItem from "./NavbarItem.tsx";
 
 export default function Navbar(){
+    const navItems = [
+        { to: "/", icon: IoHomeOutline, label: "Hirdetések" },
+        { to: "/createAd", icon: AiOutlinePlus, label: "Létrehozás" },
+        { to: "/interacted", icon: IoArchiveOutline, label: "Előzmények" },
+        { to: "/profile", icon: FaRegCircleUser, label: "Profil" },
+    ];
 
     return <>
-        <div className="sticky bg-indigo-950 w-20 h-screen flex flex-1 items-center p-4 hover:w-64 transform transition-all duration-300 ease-in-out group">
-            <nav className="list-none sticky space-y-10 place-content-center  ">
-                <div>
-                    <Link to="/" className="flex  place-items-center">
-                        <IoHomeOutline size={40} color="white"/>
-                        <p className="text-white text-2xl overflow-hidden whitespace-nowrap transition-all duration-300 ease-in-out max-w-0 px-0 group-hover:max-w-[10rem] group-hover:px-3">
-                            Hirdetések
-                        </p>
-
-                    </Link>
-                </div>
-                <div>
-                    <Link to="/createAd" className="flex place-items-center">
-                        <AiOutlinePlus size={40} color="white"/>
-                        <p className="text-white text-2xl overflow-hidden whitespace-nowrap transition-all duration-300 ease-in-out max-w-0 px-0 group-hover:max-w-[10rem] group-hover:px-3">
-                            Létrehozás
-                        </p>
-                    </Link>
-                </div>
-                <div>
-                    <Link to="/interacted" className="flex place-items-center">
-                        <IoArchiveOutline size={40} color="white"/>
-                        <p className="text-white text-2xl overflow-hidden whitespace-nowrap transition-all duration-300 ease-in-out max-w-0 px-0 group-hover:max-w-[10rem] group-hover:px-3">
-                            Előzmények
-                        </p>
-                    </Link>
-
-                </div>
-                <div >
-                    <Link to="/profile" className="flex place-items-center">
-                        <FaRegCircleUser size={40} color="white"/>
-                        <p className="text-white text-2xl overflow-hidden whitespace-nowrap transition-all duration-300 ease-in-out max-w-0 px-0 group-hover:max-w-[10rem] group-hover:px-3">
-                            Profil
-                        </p>
-
-                    </Link>
-                </div>
-            </nav>
+        <div className="bg-indigo-950 sticky bottom-0 left-0 right-0 flex
+                        flex-row justify-between sm:flex-col sm:w-20 sm:h-screen items-center sm:justify-center
+                        p-4 sm:hover:w-64 transform transition-all duration-300 ease-in-out group">
+                <nav className="flex flex-row sm:flex-col justify-around sm:space-y-10 w-full">
+                        {navItems.map(({to, icon, label}) => (
+                            <NavItem key={to} to={to} icon={icon} label={label}/>
+                        ))}
+                </nav>
         </div>
     </>
 }
