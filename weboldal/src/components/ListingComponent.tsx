@@ -27,7 +27,12 @@ export default function ListingComponent({title, show, setShow, jobs}: ListingCo
                     <>
                         {jobs.length > 0 ?
                             (
-                                <div className="flex flex-row   h-fit overflow-auto overscroll-contain">
+                                <div
+                                    className="flex flex-row scroll-smooth snap-x overflow-x-auto overflow-y-hidden  h-fit overflow-auto [&::-webkit-scrollbar]:h-1
+                                                [&::-webkit-scrollbar-track]:rounded-full
+                                                [&::-webkit-scrollbar-track]:bg-gray-100
+                                                [&::-webkit-scrollbar-thumb]:rounded-full
+                                                [&::-webkit-scrollbar-thumb]:bg-gray-300 overscroll-contain">
                                     {jobs.map((item: Job) => (
                                         <JobCard key={item.id} attending={true} Job={item}/>
                                     ))}

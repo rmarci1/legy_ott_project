@@ -1,5 +1,5 @@
 
-const API_URL = 'http://localhost:3000';
+const API_URL = `${window.location.protocol}//${window.location.hostname}:3000`;
 
 export const register = async (
   name: string,

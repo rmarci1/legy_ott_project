@@ -20,7 +20,11 @@ export default function InteractedJobs(){
     return <>
         {
             user ? (
-                <div className=" w-dvw flex flex-col h-screen p-5 overflow-auto">
+                <div className=" w-dvw flex flex-col h-screen p-5 overflow-auto [&::-webkit-scrollbar]:w-1
+                                [&::-webkit-scrollbar-track]:rounded-full
+                                [&::-webkit-scrollbar-track]:bg-gray-100
+                                [&::-webkit-scrollbar-thumb]:rounded-full
+                                [&::-webkit-scrollbar-thumb]:bg-gray-300 ">
                     <ListingComponent show={saved} title={"Elmentett munkák"}  setShow={setSaved} jobs={savedJobs}/>
                     <ListingComponent show={jobs} title={"Archivált munkák"} setShow={setJobs} jobs={archivedJobs}/>
                     <ListingComponent show={ads} title={"Archivált hírdetések"} setShow={setAds} jobs={archivedAds}/>

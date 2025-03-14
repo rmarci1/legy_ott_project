@@ -29,7 +29,11 @@ export default function ProfilePage(){
             navigate('/login');
         }
     }, [user, isLoading]);
-    return     <div className="min-h-screen flex w-full flex-col p-3  overflow-y-scroll ">
+    return     <div className="min-h-screen flex w-full flex-col p-3  overflow-y-scroll  [&::-webkit-scrollbar]:w-1
+        [&::-webkit-scrollbar-track]:rounded-full
+        [&::-webkit-scrollbar-track]:bg-gray-100
+        [&::-webkit-scrollbar-thumb]:rounded-full
+        [&::-webkit-scrollbar-thumb]:bg-gray-300 ">
             <div className=" flex flex-col w-full  p-3  items-center  ">
 
                 <div className="flex">

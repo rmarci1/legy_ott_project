@@ -3,12 +3,15 @@ import {toast, ToastContainer} from "react-toastify";
 import {useState} from "react";
 import {createReview} from "../lib/api.ts";
 import {Advertiser} from "../Types/Advertiser.ts";
+import {Review} from "../Types/Review.ts";
 
 interface WriteReviewProps {
-    advertiser: Advertiser
+    advertiser: Advertiser,
+    setReviewList: (reviews: Review[] | ((prev: Review[]) => Review[])) => void;
+    manuallyAddedReview:  React.MutableRefObject<boolean>;
 }
 
-export default function WriteReview({advertiser}: WriteReviewProps){
+export default function WriteReview({advertiser, setReviewList, manuallyAddedReview}: WriteReviewProps){
     const [hover, setHover] = useState(0);
     const [reviewDesc, setReviewDesc] = useState("");
     const [rating, setRating] = useState(0);
@@ -24,16 +27,19 @@ export default function WriteReview({advertiser}: WriteReviewProps){
             return;
         }
 
-        await createReview(advertiser.username, reviewDesc, rating).then((res) => {
-            advertiser.reviews.push(res);
+        await createReview(advertiser.username, reviewDesc, rating).then((res: Review) => {
+            manuallyAddedReview.current = true;
+            setReviewList((prev) => [...prev, res])
         })
+
+
 
         setReviewDesc("")
         setRating(0);
     }
 
     return <>
-        <form className="p-4 bg-blue-200/5 rounded-3xl" onSubmit={handleReview}>
+        <form className="p-4 bg-blue-200/5 mt-2 rounded-3xl" onSubmit={handleReview}>
             <div>
                 <div className="flex flex-row items-center pb-3">
                     <label htmlFor="reviewDesc"

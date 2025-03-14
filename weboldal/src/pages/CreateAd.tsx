@@ -29,12 +29,7 @@ export default function CreateAd(){
 
     const handleDateChange = (inputDate: string) => {
         const newDate = new Date(formatDate(inputDate));
-        if (newDate < new Date(tomorrow)){
-            toast("Leghamarabb holnapra hírdethet munkát!")
-            setDate(new Date(tomorrow));
-        }else{
             setDate(newDate);
-        }
     }
 
     const formatDate = (inputDate: string) => {
@@ -80,6 +75,10 @@ export default function CreateAd(){
                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                value={name}
                                onChange={(e) => {
+                                   if(e.target.value.length > 30){
+                                       toast('Maximum 30 karakter lehet a neve!')
+                                       return;
+                                   }
                                    setName(e.target.value)
                                }}
                                placeholder="pl.: Virág ültetés"
@@ -91,7 +90,7 @@ export default function CreateAd(){
                         <input type="date"
                                name="date"
                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                               value={formatDate(date.toLocaleDateString())}
+                               min={formatDate(tomorrow.toLocaleDateString())}
                                onChange={(e) => {
                                    handleDateChange(e.target.value);
 

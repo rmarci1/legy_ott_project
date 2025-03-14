@@ -6,6 +6,8 @@ import ReviewCard from "../cards/ReviewCard.tsx";
 import {IoClose} from "react-icons/io5";
 import {canReview} from "../../lib/api.ts";
 import WriteReview from "../WriteReview.tsx";
+import {Review} from "../../Types/Review.ts";
+import { useRef } from "react";
 
 interface ProfileModalProps {
     user?: User;
@@ -16,6 +18,10 @@ interface ProfileModalProps {
 export default function ProfileModal({ setModal, setJobModal }: ProfileModalProps) {
     const { advertiser } = useAuth();
     const [canRev, setCanRev] = useState(false);
+    const [reviewList, setReviewList] = useState<Review[]>([])
+    const myRef = useRef<HTMLDivElement>(null);
+    const isInitialRender = useRef(true);
+    const manuallyAddedReview = useRef(false);
 
 
     useEffect(() => {
@@ -29,6 +35,7 @@ export default function ProfileModal({ setModal, setJobModal }: ProfileModalProp
             canReview(advertiser.username).then((res: boolean) => {
                 setCanRev(res)
             })
+            setReviewList(advertiser.reviews);
         }
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key === "Escape") {
@@ -44,6 +51,19 @@ export default function ProfileModal({ setModal, setJobModal }: ProfileModalProp
             document.addEventListener("keydown", handleKeyDown);
         };
     }, []);
+
+    useEffect(() => {
+        if (isInitialRender.current) {
+            isInitialRender.current = false;
+            return;
+        }
+        if (manuallyAddedReview.current) {
+            manuallyAddedReview.current = false;
+            if (myRef.current) {
+                myRef.current.scrollIntoView({ behavior: "smooth" });
+            }
+        }
+    }, [reviewList]);
 
     if (!advertiser) return null;
 
@@ -64,9 +84,9 @@ export default function ProfileModal({ setModal, setJobModal }: ProfileModalProp
                 >
                     <div className="flex justify-between items-center mb-4">
                         <div className="flex items-center">
-                            <img src={advertiser.profileImg} alt="profile picture" className="w-16 h-16 object-cover rounded-full"/>
+                            <img src={advertiser.profileImg} alt="Profile picture" className="w-16 h-16 object-cover rounded-full"/>
                             <div className="ml-4">
-                                <h3 className="text-xl font-semibold text-white">{advertiser.name}</h3>
+                                <h3 className="text-xl font-semibold text-white break-words">{advertiser.name}</h3>
                                 <p className="text-gray-400">@{advertiser.username}</p>
                                 <div className="flex items-center">
                                     <p className="text-white">{Math.round(advertiser.averageRating*10)/10}</p>
@@ -86,19 +106,27 @@ export default function ProfileModal({ setModal, setJobModal }: ProfileModalProp
                             <IoClose className="place-self-center" size={25}/>
                         </button>
                     </div>
-                    <p className="text-white">{advertiser.description}</p>
+                    <p className="text-white break-words">{advertiser.description}</p>
                     <div className="w-full my-4 border-t border-gray-600"></div>
                     <p className="font-medium text-xl text-white mb-2">Értékelések</p>
-                    <div className="w-full overflow-y-auto h-full max-h-64">
+                    <div className="w-full overflow-y-auto h-full max-h-64
+                                      [&::-webkit-scrollbar]:w-1
+                                      [&::-webkit-scrollbar-track]:rounded-full
+                                      [&::-webkit-scrollbar-track]:bg-gray-600/25
+                                      [&::-webkit-scrollbar-thumb]:rounded-full
+                                      [&::-webkit-scrollbar-thumb]:bg-gray-700/30">
                         {
-                            advertiser.reviews.length > 0 ? (
-                                <ul>
-                                    {advertiser.reviews.map((item, index) => (
-                                        <li key={index} className="m-1 list-none">
-                                            <ReviewCard review={item}/>
-                                        </li>
-                                    ))}
-                                </ul>
+                            reviewList.length > 0 ? (
+                                <>
+                                    <ul>
+                                        {reviewList.map((item, index) => (
+                                            <li key={index} className="m-1 list-none">
+                                                <ReviewCard review={item}/>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                    <div ref={myRef}></div>
+                                </>
                             ):
                                 (
                                     <p className="text-gray-300 italic">Még nincsenek értékelések</p>
@@ -108,7 +136,7 @@ export default function ProfileModal({ setModal, setJobModal }: ProfileModalProp
 
                     {
                          canRev && (
-                            <WriteReview advertiser={advertiser}/>
+                            <WriteReview advertiser={advertiser} manuallyAddedReview={manuallyAddedReview} setReviewList={setReviewList}/>
                         )
                     }
 

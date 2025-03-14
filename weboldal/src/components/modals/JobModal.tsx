@@ -38,11 +38,9 @@ export default function JobModal({ job, user, attending, setModal, attendJob, se
     }, []);
 
     const handleDelete = async () => {
-        console.log("elkezdodik itt")
         deleteJobById(job.id, job.from)
-
-        setModal(false);
         toast('Sikeresen törölve lett!')
+        setModal(false);
     }
 
     return (
@@ -52,12 +50,12 @@ export default function JobModal({ job, user, attending, setModal, attendJob, se
                 onClick={() => setModal(false)}
             >
                 <div
-                    className="relative bg-indigo-950 rounded-lg shadow-sm p-6 w-full max-w-2xl"
+                    className="relative bg-indigo-950 rounded-lg flex flex-col shadow-sm max-h-[95%] p-6 w-full max-w-2xl"
                     onClick={(e) => e.stopPropagation()}
                 >
-                    <div className="flex flex-row justify-between items-center mb-4">
+                    <div className="flex flex-row justify-between items-center mb-4 whitespace-pre-wrap break-words">
                         <div className="flex flex-col">
-                            <h3 className="text-xl font-semibold text-white">{job.name}</h3>
+                            <h3 className="text-xl font-semibold text-white ">{job.name}</h3>
                             <p
                                 onClick={() => {
                                     setModal(false);
@@ -77,12 +75,19 @@ export default function JobModal({ job, user, attending, setModal, attendJob, se
                         </button>
                     </div>
 
-                    <img className="rounded mt-3 mb-2 h-40 object-cover aspect-square place-self-center" src={job.img}
+                    <img className="rounded mt-3 mb-2 h-40 place-self-center" src={job.img}
                          alt="Job picture"/>
 
-                    <p className="text-white">{job.description}</p>
+                    <div className="overflow-auto
+                                      [&::-webkit-scrollbar]:w-1
+                                      [&::-webkit-scrollbar-track]:rounded-full
+                                      [&::-webkit-scrollbar-track]:bg-gray-600/25
+                                      [&::-webkit-scrollbar-thumb]:rounded-full
+                                      [&::-webkit-scrollbar-thumb]:bg-gray-700/30">
+                        <p className="text-white break-words whitespace-pre-line">{job.description}</p>
+                    </div>
 
-                    <p className="text-gray-300 mt-2">Helyszín: {job.address}</p>
+                    <p className="text-gray-300 mt-2 break-words">Helyszín: {job.address}</p>
 
                     {user && !attending && (
                         <div className=" flex mt-4 justify-center w-full">
