@@ -22,7 +22,8 @@ export class JobsService {
           createJobDto.img = "";
           return await this.db.job.create({
             data: {...createJobDto,
-              date: new Date(createJobDto.date)
+              date: new Date(createJobDto.date),
+              created: new Date()
             }
           })
         }catch(err){

@@ -3,16 +3,17 @@ import { useAuth } from "../../context/AuthContext"
 import { MdBusinessCenter, MdOpenInNew, MdOutlineAddBusiness } from "react-icons/md";
 import AdminPanelCard from "../../components/cards/AdminPanelCard";
 import { IoStatsChartSharp } from "react-icons/io5";
-import { GrLineChart } from "react-icons/gr";
 import { PiChartLineDownLight } from "react-icons/pi";
 import Graph from "@/components/Graph";
 import { useEffect, useState } from "react";
 import { getDashBoardDatas } from "@/lib/api";
 import { DashBoardData } from "@/Types/DashBoardData";
+import AdminStaticticsCard from "@/components/cards/AdminStaticticsCard";
 export default function DashBoard(){
     const {user,isLoading} = useAuth();
     const [data,setData] = useState<DashBoardData | null>(null);
     const [isDashBoardLoading,setIsDashBoardLoading] = useState(false);
+    console.log(data);
     useEffect(() => {
         setIsDashBoardLoading(true);
         getDashBoardDatas()
@@ -32,7 +33,6 @@ export default function DashBoard(){
         const d1 = new Date();
         const d2 = new Date(user?.created!);
         const diffInMs = Math.abs(d2.getTime() - d1.getTime());
-        console.log(diffInMs);
         return Math.ceil(diffInMs / (1000*60*60*24));
     }
     return (
@@ -50,7 +50,7 @@ export default function DashBoard(){
                         <AdminPanelCard
                             title="Felhasználók száma"
                             count={data?.userCount ?? 0}
-                            pastWeekCount={data?.pastWeekCount ?? 0}
+                            pastWeekCount={data?.pastWeekUserCount ?? 0}
                             logo={FaUserGroup}
                         />
                         <AdminPanelCard
@@ -79,13 +79,13 @@ export default function DashBoard(){
                             <p className="text-2xl text-white font-light">Új felhasználók</p>
                             <p className="text-gray-600">Ezen a Héten</p>
                             <div className="justify-between flex flex-row mt-2">
-                                <p className="text-4xl font-bold text-white">{data?.thisWeekCount ?? 0}</p>
+                                <p className="text-4xl font-bold text-white">{data?.thisWeekUserCount ?? 0}</p>
                                 <div className="flex flex-row place-items-center">
                                     <FaCircle size={8} color="#2980b9" className=""/>
                                     <p className="text-white text-sm mx-2">Előző héten</p>
                                     <FaCircle size={8} color="#5daed2" className="mr-2"/>
                                     <p className="text-white text-sm mr-10">Ezen a héten</p>
-                                    <p className="text-white text-sm font-bold">{data?.thisWeekCount! + data?.pastWeekCount!}</p>
+                                    <p className="text-white text-sm font-bold">{data?.thisWeekUserCount! + data?.pastWeekUserCount!}</p>
                                 </div>
                             </div>
                         </div>
@@ -94,42 +94,23 @@ export default function DashBoard(){
                             <p className="text-white font-semibold text-2xl">Statisztikák</p>
                             <p className="text-gray-600">Ebben a hónapban</p>
                             <div className="flex flex-row">
-                                <div className="w-[25%]">
-                                    <div className="mt-4">
-                                        <div className="w-[200px] h-[168px] rounded-xl place-content-center justify-items-center" style={{
-                                            background: 'linear-gradient(to bottom, #1e1b4b 30%, #851fc4 )'
-                                        }}> 
-                                            <div className="w-[75%] h-[75%]">
-                                                <IoStatsChartSharp size={16} color="#4dbe97"/>
-                                                <p className="text-white font-bold mt-6 text-xl">1256</p>
-                                                <p className="text-[#B5BCCD]">Összes profil</p>
-                                                <div className="flex flex-row mt-2 place-items-center">
-                                                    <GrLineChart size={14} color="#4dbe97"/>
-                                                    <p className="text-[#4dbe97] mx-1">15,25%</p>
-                                                    <p className="text-[#b5bccd] text-sm">Előző hónap</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="h-full ml-10">
-                                    <div className="w-full h-full mt-4">
-                                        <div className="w-[200px] h-[168px] rounded-xl place-content-center justify-items-center" style={{
-                                            background: 'linear-gradient(to bottom, #1e1b4b 30%, #ffde8a )'
-                                        }}> 
-                                            <div className="w-[75%] h-[75%]">
-                                                <MdOutlineAddBusiness size={20} color="#2563eb" />
-                                                <p className="text-white font-bold mt-6 text-xl">756</p>
-                                                <p className="text-[#B5BCCD]">Összes Munka</p>
-                                                <div className="flex flex-row mt-2 place-items-center">
-                                                    <PiChartLineDownLight size={16  } color="#dc2626" />
-                                                    <p className="text-red-500 ">2,38%</p>
-                                                    <p className="text-[#b5bccd] text-sm ml-1">Előző hónap</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <AdminStaticticsCard
+                                    count={data?.thisMonthUserCount ?? 0}
+                                    difference={data?.thisMonthUserCount! / (data?.pastMonthUserCount! > 0 ? data?.pastMonthUserCount! : 1)}
+                                    title="Összes profil"
+                                    iconColor="#4dbe97"
+                                    mainIcon={IoStatsChartSharp}
+                                    background="linear-gradient(to bottom, #1e1b4b 30%, #851fc4 )"                             
+                                />
+                                <AdminStaticticsCard
+                                    count={data?.thisMonthJobCount ?? 0}
+                                    difference={data?.thisMonthJobCount! / (data?.pastMonthJobCount! > 0 ? data?.pastMonthJobCount! : 1)}
+                                    title="Összes Munka"
+                                    iconColor="#2563eb"
+                                    containerStyles="ml-10"
+                                    mainIcon={MdOutlineAddBusiness}       
+                                    background="linear-gradient(to bottom, #1e1b4b 30%, #ffde8a )"                      
+                                />
                                 <div className="ml-10">
                                     <div className="w-full mt-4">
                                         <div className="w-[200px] h-[168px] rounded-xl place-content-center justify-items-center" style={{

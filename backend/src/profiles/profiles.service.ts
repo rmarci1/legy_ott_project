@@ -114,10 +114,39 @@ export class ProfilesService {
       currentDate.setHours(0,0,0,0);
 
       const weekdailyCounts = [];
-      let thisWeekCount = 0;
-      let pastWeekCount = 0;
+      let thisWeekUserCount = 0;
+      let pastWeekUserCount = 0;
+
+      const monthCheck = new Date();
+      monthCheck.setDate(currentDate.getDate() - 30);
+      console.log("currDate: ",currentDate)
+      console.log("monthCheck: ",monthCheck)
+      let thisMonthUserCount = await this.db.profile.count({
+        where: {
+          created : {lte : currentDate, gte: monthCheck}
+        }
+      });
+      let thisMonthJobCount = await this.db.job.count({
+        where: {
+          created : {lte : currentDate, gte: monthCheck}
+        }
+      });
+      const pastMonthCheck = new Date();
+      pastMonthCheck.setDate(currentDate.getDate() - 30);
+      monthCheck.setDate(monthCheck.getDate() - 30);
+      console.log("currDate: ",pastMonthCheck);
+      console.log("monthCheck: ",monthCheck);
+      let pastMonthUserCount = await this.db.profile.count({
+        where: {
+          created : {gte:monthCheck, lt : pastMonthCheck}
+        }
+      });
+      let pastMonthJobCount = await this.db.job.count({
+        where: {
+          created : {gte:monthCheck, lt : pastMonthCheck}
+        }
+      });
       const daysOfTheWeek = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-      
       for (let index = 0; index < 7; index++) {
 
         // this week
@@ -134,7 +163,7 @@ export class ProfilesService {
               },
           },
         });
-        thisWeekCount += count;
+        thisWeekUserCount += count;
         startOfDay.setDate(currentDate.getDate() - 5 - index)
 
         endOfDay = new Date(startOfDay);
@@ -148,10 +177,10 @@ export class ProfilesService {
               },
           },
         });
-        pastWeekCount+=pastDayCount;
+        pastWeekUserCount+=pastDayCount;
         weekdailyCounts.push({ day: daysOfTheWeek[6-startOfDay.getDay()], thisWeek: count, pastWeek: pastDayCount});
       }
-      return {userCount, jobCount, thisWeekCount, pastWeekCount, weekDailyCounts : weekdailyCounts}
+      return {userCount, jobCount, pastMonthJobCount, thisMonthJobCount, thisWeekUserCount, pastWeekUserCount, thisMonthUserCount, pastMonthUserCount : pastMonthUserCount > 0 ? pastMonthUserCount : 1, weekDailyCounts : weekdailyCounts}
     }
     catch(error){
       throw new Error(error.message);
