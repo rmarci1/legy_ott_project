@@ -36,7 +36,7 @@ model profile{
   password String
   isAdmin Boolean @default(false)
   description String?
-
+  created DateTime
   reviews review[]
   jobs jobProfile[]
 }

@@ -7,19 +7,22 @@ const prisma = new PrismaClient()
 const main = async () => {
 
     const profiles = await Promise.all(
-        Array.from({ length: 30 }).map(async () =>
-          prisma.profile.create({
+        Array.from({ length: 30 }).map(async () =>{
+        const date = new Date();
+        date.setDate(date.getDate() + (faker.number.int({min: -10, max: 10})));
+          return prisma.profile.create({
             data: {
               name: faker.person.fullName(),
               username: faker.internet.username(),
               email: faker.internet.email(),
               password: await bcrypt.hash('Asd1234@', 10),
               description: faker.lorem.lines(10),
-              profileImg: defaultProfilePicUrl,
+              profileImg: defaultProfilePicUrl,      
+              created: date,
               isAdmin: faker.datatype.boolean()
             }
-          }, )
-        )
+          })
+        })
     );
     const citys = ["Budapest","Debrecen","Szeged","Győr","Nyíregyháza","Veszprém","Nógrád","Fejér"];
     const names = ["Közösségi Segítő Önkéntes","Idősgondozási Önkéntes","Állatmenhelyi Önkéntes","Környezetvédelmi Önkéntes","Kórházi Önkéntes",
@@ -28,7 +31,7 @@ const main = async () => {
     const jobs = await Promise.all(
         Array.from({ length: 50 }).map((_, index) => {
             const date = new Date();
-            date.setDate(date.getDate() + (faker.number.int({min: -5, max: 20})));
+            date.setDate(date.getDate() + (faker.number.int({min: -14, max: 0})));
             const max_attending = faker.number.int({min: 5, max: 30});
             return prisma.job.create({
                 data: {
