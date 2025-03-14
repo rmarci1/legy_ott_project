@@ -21,6 +21,7 @@ export class CreateProfileDto {
   @IsString()
   username: string;
 
+  created : Date;
   @ApiProperty({
     description: 'Users email address',
     type: 'string'

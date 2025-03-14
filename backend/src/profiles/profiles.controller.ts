@@ -101,6 +101,12 @@ export class ProfilesController {
   @Delete('')
   @UseGuards(AuthGuard)
   remove(@Request() req: Request) {
+    
     return this.profilesService.remove(req['profile']['username']);
+  }
+
+  @Get("/admin/dashboard")
+  dashboard(){
+    return this.profilesService.getDashBoardData();
   }
 }

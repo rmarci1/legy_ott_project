@@ -106,5 +106,56 @@ export class ProfilesService {
       throw new Error("Nem létezik ilyen profil")
     }
   }
+  async getDashBoardData(){
+    try{
+      const userCount = await this.db.profile.count();
+      const jobCount = await this.db.job.count();
+      const currentDate = new Date();
+      currentDate.setHours(0,0,0,0);
+
+      const weekdailyCounts = [];
+      let thisWeekCount = 0;
+      let pastWeekCount = 0;
+      const daysOfTheWeek = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+      
+      for (let index = 0; index < 7; index++) {
+
+        // this week
+        const startOfDay = new Date(currentDate);
+        startOfDay.setDate(currentDate.getDate() - index)
+
+        let endOfDay = new Date(startOfDay);
+        endOfDay.setHours(23, 59, 59, 999);
+        const count = await this.db.profile.count({
+          where: {
+              created: {
+                  gte: startOfDay,
+                  lte: endOfDay,
+              },
+          },
+        });
+        thisWeekCount += count;
+        startOfDay.setDate(currentDate.getDate() - 5 - index)
+
+        endOfDay = new Date(startOfDay);
+        endOfDay.setHours(23, 59 , 59, 999);
+
+        const pastDayCount = await this.db.profile.count({
+          where: {
+              created: {
+                  gte: startOfDay,
+                  lte: endOfDay,
+              },
+          },
+        });
+        pastWeekCount+=pastDayCount;
+        weekdailyCounts.push({ day: daysOfTheWeek[6-startOfDay.getDay()], thisWeek: count, pastWeek: pastDayCount});
+      }
+      return {userCount, jobCount, thisWeekCount, pastWeekCount, weekDailyCounts : weekdailyCounts}
+    }
+    catch(error){
+      throw new Error(error.message);
+    }
+  }
 
 }
