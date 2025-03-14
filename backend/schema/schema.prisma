@@ -23,7 +23,8 @@ model job{
   max_attending Int
   current_attending Int
   address String
-
+  created DateTime
+  
   profiles jobProfile[]
 }
 
