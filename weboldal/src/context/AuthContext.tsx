@@ -95,7 +95,8 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
             password: newUser.password,
             bejelentkezett: true,
             profileImg: newUser.profileImg,
-            isAdmin: newUser.isAdmin
+            isAdmin: newUser.isAdmin,
+            created: newUser.created
         });
 
         await resetJobs();

@@ -351,5 +351,21 @@ export const getAverageRating = async (username: string) => {
     throw new Error(e.message)
   }
 }
+export const getDashBoardDatas = async () => {
+  try{
+    const response = await fetch(`${API_URL}/profiles/admin/dashboard`,{
+      method: 'GET',
+      credentials: 'include'
+    })
+    const data = await response.json();
+    if(!response.ok){
+      throw new Error(data.message);
+    }
+    return data;
+  }
+  catch(error: any){
+    throw new Error(error);
+  }
+}
 
 

@@ -7,4 +7,5 @@ export interface User{
     profileImg: string;
     bejelentkezett?: boolean;
     isAdmin: boolean;
+    created : Date,
 }

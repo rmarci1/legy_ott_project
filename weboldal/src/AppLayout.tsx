@@ -9,10 +9,11 @@ import ProfilePage from './pages/ProfilePage';
 import DashBoard from './pages/admin/DashBoard';
 import AdminNavbar from './components/navbars/AdminNavBar';
 import Users from './pages/admin/Users';
+import AdminRoute from './pages/admin/AdminRoute';
 
 export default function AppLayout(){
-    const location = useLocation(); // Itt már használható a useLocation
-    const isAdmin = location.pathname.startsWith('/admin')
+    const location = useLocation();
+    const isAdmin = location.pathname.startsWith('/admin');
     return (
       <div className="flex flex-row h-screen w-full overflow-hidden font-poppins">
         <AuthProvider>
@@ -23,8 +24,8 @@ export default function AppLayout(){
             <Route path="/register" element={<Register />} />
             <Route path="/interacted" element={<InteractedJobs />} />
             <Route path="/profile" element={<ProfilePage />} />
-            <Route path='/admin' >
-                <Route path="dashboard" element={<DashBoard/>} />
+            <Route path='/admin'>
+                <Route path="dashboard" element={<DashBoard />} />
                 <Route path="users" element={<Users/>} />
             </Route>
           </Routes>
