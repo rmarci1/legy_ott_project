@@ -8,19 +8,19 @@ import {toast, ToastContainer} from "react-toastify";
 interface JobModalProps {
     job: Job;
     user?: User;
-    attending: boolean;
     setModal: (value: boolean) => void;
     setProfileModal: (value: boolean) => void;
     attendJob: (id: number, value: boolean) => void;
 }
 
-export default function JobModal({ job, user, attending, setModal, attendJob, setProfileModal }: JobModalProps) {
+export default function JobModal({ job, user, setModal, attendJob, setProfileModal }: JobModalProps) {
     const date = new Date(job.date);
     const today = new Date();
     const { getAdvertiserProfile, deleteJobById } = useAuth();
 
     useEffect(() => {
         getAdvertiserProfile(job.from);
+        console.log(job.profiles);
 
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key === "Escape") {
@@ -88,12 +88,20 @@ export default function JobModal({ job, user, attending, setModal, attendJob, se
                     </div>
 
                     <p className="text-gray-300 mt-2 break-words">Helyszín: {job.address}</p>
-
-                    {user && !attending && (
+                    {user && (!job.profiles || job.profiles.length <= 0 || (job.profiles[0] && !job.profiles[0].isApplied))  && (
                         <div className=" flex mt-4 justify-center w-full">
                             <button type="button" onClick={() => attendJob(job.id, true)}
                                     className="bg-green-700 rounded p-2 w-2/3 text-white">
                                 Jelentkezés
+                            </button>
+                        </div>
+                    )}
+
+                    {user && (job.profiles && job.profiles[0] && job.profiles[0].isApplied) && (
+                        <div className=" flex mt-4 justify-center w-full">
+                            <button type="button" onClick={() => attendJob(job.id, false)}
+                                    className="bg-red-700 rounded p-2 w-2/3 text-white">
+                                Jelentkezés lemondása
                             </button>
                         </div>
                     )}

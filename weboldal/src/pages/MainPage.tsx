@@ -21,10 +21,10 @@ export default function MainPage() {
             {
                 user?
                     (jobs.map((item: Job) => (
-                        <JobCard key={item.id} attending={false} Job={item}/>
+                        <JobCard key={item.id} canSaveForLater={true} Job={item}/>
                     )))
                 :(allJobs.map((item: Job) => (
-                    <JobCard key={item.id} attending={false} Job={item}/>
+                    <JobCard key={item.id} canSaveForLater={false} Job={item}/>
                 )))
             }
         </div>

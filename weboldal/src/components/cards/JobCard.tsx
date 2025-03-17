@@ -7,10 +7,10 @@ import ProfileModal from "../modals/ProfileModal.tsx";
 
 interface jobProps{
     Job: Job,
-    attending: boolean
+    canSaveForLater: boolean
 }
 
-export default function JobCard({Job, attending}: jobProps){
+export default function JobCard({Job, canSaveForLater}: jobProps){
     const [jobModal, setJobModal] = useState(false);
     const [profileModal, setProfileModal] = useState(false);
     const {user, setSave, attendJob} = useAuth();
@@ -46,7 +46,7 @@ export default function JobCard({Job, attending}: jobProps){
                     </p>
                 </span>
                 <div className="flex flex-row justify-between ">
-                    {user && !attending && (
+                    {user && canSaveForLater &&  (
                         <span className="flex-none cursor-pointer">
                             {Job.profiles && Job.profiles[0] && Job.profiles[0].saveForLater ?
                                 <PiHeartFill size={40} color="red"
@@ -66,10 +66,10 @@ export default function JobCard({Job, attending}: jobProps){
 
             {jobModal && (
                 user? (
-                        <JobModal job={Job} user={user} setModal={setJobModal} attending={attending} attendJob={attendJob} setProfileModal={setProfileModal}/>
+                        <JobModal job={Job} user={user} setModal={setJobModal} attendJob={attendJob} setProfileModal={setProfileModal}/>
                     ):
                     (
-                        <JobModal job={Job} setModal={setJobModal} attending={attending} attendJob={attendJob} setProfileModal={setProfileModal}/>
+                        <JobModal job={Job} setModal={setJobModal} attendJob={attendJob} setProfileModal={setProfileModal}/>
                     )
             )}
 
