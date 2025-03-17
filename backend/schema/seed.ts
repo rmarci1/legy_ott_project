@@ -9,7 +9,7 @@ const main = async () => {
     const generatedUsernames: Set<string> = new Set();
 
     const profiles = await Promise.all(
-        Array.from({ length: 30 }).map(async () => {
+        Array.from({ length: 500 }).map(async () => {
             let username;
             do {
                 username = faker.internet.username();
@@ -42,7 +42,7 @@ const main = async () => {
             const date = new Date();
             const create = new Date();
             create.setDate(create.getDate() + faker.number.int({ min: -60, max: 0 }));
-            date.setDate(date.getDate() + (faker.number.int({ min: -5, max: 20 })));
+            date.setDate(date.getDate() + (faker.number.int({ min: -60, max: 60})));
             const max_attending = faker.number.int({ min: 5, max: 30 });
             return prisma.job.create({
                 data: {

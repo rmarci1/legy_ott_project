@@ -105,47 +105,65 @@ export class ProfilesService {
     catch{
       throw new Error("Nem létezik ilyen profil")
     }
-  }
+  } 
   async getDashBoardData(){
     try{
+      const currentDate = new Date();
+
+      const pastWeek = new Date();
+      pastWeek.setDate(currentDate.getDate() - 7);
+
       const userCount = await this.db.profile.count();
       const jobCount = await this.db.job.count();
-      const currentDate = new Date();
+
+      const jobCountPastWeek = await this.db.job.count({
+        where:{
+          created: {gt: pastWeek}
+        }
+      });
       currentDate.setHours(0,0,0,0);
 
       const weekdailyCounts = [];
       let thisWeekUserCount = 0;
       let pastWeekUserCount = 0;
 
+      // checking this month
       const monthCheck = new Date();
       monthCheck.setDate(currentDate.getDate() - 30);
-      console.log("currDate: ",currentDate)
-      console.log("monthCheck: ",monthCheck)
-      let thisMonthUserCount = await this.db.profile.count({
+      const thisMonthUserCount = await this.db.profile.count({
         where: {
           created : {lte : currentDate, gte: monthCheck}
         }
       });
-      let thisMonthJobCount = await this.db.job.count({
+      const thisMonthJobCount = await this.db.job.count({
         where: {
           created : {lte : currentDate, gte: monthCheck}
         }
       });
+      const thisMonthClosedJobs = await this.db.job.count({
+        where: {
+          date: { lte: currentDate, gte: monthCheck}
+        }
+      })
+      // checking past month
       const pastMonthCheck = new Date();
       pastMonthCheck.setDate(currentDate.getDate() - 30);
       monthCheck.setDate(monthCheck.getDate() - 30);
-      console.log("currDate: ",pastMonthCheck);
-      console.log("monthCheck: ",monthCheck);
-      let pastMonthUserCount = await this.db.profile.count({
+      const pastMonthUserCount = await this.db.profile.count({
         where: {
-          created : {gte:monthCheck, lt : pastMonthCheck}
+          created : { gte:monthCheck, lt : pastMonthCheck }
         }
       });
-      let pastMonthJobCount = await this.db.job.count({
+      const pastMonthJobCount = await this.db.job.count({
         where: {
-          created : {gte:monthCheck, lt : pastMonthCheck}
+          created : { gte:monthCheck, lt : pastMonthCheck }
         }
       });
+      const pastMonthClosedJobs = await this.db.job.count({
+        where: {
+          date: { gte:monthCheck, lt : pastMonthCheck }
+        }
+      })
       const daysOfTheWeek = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
       for (let index = 0; index < 7; index++) {
 
@@ -180,7 +198,8 @@ export class ProfilesService {
         pastWeekUserCount+=pastDayCount;
         weekdailyCounts.push({ day: daysOfTheWeek[6-startOfDay.getDay()], thisWeek: count, pastWeek: pastDayCount});
       }
-      return {userCount, jobCount, pastMonthJobCount, thisMonthJobCount, thisWeekUserCount, pastWeekUserCount, thisMonthUserCount, pastMonthUserCount : pastMonthUserCount > 0 ? pastMonthUserCount : 1, weekDailyCounts : weekdailyCounts}
+
+      return {jobCount, jobCountPastWeek, userCount, pastMonthJobCount, thisMonthJobCount,thisMonthClosedJobs,pastMonthClosedJobs, thisWeekUserCount, pastWeekUserCount, thisMonthUserCount, pastMonthUserCount : pastMonthUserCount > 0 ? pastMonthUserCount : 1, weekDailyCounts : weekdailyCounts}
     }
     catch(error){
       throw new Error(error.message);

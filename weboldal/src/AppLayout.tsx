@@ -9,7 +9,6 @@ import ProfilePage from './pages/ProfilePage';
 import DashBoard from './pages/admin/DashBoard';
 import AdminNavbar from './components/navbars/AdminNavBar';
 import Users from './pages/admin/Users';
-import AdminRoute from './pages/admin/AdminRoute';
 
 export default function AppLayout(){
     const location = useLocation();

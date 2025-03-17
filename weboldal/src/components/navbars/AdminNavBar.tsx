@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom";
 import images from "../../constants/images";
 import { AiOutlineIssuesClose } from "react-icons/ai";
 import { TbMessageSearch } from "react-icons/tb";
+import { FiUsers } from "react-icons/fi";
 export default function AdminNavbar(){
     return (
         <div className="h-screen w-64 text-white p-4 flex flex-col bg-indigo-950" style={{
@@ -27,7 +28,7 @@ export default function AdminNavbar(){
                 }`
               }
             >   
-              <img src={images.profile} className="h-4 w-4"/>
+              <FiUsers />
               Felhasználók
             </NavLink>
             <NavLink

@@ -3,7 +3,6 @@ import { useAuth } from "../../context/AuthContext"
 import { MdBusinessCenter, MdOpenInNew, MdOutlineAddBusiness } from "react-icons/md";
 import AdminPanelCard from "../../components/cards/AdminPanelCard";
 import { IoStatsChartSharp } from "react-icons/io5";
-import { PiChartLineDownLight } from "react-icons/pi";
 import Graph from "@/components/Graph";
 import { useEffect, useState } from "react";
 import { getDashBoardDatas } from "@/lib/api";
@@ -49,14 +48,14 @@ export default function DashBoard(){
                         <p className="text-gray-600">Kezdet óta</p>
                         <AdminPanelCard
                             title="Felhasználók száma"
-                            count={data?.userCount ?? 0}
+                            count={data?.userCount!}
                             pastWeekCount={data?.pastWeekUserCount ?? 0}
                             logo={FaUserGroup}
                         />
                         <AdminPanelCard
                             title="Munkák száma"
-                            count={data?.jobCount ?? 0}
-                            pastWeekCount={0}
+                            count={data?.jobCount!}
+                            pastWeekCount={data?.jobCountPastWeek ?? 0}
                             logo={MdBusinessCenter}
                         />
                         <div className="mt-12 h-20 w-full rounded-xl place-content-center justify-items-center shadow-lg bg-gradient-to-r from-orange-400 via-pink-500 to-purple-500">
@@ -111,24 +110,15 @@ export default function DashBoard(){
                                     mainIcon={MdOutlineAddBusiness}       
                                     background="linear-gradient(to bottom, #1e1b4b 30%, #ffde8a )"                      
                                 />
-                                <div className="ml-10">
-                                    <div className="w-full mt-4">
-                                        <div className="w-[200px] h-[168px] rounded-xl place-content-center justify-items-center" style={{
-                                            background: 'linear-gradient(to bottom, #1e1b4b 30%, #838576 )'
-                                        }}> 
-                                            <div className="w-[75%] h-[75%]">
-                                                <MdOpenInNew size={20} color="#ffde8a"/>
-                                                <p className="text-white font-bold mt-6 text-xl">213</p>
-                                                <p className="text-[#B5BCCD]">Lezárt Munkák</p>
-                                                <div className="flex flex-row mt-2 place-items-center">
-                                                    <PiChartLineDownLight size={16  } color="#dc2626" />
-                                                    <p className="text-red-600 ">40,28%</p>
-                                                    <p className="text-[#b5bccd] text-sm ml-1">Előző hónap</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                               <AdminStaticticsCard
+                                    count={data?.thisMonthClosedJobs ?? 0}
+                                    difference={data?.thisMonthClosedJobs! / (data?.pastMonthClosedJobs! > 0 ? data?.pastMonthClosedJobs! : 1)}
+                                    title="Lezárt Munkák"
+                                    iconColor="#ffde8a"
+                                    containerStyles="ml-10"
+                                    mainIcon={MdOpenInNew}       
+                                    background="linear-gradient(to bottom, #1e1b4b 30%, #838576 )"                      
+                                />
                             </div>
                         </div>
                     </div>

@@ -331,7 +331,6 @@ export const getArchivedAds = async () => {
   }
 }
 
-
 export const getAverageRating = async (username: string) => {
   try{
     const res = await fetch(`${API_URL}/reviews/average/${username} `, {
@@ -351,6 +350,7 @@ export const getAverageRating = async (username: string) => {
     throw new Error(e.message)
   }
 }
+
 export const getDashBoardDatas = async () => {
   try{
     const response = await fetch(`${API_URL}/profiles/admin/dashboard`,{
@@ -367,5 +367,23 @@ export const getDashBoardDatas = async () => {
     throw new Error(error);
   }
 }
+
+export const getAllUsers = async () => {
+  try{
+    const response = await fetch(`${API_URL}/profiles`,{
+      method: 'GET',
+      credentials: 'include'
+    })
+    const data = await response.json();
+    if(!response.ok){
+      throw new Error(data.message);
+    }
+    return data;
+  }
+  catch(error: any){
+    throw new Error(error);
+  }
+}
+
 
 

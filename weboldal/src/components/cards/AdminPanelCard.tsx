@@ -10,8 +10,8 @@ interface Props{
 export default function AdminPanelCard({logo: Logo, title, count, pastWeekCount}: Props){
     const isPositive = pastWeekCount > 0;
     return (
-    <div className="border-2 border-gray-500 rounded-xl w-full min-h-[25%] justify-items-center place-content-center mt-5">
-        <div className="w-[90%] h-[80%]">
+    <div className="border-2 border-gray-500 rounded-xl w-full justify-items-center place-content-center mt-5">
+        <div className="w-[90%] my-4">
             <div className="w-12 h-12 bg-indigo-900 rounded-sm justify-items-center place-content-center">
                 <Logo color="white" size={24}/>
             </div>

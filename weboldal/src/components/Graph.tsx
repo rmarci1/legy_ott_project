@@ -18,11 +18,11 @@ import {
 export default function Graph({ data }: { data?: Props[] |any}) {  
   const chartConfig = {
     thisWeek: {
-      label: "This Week",
+      label: "Ezen a héten",
       color: "#2980b9",
     },
     pastWeek: {
-      label: "Past Week",
+      label: "Előző héten",
       color: "#5daed2",
     },
   } satisfies ChartConfig;
