@@ -9,6 +9,7 @@ import ProfilePage from './pages/ProfilePage';
 import DashBoard from './pages/admin/DashBoard';
 import AdminNavbar from './components/navbars/AdminNavBar';
 import Users from './pages/admin/Users';
+import Test from './pages/admin/test';
 
 export default function AppLayout(){
     const location = useLocation();
@@ -26,6 +27,7 @@ export default function AppLayout(){
             <Route path='/admin'>
                 <Route path="dashboard" element={<DashBoard />} />
                 <Route path="users" element={<Users/>} />
+                <Route path="test" element={<Test/>} />
             </Route>
           </Routes>
         </AuthProvider>

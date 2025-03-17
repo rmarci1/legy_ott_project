@@ -119,7 +119,7 @@
                     </thead>
                     <tbody className="bg-gray-50">
                     {
-                      filteredUsers.map((curr) => <UserListCard user={curr} searchTerm={searchTerm}/>)
+                      filteredUsers.map((curr) => <UserListCard key={curr.id} user={curr} searchTerm={searchTerm}/>)
                     }
                     </tbody>
                   </table>

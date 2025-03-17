@@ -53,10 +53,10 @@ export default function AdminNavbar(){
               </span>
             </NavLink>
             <NavLink
-              to="/docs"
+              to="/admin/test"
               className="flex items-center gap-2 p-3 rounded-lg hover:bg-gray-700"
             >
-              Docs
+              Test
             </NavLink>
           </nav>
         </div>
