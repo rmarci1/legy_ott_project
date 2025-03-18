@@ -33,7 +33,8 @@ export default function ListingComponent({title, show, setShow, jobs}: ListingCo
                         {jobs.length > 0 ?
                             (
                                 <div
-                                    className="flex flex-row scroll-smooth snap-x overflow-x-auto overflow-y-hidden  h-fit overflow-auto [&::-webkit-scrollbar]:h-1
+                                    className="flex flex-row scroll-smooth snap-x overflow-x-auto overflow-y-hidden h-fit overflow-auto mr-2
+                                                [&::-webkit-scrollbar]:h-1
                                                 [&::-webkit-scrollbar-track]:rounded-full
                                                 [&::-webkit-scrollbar-track]:bg-gray-100
                                                 [&::-webkit-scrollbar-thumb]:rounded-full

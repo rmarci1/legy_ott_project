@@ -13,7 +13,7 @@ export default function AppLayout(){
     const location = useLocation();
 
     return (
-      <div className="flex flex-col sm:flex-row h-screen w-full overflow-hidden font-poppins">
+      <div className="flex flex-col md:flex-row h-screen w-full overflow-hidden font-poppins">
         <AuthProvider>
           {location.pathname !== "/admin" && <Navbar />}
           <Routes>

@@ -20,7 +20,6 @@ export default function JobModal({ job, user, setModal, attendJob, setProfileMod
 
     useEffect(() => {
         getAdvertiserProfile(job.from);
-        console.log(job.profiles);
 
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key === "Escape") {
@@ -88,7 +87,7 @@ export default function JobModal({ job, user, setModal, attendJob, setProfileMod
                     </div>
 
                     <p className="text-gray-300 mt-2 break-words">Helyszín: {job.address}</p>
-                    {user && (!job.profiles || job.profiles.length <= 0 || (job.profiles[0] && !job.profiles[0].isApplied))  && (
+                    {user && (!job.profiles || job.profiles.length <= 0 || (job.profiles[0] && !job.profiles[0].isApplied)) && (job.from != user.username) && (
                         <div className=" flex mt-4 justify-center w-full">
                             <button type="button" onClick={() => attendJob(job.id, true)}
                                     className="bg-green-700 rounded p-2 w-2/3 text-white">
@@ -106,7 +105,7 @@ export default function JobModal({ job, user, setModal, attendJob, setProfileMod
                         </div>
                     )}
 
-                    {user && job.from == user.username && date > today && (
+                    {(user && (job.from == user.username) && (date > today)) && (
                         <div className=" flex mt-4 justify-center w-full">
                             <button type="button"
                                     onClick={() => {

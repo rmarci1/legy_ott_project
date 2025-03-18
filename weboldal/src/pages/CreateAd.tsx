@@ -21,7 +21,9 @@ export default function CreateAd(){
 
     useEffect(() => {
         if(maxPart <= 0){
-            toast('Minimum 1 résztvevőnek lennie kell!')
+            toast.warn('Minimum 1 résztvevőnek lennie kell!', {
+                className: "bg-yellow-300 text-white"
+            })
             setMaxPart(1);
         }
     }, [maxPart]);
@@ -42,7 +44,16 @@ export default function CreateAd(){
     const handleSubmit = async (e: { preventDefault: () => void; }) =>{
         e.preventDefault();
         if(!user){
-            toast('Jelentkezzen be a hírdetés létrehozásához!')
+            toast.error('Jelentkezzen be a hírdetés létrehozásához!', {
+                className: "bg-red-300 text-white"
+            })
+            return;
+        }
+
+        if(date < tomorrow){
+            toast.warn('Leghamarabb holnapra hírdethet meg munkát!', {
+                className: "bg-yellow-300 text-white"
+            })
             return;
         }
 
@@ -62,9 +73,9 @@ export default function CreateAd(){
     }
 
     return <>
-        <div className=" w-dvw flex flex-wrap h-screen overflow-auto justify-center items-center">
+        <div className=" md:w-dvw w-full flex flex-wrap h-screen overflow-auto justify-center items-center">
             <div
-                className=" w-full max-w-fit m-4 bg-white h-fit border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-indigo-950 dark:border-gray-700">
+                className=" md:w-full w-4/5 overflow-x-hidden md:max-w-fit m-4 bg-white h-fit border p-3 border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-indigo-950 dark:border-gray-700">
                 <form className="space-y-6" onSubmit={handleSubmit}>
                     <h5 className="text-xl font-medium text-gray-900 dark:text-white">Hírdetés létrehozása</h5>
                     <div>
@@ -76,7 +87,9 @@ export default function CreateAd(){
                                value={name}
                                onChange={(e) => {
                                    if(e.target.value.length > 30){
-                                       toast('Maximum 30 karakter lehet a neve!')
+                                       toast.warn('Maximum 30 karakter lehet a neve!', {
+                                           className: "bg-yellow-300 text-white"
+                                       })
                                        return;
                                    }
                                    setName(e.target.value)
@@ -150,7 +163,8 @@ export default function CreateAd(){
                     </button>
                 </form>
             </div>
-            <ToastContainer/>
+            <ToastContainer
+             autoClose={2000}/>
         </div>
 
     </>

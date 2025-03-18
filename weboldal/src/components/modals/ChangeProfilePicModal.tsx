@@ -1,6 +1,8 @@
 import {profilePicChange} from "../../lib/api.ts";
-import {ChangeEvent, useState} from "react";
+import {ChangeEvent, useEffect, useState} from "react";
 import {useAuth} from "../../context/AuthContext.tsx";
+import {IoClose} from "react-icons/io5";
+import {toast, ToastContainer} from "react-toastify";
 
 interface ChangeProfilePicModalProps{
     setModal: (value: boolean) => void
@@ -18,6 +20,13 @@ export default function ChangeProfilePicModal({setModal}: ChangeProfilePicModalP
 
     async function handleSendPic (e: any) {
         e.preventDefault();
+        if(!file){
+            toast.warning('Adjon meg egy képet!', {
+                className: "bg-yellow-700 text-white font-semibold p-3 rounded-lg shadow-md",
+                progressClassName: "bg-red-400"
+            })
+            return;
+        }
         const formData = new FormData();
         formData.append('file', file);
         formData.append('username', user?.username || "");
@@ -32,39 +41,57 @@ export default function ChangeProfilePicModal({setModal}: ChangeProfilePicModalP
         setModal(false)
     }
 
-    return <>
-        <div tabIndex={-1}
-             className="overflow-y-auto overflow-x-hidden fixed justify-center items-center w-fit h-fit justify-self-center md:inset-0 max-h-full">
-            <div className="relative p-4 w-full max-w-2xl max-h-full">
-                <div className="relative bg-indigo-950 rounded-lg shadow-sm ">
-                    <div className="flex items-center justify-between p-4 md:p-5 rounded-t">
-                        <form onSubmit={handleSendPic}>
-                            <div className="flex flex-row">
-                                <h3 className="text-xl font-semibold text-white">
-                                    Töltsön fel egy képet!
-                                </h3>
-                                <button type="button"
-                                        className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                                        onClick={() => setModal(false)}>
-                                    <svg className="w-3 h-3" aria-hidden="true"
-                                         xmlns="http://www.w3.org/2000/svg" fill="none"
-                                         viewBox="0 0 14 14">
-                                        <path stroke="currentColor" strokeLinecap="round"
-                                              strokeLinejoin="round" strokeWidth="2"
-                                              d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                                    </svg>
-                                </button>
-                            </div>
-                            <div className=" md:p-3 space-y-0.5">
-                                <input type="file" accept="image/*" className="text-gray-300 "
-                                       onChange={handleFileChange}/>
-                                <button type="submit" className="bg-gray-300 rounded p-2">Feltöltés
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Escape") {
+                setModal(false);
+            }
+        };
+
+        document.addEventListener("keydown", handleKeyDown);
+
+        document.body.style.overflow = "hidden";
+        return () => {
+            document.body.style.overflow = "auto";
+            document.addEventListener("keydown", handleKeyDown);
+        };
+    }, []);
+    return (
+        <div
+            className="fixed inset-0 bg-black  bg-opacity-50 flex justify-center items-center z-50"
+            onClick={() => setModal(false)}
+        >
+            <div
+                className="relative bg-indigo-950 rounded-lg m-2 shadow-md max-h-[90%] p-6 w-full max-w-md md:max-w-2xl"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-xl font-semibold text-white">Profilkép feltöltése</h3>
+                    <button
+                        type="button"
+                        className="text-gray-400 hover:bg-gray-600 rounded-lg p-1"
+                        onClick={() => setModal(false)}
+                    >
+                        <IoClose size={25} />
+                    </button>
                 </div>
+
+                <form onSubmit={handleSendPic} className="space-y-3 flex flex-row justify-between items-center">
+                    <input
+                        type="file"
+                        accept="image/*"
+                        className="text-gray-300 w-full rounded p-2"
+                        onChange={handleFileChange}
+                    />
+                    <button
+                        type="submit"
+                        className="bg-green-600 hover:bg-green-700 rounded p-2 w-2/5 text-white transition"
+                    >
+                        Feltöltés
+                    </button>
+                </form>
             </div>
+            <ToastContainer  />
         </div>
-    </>
+    );
 }

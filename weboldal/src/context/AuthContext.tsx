@@ -77,6 +77,7 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
             password: newUser.password,
             bejelentkezett: true,
             profileImg: newUser.profileImg,
+            description: newUser.description,
             isAdmin: newUser.isAdmin
         });
 

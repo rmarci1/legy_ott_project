@@ -13,9 +13,9 @@ export default function Navbar(){
 
     return <>
         <div className="bg-indigo-950 sticky bottom-0 left-0 right-0 flex
-                        flex-row justify-between sm:flex-col sm:w-20 sm:h-screen items-center sm:justify-center
-                        p-4 sm:hover:w-64 transform transition-all duration-300 ease-in-out group">
-                <nav className="flex flex-row sm:flex-col justify-around sm:space-y-10 w-full">
+                        flex-row justify-between md:flex-col md:w-20 md:h-screen items-center md:justify-center
+                        p-4 md:hover:w-64 transform transition-all duration-300 ease-in-out group">
+                <nav className="flex flex-row md:flex-col justify-around md:space-y-10 w-full">
                         {navItems.map(({to, icon, label}) => (
                             <NavItem key={to} to={to} icon={icon} label={label}/>
                         ))}
