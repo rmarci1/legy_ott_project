@@ -9,23 +9,29 @@
   export default function Users() {
     const {user,isLoading} = useAuth()
     const [allUsers,setAllUsers] = useState<User[]>([]);
+    const [allFilteredUsers,setAllFilteredUsers] = useState<User[]>([]);
     const [filteredUsers,setFilteredUsers] = useState<User[]>([]);
     const [isUsersLoading,setIsUsersLoading] = useState(false);
     const [userPerPage, setUserPerPage] = useState<number>(50);
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const [userstoShow,setUsersToShow] = useState<User[]>([]);
     const [searchTerm,setSearchTerm] = useState("");
     const [dateSearch, setDateSearch] = useState<string>();
     const [totalPages,setTotalPages] = useState<number>(Math.ceil(filteredUsers.length/userPerPage));
+    const [refresh,setRefresh] = useState(false);
     useEffect(() => {
       if(!isLoading && !isUsersLoading){
-        setUsersToShow(allUsers.slice(((currentPage? currentPage : 1) - 1)* (userPerPage ? userPerPage : 0), (currentPage ? currentPage : 1)*(userPerPage ? userPerPage : filteredUsers.length)));
+        const users = allFilteredUsers.slice(((currentPage? currentPage : 1) - 1) * (userPerPage ? userPerPage : 0), (currentPage ? currentPage : 1)*(userPerPage ? userPerPage : filteredUsers.length))
+        setFilteredUsers(users);
       }
     }, [currentPage,totalPages])
     useEffect(() => {
       if(!isLoading && !isUsersLoading){
         const timeoutId = setTimeout(() => {
-          setTotalPages(Math.ceil(filteredUsers.length / userPerPage));
+          const pages = Math.ceil(allFilteredUsers.length / userPerPage);
+          setTotalPages(pages);
+          if(pages < currentPage){
+            setCurrentPage(pages);
+          }
         }, 500);
         return () => clearTimeout(timeoutId);
       }
@@ -37,8 +43,8 @@
       .then((res) => {
         if(res){
           setAllUsers(res);
-          setFilteredUsers(res);
-          setUsersToShow(res.slice((currentPage - 1)* userPerPage, currentPage*userPerPage));
+          setAllFilteredUsers(res);
+          setFilteredUsers(res.slice((currentPage - 1)* userPerPage, currentPage*userPerPage));
           setTotalPages(Math.ceil(res.length/userPerPage));
         }
       })
@@ -46,18 +52,30 @@
         alert(error.message);
       })
       .finally(() => {
+        setRefresh(false);
         setIsUsersLoading(false);
       })
-    },[])
-    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const term = event.target.value.toLocaleLowerCase();
+    },[refresh])
+
+    const handleSearch = (event: string, date? : string) => {
+      const term = event.toLocaleLowerCase();
       setSearchTerm(term);
-      const filtered = userstoShow.filter((item) => 
-        item.name?.toLowerCase().includes(term)
+      const filtered = allUsers.filter((item) => {
+          const created = item.created.toString().split('T')[0];
+          if (date && created !== date){
+            return false;
+          }
+          if (!date && dateSearch && created !== dateSearch){
+            return false;
+          }
+          return item.name?.toLowerCase().includes(term) ||
+          item.username?.toLowerCase().includes(term);
+        }
       );
-      console.log(filtered);
-      setFilteredUsers(filtered);
-     }
+      setAllFilteredUsers(filtered);
+      setFilteredUsers(filtered.slice(0,50));
+      setTotalPages(Math.ceil(filtered.length/userPerPage));
+    }
     return (
       <div className="bg-[#0d0b42] h-screen w-screen">
         {(!isLoading && !isUsersLoading ) ?
@@ -76,7 +94,10 @@
                 <div className="flex flex-row">
                   <div className="border ml-2 h-9 w-60 place-content-center justify-items-center flex flex-row rounded-md">
                     <div className="w-[85%] place-content-center justify-items-center place-self-center">
-                      <input type="text" placeholder="Keress név alapján..." value={searchTerm} onChange={(e) => handleSearch(e)} className="ml-2"/>
+                      <input type="text" placeholder="Keress név alapján..." value={searchTerm} onChange={(e) => {
+                          handleSearch(e.target.value);
+                          setCurrentPage(1);
+                        }} className="ml-2"/>
                     </div>
                     <button className="h-full w-[15%] place-content-center justify-items-center border hover:bg-gray-200">
                       <IoSearchOutline size={20} className="" />
@@ -92,7 +113,10 @@
                 <div className="flex flex-row mr-2 h-9">
                     <div className="h-full place-content-center justify-items-center place-self-center border justify-between flex flex-row">
                       <div className="w-[85%] place-content-center justify-items-center place-self-center">
-                        <input type="date" placeholder="Válassz egy napot" value={dateSearch} onChange={(e) => setDateSearch(e.target.value)} className="ml-2"/>
+                        <input type="date" placeholder="Válassz egy napot" value={dateSearch} onChange={(e) => {
+                          setDateSearch(e.target.value);
+                          handleSearch("",e.target.value);
+                          }} className="ml-2"/>
                       </div>
                     </div>
                     <button className="px-4 border mx-2 bg-gray-200 rounded-md hover:bg-gray-500">Szűrő</button>
@@ -119,7 +143,12 @@
                     </thead>
                     <tbody className="bg-gray-50">
                     {
-                      filteredUsers.map((curr) => <UserListCard key={curr.id} user={curr} searchTerm={searchTerm}/>)
+                      filteredUsers.map((curr) => 
+                      <UserListCard 
+                        key={curr.id}  
+                        user={curr} 
+                        searchTerm={searchTerm} 
+                        refresh={() => setRefresh(true)}/>)
                     }
                     </tbody>
                   </table>

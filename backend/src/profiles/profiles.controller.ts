@@ -94,7 +94,20 @@ export class ProfilesController {
 
     return token.profile;
   }
-  
+  @ApiOperation({
+    summary: 'Updateing user with admin role'
+  })
+  @Patch('/admin/updateUser/:username')
+  @UseGuards(AuthGuard)
+  updateUser(@Request() req: Request, @Param('username') username : string, @Body() updateProfileDto : UpdateProfileDto, @Res() response: Response){
+    if(req['profile']['isAdmin']){
+      return this.profilesService.update(username,updateProfileDto);
+    }
+    else{
+      return response.json("Nem authorizált ehhez a változtatáshoz!");
+    }
+  }
+
   @ApiOperation({
     summary: 'Deletes profile by username'
   })
