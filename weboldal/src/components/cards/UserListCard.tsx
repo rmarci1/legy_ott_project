@@ -1,9 +1,9 @@
-import { updateUserByAdmin } from "@/lib/api";
+import { deleteUserByAdmin, updateUserByAdmin } from "@/lib/api";
 import { UpdateUser } from "@/Types/UpdateUser";
 import { User } from "@/Types/User";
 import { useEffect, useState } from "react";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-export default function UserListCard({user,searchTerm,refresh} : {user: User, searchTerm: string, refresh : () => void}){
+export default function UserListCard({user,searchTerm,onDelete, onUpdate} : {user: User, searchTerm: string, onDelete : (username: string) => void, onUpdate : () => void}){
     const [isOpen,setIsOpen] = useState(false);
     const [item, setItem] = useState<User>(user);
     const [updateing,setUpdateing] = useState(false);
@@ -11,24 +11,34 @@ export default function UserListCard({user,searchTerm,refresh} : {user: User, se
     const changeAdmin = (isAdmin : boolean) =>{
         setItem({...item, isAdmin: isAdmin});
     } 
+    const showAlertConfirm = (text : string) => {
+        return window.confirm(text);
+    }
     const handleCancel = () => {
-        const cancel = window.confirm("Biztos elakarod vetni?");
-        if(cancel){
+        if(showAlertConfirm("Biztos elakarod vetni?")){
             setItem(user);
             setUpdateing(false);
         }
     }
-    const handleDelete = () => {
-
+    const handleDelete = async () => {
+        if(showAlertConfirm("Biztos kiakarod törölni?")){
+            try{
+                await deleteUserByAdmin(user.username);
+                onDelete(user.username);
+            }
+            catch(error : any){
+                alert(error.message);
+            }
+        }
     }
-    const handleUpdate = () => {
+    const handleUpdate = async () => {
         if(!updateing){
             alert("Változtass meg valamit!");
             return;
         }
         try{
-            updateUserByAdmin(updatedValues!,user?.username);
-            refresh();
+            await updateUserByAdmin(updatedValues!,user?.username);
+            onUpdate();
         }
         catch(error : any){
             alert(error.message);
@@ -120,7 +130,11 @@ export default function UserListCard({user,searchTerm,refresh} : {user: User, se
             <td className="text-blue-600">{item?.created.toString().split('T')[0]}</td>
             <td>
                 {!user?.isAdmin &&
-                    <button className="bg-red-400 h-8 w-16 text-white font-light rounded-md hover:bg-gray-600">Törlés</button>
+                    <button className="bg-red-400 h-8 w-16 text-white font-light rounded-md hover:bg-gray-600"
+                        onClick={handleDelete}
+                    >
+                        Törlés
+                    </button>
                 }     
             </td>
             <td>

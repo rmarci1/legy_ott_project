@@ -403,6 +403,23 @@ export const updateUserByAdmin = async (fields : UpdateUser, username : string) 
     throw new Error(error);
   }
 }
+export const deleteUserByAdmin = async (username : string) => {
+  try{
+    console.log("in");
+    const response = await fetch(`${API_URL}/profiles/admin/deleteUser/${username}`,{
+      method: "DELETE", 
+      credentials: "include"
+    });
+    const data = await response.json();
+    if(!response.ok){
+      throw new Error(data.message);
+    }
+    return data;
+  }
+  catch(error : any){
+    throw new Error(error);
+  }
+}
 
 
 
