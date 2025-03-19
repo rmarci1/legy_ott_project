@@ -32,7 +32,9 @@ interface AuthContextType {
     attendJob: (id: number, value: boolean) => void,
     getAll: () => void,
     getAdvertiserProfile: (username: string) => void,
-    checkUser: () => void
+    checkUser: () => void,
+    isListUser: (list: (Job | User)[]) => Promise<boolean>,
+    isUser: (list: Job | User) => Promise<boolean>,
 }
 interface AuthContextTypeProps {
     children : ReactNode;
@@ -204,7 +206,12 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
         });
         setIsLoading(false)
     }
-
+    const isListUser = async (list: (User | Job)[]) : Promise<boolean> => {
+        return Array.isArray(list) && list.every(item => 'name' in item && 'username' in item);
+    }
+    const isUser = async (item: User | Job) : Promise<boolean> => {
+        return 'name' in item && 'username' in item;
+    }
 
     return (
         <AuthContext.Provider
@@ -227,7 +234,9 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
                 setSave,
                 attendJob,
                 getAll,
-                getAdvertiserProfile
+                getAdvertiserProfile,
+                isListUser,
+                isUser
             }}
         >
             {children}

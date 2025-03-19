@@ -41,7 +41,16 @@ export class JobsService {
       }
     });
   }
-
+  async findAllJobs() {
+    return this.db.job.findMany();
+  }
+  async deleteOne(jobId: number){
+    return this.db.job.delete({
+      where:{
+        id: jobId
+      }
+    })
+  }
   async findOne(id: number) {
     try{
       return await this.db.job.findUnique({
