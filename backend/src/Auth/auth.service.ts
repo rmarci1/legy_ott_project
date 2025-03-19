@@ -111,28 +111,45 @@ export class AuthService {
 
       hashedPassword = this.hashPassword(CreateProfileDto.password);
         CreateProfileDto.password = hashedPassword;
-      await this.ps.create(CreateProfileDto);
 
-      if(!/^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{2,}$/.test(CreateProfileDto.name)){
-        throw new BadRequestException("Nem megfelelő a név formátuma. Helyes példa: Jakab Zoltán")
-      }
+        if (
+          await this.db.profile.findFirst({
+            where: {
+              OR: [
+                { username: CreateProfileDto.username },
+                {email: CreateProfileDto.email}
+              ],
+            },
+          })
+        != null){
+          throw new HttpException('Már létezik ilyen profil!', HttpStatus.BAD_REQUEST)
+        }
+          if (
+            !/^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{2,}$/.test(
+              CreateProfileDto.name,
+            )
+          ) {
+            throw new HttpException('Nem megfelelő a név formátuma. Helyes példa: Jakab Zoltán', HttpStatus.BAD_REQUEST);
+          }
       if(!/^[a-zA-Z0-9](_(?!(\.|_))|\.(?!(_|\.))|[a-zA-Z0-9]){6,18}[a-zA-Z0-9]$/.test(CreateProfileDto.username)){
         throw new BadRequestException("Nem megfelelő a felhasználó név formátuma.");
       }
+      return await this.ps.create(CreateProfileDto);
     }
     catch (error){
-      //TODO: Fix validaton for unique constraint
-      if (error instanceof Prisma.PrismaClientKnownRequestError){
-        if (error.code === PrismaError.UniqueConstraintViolation &&
-          error.meta.target[0] === 'username') {
-          throw new BadRequestException("A felhasználónév már használatban van")
-        }else if (error.code === PrismaError.UniqueConstraintViolation &&
-          error.meta.target[0] === 'email'){
-          throw new BadRequestException("Már regisztráltak erről az email címről")
-        }
-
+      if (error instanceof HttpException) {
+        throw error; // Rethrow known HTTP exceptions
       }
-      throw new Error("Error: " + error);
+
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === PrismaError.UniqueConstraintViolation) {
+          if (error.meta.target[0] === 'username') {
+            throw new BadRequestException("A felhasználónév már használatban van");
+          } else if (error.meta.target[0] === 'email') {
+            throw new BadRequestException("Már regisztráltak erről az email címről");
+          }
+        }
+      }
     }
   }
 

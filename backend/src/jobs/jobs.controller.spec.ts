@@ -35,15 +35,9 @@ describe('JobsController', () => {
     jest.spyOn(service,"findOne").mockResolvedValue(findJob);
     expect(controller.findOne(jobId.toString())).resolves.toEqual(findJob);
   });
-  it('should throw an error', () => {
+  it('should throw an error when trying to find a not existing job', () => {
     jest.spyOn(service,"findOne").mockRejectedValue(new Error());
     expect(controller.findOne("2")).rejects.toEqual(new Error());
   });
-
-  /*it('should throw an error that the name is not a string', async () => {
-    const invalidJob = { id: 0, name: 0, date: new Date(), description: "", img: "", from: "", max_attending: 5, current_attending : 3, address: "" };
-    jest.spyOn(service,"create").mockRejectedValue(new Error("asd"));
-    await expect(controller.create(invalidJob))
-  });*/
 
 });

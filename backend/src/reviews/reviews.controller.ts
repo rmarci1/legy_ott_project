@@ -47,15 +47,17 @@ export class ReviewsController {
     summary: 'Alters a review(by id)'
   })
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateReviewDto: UpdateReviewDto) {
-    return await this.reviewsService.update(+id, updateReviewDto);
+  @UseGuards(AuthGuard)
+  async update(@Param('id') id: string, @Body() updateReviewDto: UpdateReviewDto, @Request() req: Request) {
+    return await this.reviewsService.update(+id, updateReviewDto, req);
   }
 
   @ApiOperation({
     summary: 'Deletes a review(by id)'
   })
   @Delete(':id')
-  async remove(@Param('id') id: number) {
-    return await this.reviewsService.remove(+id);
+  @UseGuards(AuthGuard)
+  async remove(@Param('id') id: number, @Request() req: Request) {
+    return await this.reviewsService.remove(+id, req);
   }
 }

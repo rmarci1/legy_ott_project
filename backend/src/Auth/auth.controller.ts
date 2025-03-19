@@ -61,7 +61,7 @@ export class AuthController {
     response.clearCookie('refreshToken');
     return response
       .status(200)
-      .json({message: "asd"});
+      .json({message: "Sikeresen kijelentkezett!"});
   }
 
   @Post('refresh')
