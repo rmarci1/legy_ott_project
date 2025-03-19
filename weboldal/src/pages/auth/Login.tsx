@@ -34,7 +34,7 @@ export default function Login(){
             console.log(user);
             bejelentkezes(user);
             if(user.isAdmin){
-                navigate('/admin');
+                navigate('/admin/dashboard');
                 return;
             }
             navigate("/")

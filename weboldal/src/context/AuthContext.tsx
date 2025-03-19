@@ -1,4 +1,4 @@
-import {createContext, ReactNode, useContext, useState} from "react";
+import {createContext, ReactNode, useContext, useEffect, useState} from "react";
 import {User} from "../Types/User.ts";
 import {Job} from "../Types/Job.ts";
 import {
@@ -34,7 +34,9 @@ interface AuthContextType {
     deleteJobById: (id: number, from: string) => void,
     getAll: () => void,
     getAdvertiserProfile: (username: string) => void,
-    checkUser: () => void
+    checkUser: () => void,
+    isListUser: (list: (Job | User)[]) => Promise<boolean>,
+    isUser: (list: Job | User) => Promise<boolean>,
 }
 interface AuthContextTypeProps {
     children : ReactNode;
@@ -58,6 +60,27 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
     const [advertiser, setAdvertiser] = useState<Advertiser | null>(null);
     const [jobs, setJobs] = useState<Job[]>([])
 
+    useEffect(() => {
+        setIsLoading(true);
+        getUser()
+        .then((result) => {
+            if(result && result.profile){
+                setUser(result.profile);
+                getAllJobs()
+                .then((jobs) => {
+                    if(jobs){
+                        setJobs(jobs);
+                    }
+                })
+            }
+        })
+        .catch((error) => {
+            throw new Error(error.message);
+        })
+        .finally(() => {
+            setIsLoading(false);
+        })
+    },[])
     const getAll = () => {
         setIsLoading(true)
         getAllJobs()
@@ -188,6 +211,12 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
         });
         setIsLoading(false)
     }
+    const isListUser = async (list: (User | Job)[]) : Promise<boolean> => {
+        return Array.isArray(list) && list.every(item => 'name' in item && 'username' in item);
+    }
+    const isUser = async (item: User | Job) : Promise<boolean> => {
+        return 'name' in item && 'username' in item;
+    }
 
     const deleteJobById = async (id: number, from: string) => {
         await deleteJob(id, from);
@@ -218,7 +247,9 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
                 attendJob,
                 deleteJobById,
                 getAll,
-                getAdvertiserProfile
+                getAdvertiserProfile,
+                isListUser,
+                isUser
             }}
         >
             {children}

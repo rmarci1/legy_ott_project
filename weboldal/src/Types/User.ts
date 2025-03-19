@@ -8,4 +8,5 @@ export interface User{
     description: string;
     bejelentkezett?: boolean;
     isAdmin: boolean;
+    created : Date,
 }

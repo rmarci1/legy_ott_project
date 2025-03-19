@@ -23,7 +23,8 @@ model job{
   max_attending Int
   current_attending Int
   address String
-
+  created DateTime
+  
   profiles jobProfile[]
 }
 
@@ -36,7 +37,7 @@ model profile{
   password String
   isAdmin Boolean @default(false)
   description String?
-
+  created DateTime
   reviews review[]
   jobs jobProfile[]
 }

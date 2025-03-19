@@ -94,7 +94,33 @@ export class ProfilesController {
 
     return token.profile;
   }
-  
+  @ApiOperation({
+    summary: 'Updateing user with admin role'
+  })
+  @Patch('/admin/updateUser/:username')
+  @UseGuards(AuthGuard)
+  updateUser(@Request() req: Request, @Param('username') username : string, @Body() updateProfileDto : UpdateProfileDto, @Res() response: Response){
+    if(req['profile']['isAdmin']){
+      return this.profilesService.update(username,updateProfileDto);
+    }
+    else{
+      return response.json("Nem authorizált ehhez a változtatáshoz!");
+    }
+  }
+  @ApiOperation({
+    summary: 'Deletes a user with admin role'
+  })
+  @Delete('/admin/deleteUser/:username')
+  @UseGuards(AuthGuard)
+  async deleteUser(@Request() req: Request, @Param('username') username : string, @Res() response: Response){
+    if(req['profile']['isAdmin']){
+      const res = await this.profilesService.remove(username);
+      return response.json("Sikeres Törlés");
+    }
+    else{
+      return response.status(401).json("Nem authorizált ehhez a változtatáshoz!");
+    }
+  }
   @ApiOperation({
     summary: 'Deletes profile by username'
   })
@@ -102,5 +128,10 @@ export class ProfilesController {
   @UseGuards(AuthGuard)
   remove(@Request() req: Request) {
     return this.profilesService.remove(req['profile']['username']);
+  }
+
+  @Get("/admin/dashboard")
+  dashboard(){
+    return this.profilesService.getDashBoardData();
   }
 }

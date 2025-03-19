@@ -1,3 +1,5 @@
+import { UpdateJob } from "@/Types/UpdateJob";
+import { UpdateUser } from "@/Types/UpdateUser";
 
 const API_URL = `${window.location.protocol}//${window.location.hostname}:3000`;
 
@@ -107,7 +109,24 @@ export const getAllJobs = async () =>{
     throw new Error(e.message);
   }
 }
-
+export const getAllJobsforAdmin = async () => {
+  try{
+    console.log("first");
+    const res = await fetch(`${API_URL}/jobs/admin/allJobs`, {
+      method: 'GET',
+      credentials: "include"
+    })
+    console.log(res);
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.message as string);
+    }
+    return data;
+  }
+  catch(error : any){
+    throw new Error(error.message);
+  }
+}
 export const getAvailableJobs = async () =>{
   try{
     const response = await fetch(`${API_URL}/jobs/available`, {
@@ -334,7 +353,6 @@ export const getArchivedAds = async () => {
   }
 }
 
-
 export const getAverageRating = async (username: string) => {
   try{
     const res = await fetch(`${API_URL}/reviews/average/${username} `, {
@@ -355,6 +373,107 @@ export const getAverageRating = async (username: string) => {
   }
 }
 
+export const getDashBoardDatas = async () => {
+  try{
+    const response = await fetch(`${API_URL}/profiles/admin/dashboard`,{
+      method: 'GET',
+      credentials: 'include'
+    })
+    const data = await response.json();
+    if(!response.ok){
+      throw new Error(data.message);
+    }
+    return data;
+  }
+  catch(error: any){
+    throw new Error(error);
+  }
+}
+
+export const getAllUsers = async () => {
+  try{
+    const response = await fetch(`${API_URL}/profiles`,{
+      method: 'GET',
+      credentials: 'include'
+    })
+    const data = await response.json();
+    if(!response.ok){
+      throw new Error(data.message);
+    }
+    return data;
+  }
+  catch(error: any){
+    throw new Error(error);
+  }
+}
+export const updateUserByAdmin = async (fields : UpdateUser, username : string) => {
+  try{
+    const response = await fetch(`${API_URL}/profiles/admin/updateUser/${username}`,{
+      method: 'PATCH',
+      headers: {'Content-Type' : "application/json"},
+      body: JSON.stringify(fields),
+      credentials: 'include'
+    })
+    const data = await response.json();
+    if(!response.ok){
+      throw new Error(data.message);
+    }
+    return data;
+  }
+  catch(error : any){
+    throw new Error(error);
+  }
+}
+export const deleteUserByAdmin = async (username : string) => {
+  try{
+    const response = await fetch(`${API_URL}/profiles/admin/deleteUser/${username}`,{
+      method: "DELETE", 
+      credentials: "include"
+    });
+    const data = await response.json();
+    if(!response.ok){
+      throw new Error(data.message);
+    }
+    return data;
+  }
+  catch(error : any){
+    throw new Error(error);
+  }
+}
+export const deleteJobByAdmin = async (jobId: number) => {
+  try{
+    const response = await fetch(`${API_URL}/jobs/admin/deleteJob/${jobId}`,{
+      method: "DELETE", 
+      credentials: "include"
+    });
+    const data = await response.json();
+    if(!response.ok){
+      throw new Error(data.message);
+    }
+    return data;
+  }
+  catch(error : any){
+    throw new Error(error);
+  }
+}
+export const updateJobByAdmin = async (fields : UpdateJob, jobId : number) => {
+  try{
+    const response = await fetch(`${API_URL}/job/admin/updateJob/${jobId}`,{
+      method: 'PATCH',
+      headers: {'Content-Type' : "application/json"},
+      body: JSON.stringify(fields),
+      credentials: 'include'
+    })
+    const data = await response.json();
+    if(!response.ok){
+      throw new Error(data.message);
+    }
+    return data;
+  }
+  catch(error : any){
+    throw new Error(error);
+  }
+}
 export const createReview = async (reviewed_un: string, desc: string, review: number) => {
   try{
     console.log('adatok:')
