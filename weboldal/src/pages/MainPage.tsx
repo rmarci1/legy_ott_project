@@ -12,14 +12,19 @@ export default function MainPage() {
     }, []);
 
     return (
-        <div className="flex flex-wrap h-screen w-dvw justify-center overflow-auto">
+        <div className="flex flex-wrap h-full w-full justify-center overflow-y-auto overflow-x-hidden md:overflow-auto
+        [&::-webkit-scrollbar]:w-1
+        [&::-webkit-scrollbar-track]:rounded-full
+        [&::-webkit-scrollbar-track]:bg-gray-100
+        [&::-webkit-scrollbar-thumb]:rounded-full
+        [&::-webkit-scrollbar-thumb]:bg-gray-300 cursos-default">
             {
                 user?
                     (jobs.map((item: Job) => (
-                        <JobCard key={item.id} attending={false} Job={item}/>
+                        <JobCard key={item.id} canSaveForLater={true} Job={item}/>
                     )))
                 :(allJobs.map((item: Job) => (
-                    <JobCard key={item.id} attending={false} Job={item}/>
+                    <JobCard key={item.id} canSaveForLater={false} Job={item}/>
                 )))
             }
         </div>

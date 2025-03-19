@@ -28,8 +28,10 @@ export class JobsController {
   @ApiOperation({
     summary: 'Creates a job'
   })
-  @Post() 
-  create(@Body() createJobDto: CreateJobDto) {
+  @Post()
+  @UseGuards(AuthGuard)
+  create(@Body() createJobDto: CreateJobDto, @Request() req: Request) {
+    createJobDto.from = req['profile']['username']
     return this.jobsService.create(createJobDto);
   }
 
@@ -114,32 +116,28 @@ export class JobsController {
   @ApiOperation({
     summary: 'Alter job by id and checking if the user username equals to who created the job'
   })
-  @Patch('/:id/:from')
+  @Patch('/:id')
   @UseGuards(AuthGuard)
-  update(@Param('id') id: string, @Param('from') from : string, @Body() updateJobDto: UpdateJobDto, @Request() req:Request) {
-    if(req['profile']['username'] !== from){
-      throw new Error("Nem authorizált ehhez a változtatáshoz!");
-    }
-    return this.jobsService.update(+id, updateJobDto);
+  update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto, @Request() req:Request) {
+    return this.jobsService.update(+id, updateJobDto, req);
   }
 
   @Post('/:id/updateJobPic')
   @UseInterceptors(FileInterceptor('file'))
-  updateJobPic(@UploadedFile() file: Express.Multer.File, @Param('id') id: string){
-    return this.jobsService.updateJobPic(+id, file.buffer);
+  @UseGuards(AuthGuard)
+  updateJobPic(@UploadedFile() file: Express.Multer.File, @Param('id') id: string, @Request() req:Request){
+    return this.jobsService.updateJobPic(+id, file.buffer, req);
   }
 
   @ApiOperation({
     summary: 'Delete job by id and checking if the user username equals to who created the job'
   })
-  @Delete('/:id/:from')
+  @Delete('/:id')
   @UseGuards(AuthGuard)
-  remove(@Param('id') id: string, @Param('from') from : string, @Request() req:Request) {
-    if(req['profile']['username'] !== from){
-      throw new Error("Nem authorizált ehhez a változtatáshoz!");
-    }
-    return this.jobsService.remove(+id);
+  remove(@Param('id') id: string, @Request() req:Request) {
+    return this.jobsService.remove(+id, req);
   }
+
   @ApiOperation({
     summary: "Filter jobs my name"
   })
@@ -162,7 +160,7 @@ export class JobsController {
   })
   @UseGuards(AuthGuard)
   @Get('/review/:reviewed_username')
-  canreview(@Request() req: Request, @Param('reviewed_username') reviewed_username){
+  canReview(@Request() req: Request, @Param('reviewed_username') reviewed_username){
     return this.jobsService.canReview(req['profile']['username'], reviewed_username);
   }
 

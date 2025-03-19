@@ -52,13 +52,13 @@ export default function Register(){
     }
 
     return <>
-        <div className="w-dvw flex flex-wrap h-screen justify-center items-center">
+        <div className="w-dvw flex flex-wrap h-screen p-2 sm:overflow-auto justify-center items-center">
         <div className="w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-indigo-950 dark:border-gray-700">
             <form className="space-y-6" onSubmit={handleRegister}>
                 <h5 className="text-xl font-medium text-gray-900 dark:text-white">Regisztráció</h5>
                 <div>
                     <label htmlFor="name"
-                           className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Neved</label>
+                           className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Név</label>
                     <input type="text" name="name" id="name"
                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                            placeholder="Jakab Zoltán" value={name} onChange={(e) => {
@@ -66,8 +66,7 @@ export default function Register(){
                     }} required/>
                 </div>
                 <div>
-                    <label htmlFor="username" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Felhasználó
-                        neved</label>
+                    <label htmlFor="username" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Felhasználónév</label>
                     <input type="text" name="username" id="username"
                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                            placeholder="jakab.zoltan" value={userName} onChange={(e) => {
@@ -77,7 +76,7 @@ export default function Register(){
                 </div>
                 <div>
                     <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email
-                        címed</label>
+                        cím</label>
                     <input type="email" name="email" id="email"
                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                            placeholder="pelda@gmail.com" value={email} onChange={(e) => {
@@ -86,7 +85,7 @@ export default function Register(){
                 </div>
                 <div className="relative">
                     <label htmlFor="password"
-                           className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Jelszavad</label>
+                           className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Jelszó</label>
                     <input type={showPassword ? 'text' : 'password'} name="password" id="password"
                            placeholder="••••••••"
                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
@@ -100,7 +99,7 @@ export default function Register(){
 
                 </div>
                 <div>
-                    <label htmlFor="password2" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Jelszavad
+                    <label htmlFor="password2" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Jelszó
                         újra</label>
                     <input type={showPassword ? 'text' : 'password'} name="password2" id="password2"
                            placeholder="••••••••"

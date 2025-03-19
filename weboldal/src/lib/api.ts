@@ -1,7 +1,7 @@
 import { UpdateJob } from "@/Types/UpdateJob";
 import { UpdateUser } from "@/Types/UpdateUser";
 
-const API_URL = 'http://localhost:3000';
+const API_URL = `${window.location.protocol}//${window.location.hostname}:3000`;
 
 export const register = async (
   name: string,
@@ -153,9 +153,12 @@ export const profilePicChange = async (formData: FormData) => {
         {
           body: formData,
           method: "post",
+          credentials: "include"
         });
 
-    const data = await result.json();
+    const data = await result.json()
+
+    console.log(data)
 
     if (!result.ok) {
       throw new Error(data.message as string);
@@ -471,6 +474,119 @@ export const updateJobByAdmin = async (fields : UpdateJob, jobId : number) => {
     throw new Error(error);
   }
 }
+export const createReview = async (reviewed_un: string, desc: string, review: number) => {
+  try{
+    console.log('adatok:')
+    const res = await fetch(`${API_URL}/reviews/add `, {
+      method: 'POST',
+      credentials: "include",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reviewed_un, desc, review })
+    })
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message as string);
+    }
+
+    return data;
+  }
+  catch (e: any){
+    throw new Error(e.message)
+  }
+}
+
+export const canReview = async (username: string) => {
+  try{
+    const res = await fetch(`${API_URL}/jobs/review/${username} `, {
+      method: 'GET',
+      credentials: "include",
+    })
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message as string);
+    }
+
+    return data;
+  }
+  catch (e: any){
+    throw new Error(e.message)
+  }
+}
+
+
+export const createAdv = async (name: string, date: Date, description: string, img: string, max_attending: number, address: string) => {
+  try{
+    const res = await fetch(`${API_URL}/jobs `, {
+      method: 'POST',
+      credentials: "include",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, date, description, img, max_attending, address })
+    })
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message as string);
+    }
+
+    return data;
+  }
+  catch (e: any){
+    throw new Error(e.message)
+  }
+}
+
+export const jobPicChange = async (formData: FormData, id: number) => {
+  try{
+    const result = await fetch(`${API_URL}/jobs/${id}/updateJobPic`,
+        {
+          body: formData,
+          method: "POST",
+          credentials: "include"
+        });
+
+    const data = await result.json()
+
+    if (!result.ok) {
+      throw new Error(data.message as string);
+    }
+
+    return data;
+  }
+  catch (e: any){
+    throw new Error(e.message);
+  }
+}
+
+
+export const deleteJob = async (id: number, from: string) => {
+  try{
+    const result = await fetch(`${API_URL}/jobs/${id}/${from}`,
+        {
+          method: "DELETE",
+          credentials: "include"
+        });
+
+    const data = await result.json()
+
+    console.log(data)
+
+    if (!result.ok) {
+      throw new Error(data.message as string);
+    }
+
+    return data;
+  }
+  catch (e: any){
+    throw new Error(e.message);
+  }
+}
+
+
 
 
 

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -15,6 +15,18 @@ export class ProfilesService {
 
   async create(createProfileDto: CreateProfileDto) {
     createProfileDto.profileImg = defaultProfilePicUrl;
+    if (
+      await this.db.profile.findFirst({
+        where: {
+          OR: [
+            { username: createProfileDto.username },
+            {email: createProfileDto.email}
+          ],
+        },
+      })
+      != null){
+      throw new HttpException('Már létezik ilyen profil!', HttpStatus.BAD_REQUEST)
+    }
     return this.db.profile.create({
         data: createProfileDto
       }
@@ -26,24 +38,24 @@ export class ProfilesService {
   }
 
   async findOneProfileView(username: string) {
-    try{
-      return await this.db.profile.findUnique({
-        where:{
-          username
-        },
-        select:{
-          name: true,
-          username: true,
-          reviews: true,
-          description: true,
-          isAdmin: true,
-          profileImg: true
-        }
-      });
+    const profile = await this.db.profile.findUnique({
+      where:{
+        username
+      },
+      select:{
+        name: true,
+        username: true,
+        reviews: true,
+        description: true,
+        isAdmin: true,
+        profileImg: true
+      }
+    });
+    if(profile != null){
+      return profile
     }
-    catch{
-      throw new NotFoundException("Nem létezik ilyen profil");
-    }
+
+    throw new NotFoundException("Nem létezik ilyen profil");
   }
   async update(username: string, updateProfileDto: UpdateProfileDto): Promise<{access_token: string, refresh_token: string, profile}> {
     try{
@@ -68,7 +80,7 @@ export class ProfilesService {
         profile: profile
       };
     }catch(err){
-      throw new Error("Error:" + err);
+      throw new Error("Nem létezik ilyen profil!");
     }
   }
 

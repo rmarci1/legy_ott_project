@@ -2,7 +2,7 @@ import {createContext, ReactNode, useContext, useEffect, useState} from "react";
 import {User} from "../Types/User.ts";
 import {Job} from "../Types/Job.ts";
 import {
-    attend,
+    attend, deleteJob,
     getAdvertised,
     getAllJobs, getArchivedAds, getArchivedJobs,
     getAvailableJobs, getAverageRating,
@@ -24,12 +24,14 @@ interface AuthContextType {
     archivedAds: Job[],
     advertiser: Advertiser | null,
     isLoading: boolean,
+    isProfilePicChanged: boolean,
     setIsLoading: (value: boolean)=> void,
     kijelentkezes: () => void,
     bejelentkezes: (newUser: User) => void,
     profilKepUpdate: (url: string, user: User) => void,
     setSave: (job: Job ,value: boolean) => void,
     attendJob: (id: number, value: boolean) => void,
+    deleteJobById: (id: number, from: string) => void,
     getAll: () => void,
     getAdvertiserProfile: (username: string) => void,
     checkUser: () => void,
@@ -48,6 +50,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({children} : AuthContextTypeProps) => {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isProfilePicChanged, setIsProfilePicChanged] = useState(false);
     const [allJobs, setAllJobs] = useState<Job[]>([]);
     const [selectedJobs, setSelectedJobs] = useState<Job[]>([])
     const [ads, setAds] = useState<Job[]>([])
@@ -97,8 +100,8 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
             password: newUser.password,
             bejelentkezett: true,
             profileImg: newUser.profileImg,
-            isAdmin: newUser.isAdmin,
-            created: newUser.created
+            description: newUser.description,
+            isAdmin: newUser.isAdmin
         });
 
         await resetJobs();
@@ -142,10 +145,12 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
 
     const profilKepUpdate = (url: string, user: User) =>{
         setIsLoading(true)
+        setIsProfilePicChanged(false);
         setUser({
             ...user,
             profileImg: url
         })
+        setIsProfilePicChanged(true);
         setIsLoading(false)
     }
     const setSave = async (job: Job ,value: boolean) => {
@@ -213,6 +218,12 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
         return 'name' in item && 'username' in item;
     }
 
+    const deleteJobById = async (id: number, from: string) => {
+        await deleteJob(id, from);
+        await resetJobs();
+    }
+
+
     return (
         <AuthContext.Provider
             value = {{
@@ -221,6 +232,7 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
                 allJobs,
                 advertiser,
                 isLoading,
+                isProfilePicChanged,
                 selectedJobs,
                 ads,
                 savedJobs,
@@ -233,6 +245,7 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
                 profilKepUpdate,
                 setSave,
                 attendJob,
+                deleteJobById,
                 getAll,
                 getAdvertiserProfile,
                 isListUser,
