@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -500,7 +500,7 @@ export class JobsService {
     }
   }
 
-  async updateJobPic(id: number, file: Buffer){
+  async updateJobPic(id: number, file: Buffer, req: Request){
     try{
       const readStream = Readable.from(file)
       const job = await this.db.job.findUnique({
@@ -517,7 +517,7 @@ export class JobsService {
       }
 
       const newPicUrl = await this.cloudinary.uploadImage(readStream);
-      const update = await this.update(id,{img: newPicUrl.url})
+      const update = await this.update(id,{img: newPicUrl.url}, req)
       console.log(update)
       return update;
     }
@@ -526,38 +526,71 @@ export class JobsService {
     }
   }
 
-  async update(id: number, updateJobDto: UpdateJobDto) {
-    try{
-      return await this.db.job.update({
+  async update(id: number, updateJobDto: UpdateJobDto, req: Request) {
+    const job = await this.db.job.findUnique({
+      where: {
+        id
+      }
+    })
+
+    if(job == null){
+      throw new NotFoundException("Nem létezik ilyen munka!")
+    }
+
+    if(job.from != req['profile']['username']){
+      throw new UnauthorizedException("Csak a saját hírdetését szerkesztheti!");
+    }
+
+      return this.db.job.update({
         where: {
           id
         },
         data: updateJobDto
       });
-    }catch(err){
-      throw new Error("error: " + err)
-    }
   }
-  async remove(id: number) {
-    try{
-      const job = await this.db.job.delete({
-        where:{
-          id
-        }
-      });
-
-      if(job.img != defaultProfilePicUrl){
-        const publicId = extractPublicId(job.img);
-        await this.cloudinary.destroyImage(publicId);
+  async remove(id: number, req: Request) {
+    const job = await this.db.job.findUnique({
+      where: {
+        id
       }
+    })
 
-      return job;
-    }catch(err){
-      throw new Error("error: " + err)
+    if(job == null){
+      throw new NotFoundException("Nem létezik ilyen munka!")
     }
+
+    if(job.from != req['profile']['username']){
+      throw new UnauthorizedException("Csak a saját hírdetését szerkesztheti!");
+    }
+
+    const updatedJob = await this.db.job.delete({
+      where:{
+        id
+      }
+    });
+
+    if(updatedJob.img != defaultProfilePicUrl){
+      const publicId = extractPublicId(updatedJob.img);
+      await this.cloudinary.destroyImage(publicId);
+    }
+
+    return updatedJob;
   }
   async canReview(username: string, review_username: string){
     const currDate = new Date();
+
+    const profile = await this.db.profile.findUnique({
+      where: {
+        username: review_username
+      }
+    })
+
+    console.log(profile)
+
+    if(profile == null){
+      throw new NotFoundException("Nem létezik ilyen profil!")
+    }
+
     const res = await this.db.job.findFirst({
       where: {
         AND: [
