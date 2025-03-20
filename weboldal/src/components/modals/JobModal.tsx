@@ -37,7 +37,7 @@ export default function JobModal({ job, user, setModal, attendJob, setProfileMod
     }, []);
 
     const handleDelete = async () => {
-        deleteJobById(job.id, job.from)
+        deleteJobById(job.id)
         toast('Sikeresen törölve lett!')
         setModal(false);
     }

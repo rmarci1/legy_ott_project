@@ -563,9 +563,9 @@ export const jobPicChange = async (formData: FormData, id: number) => {
 }
 
 
-export const deleteJob = async (id: number, from: string) => {
+export const deleteJob = async (id: number) => {
   try{
-    const result = await fetch(`${API_URL}/jobs/${id}/${from}`,
+    const result = await fetch(`${API_URL}/jobs/${id}`,
         {
           method: "DELETE",
           credentials: "include"

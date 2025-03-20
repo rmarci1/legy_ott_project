@@ -31,7 +31,7 @@ interface AuthContextType {
     profilKepUpdate: (url: string, user: User) => void,
     setSave: (job: Job ,value: boolean) => void,
     attendJob: (id: number, value: boolean) => void,
-    deleteJobById: (id: number, from: string) => void,
+    deleteJobById: (id: number) => void,
     getAll: () => void,
     getAdvertiserProfile: (username: string) => void,
     checkUser: () => void,
@@ -93,15 +93,7 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
     const bejelentkezes = async (newUser: User) =>{
         setIsLoading(true)
         setUser({
-            id: newUser.id,
-            name: newUser.name,
-            username: newUser.username,
-            email: newUser.email,
-            password: newUser.password,
-            bejelentkezett: true,
-            profileImg: newUser.profileImg,
-            description: newUser.description,
-            isAdmin: newUser.isAdmin
+            ...newUser
         });
 
         await resetJobs();
@@ -218,8 +210,8 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
         return 'name' in item && 'username' in item;
     }
 
-    const deleteJobById = async (id: number, from: string) => {
-        await deleteJob(id, from);
+    const deleteJobById = async (id: number) => {
+        await deleteJob(id);
         await resetJobs();
     }
 

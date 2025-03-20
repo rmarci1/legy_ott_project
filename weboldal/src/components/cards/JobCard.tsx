@@ -14,6 +14,7 @@ export default function JobCard({Job, canSaveForLater}: jobProps){
     const [jobModal, setJobModal] = useState(false);
     const [profileModal, setProfileModal] = useState(false);
     const {user, setSave, attendJob} = useAuth();
+    const whenCreated = new Date(Job.created);
 
     const trimmedText = (text: string) => {
         const lines = text.split('\n');
@@ -46,7 +47,7 @@ export default function JobCard({Job, canSaveForLater}: jobProps){
                     </p>
                 </span>
                 <div className="flex flex-row justify-between ">
-                    {user && canSaveForLater &&  (
+                    {user && canSaveForLater && (
                         <span className="flex-none cursor-pointer">
                             {Job.profiles && Job.profiles[0] && Job.profiles[0].saveForLater ?
                                 <PiHeartFill size={40} color="red"
@@ -56,16 +57,23 @@ export default function JobCard({Job, canSaveForLater}: jobProps){
                     )}
                     <button
                         type="button"
-                        className="inline-block rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal shadow-primary-3 transition duration-150 ease-in-out shadow-black/30 hover:shadow-dark-strong focus:shadow-dark-strong active:shadow-dark-strong"
+                        className="inline-block rounded px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal shadow-primary-3 transition duration-150 ease-in-out shadow-black/30 hover:shadow-dark-strong focus:shadow-dark-strong active:shadow-dark-strong"
                         onClick={() => setJobModal(true)}>
                         További információ
                     </button>
                 </div>
 
+
+                <span className="text-gray-800/60 place-self-end">
+                    {
+                        whenCreated.toLocaleDateString()
+                    }
+                </span>
+
             </div>
 
             {jobModal && (
-                user? (
+                user ? (
                         <JobModal job={Job} user={user} setModal={setJobModal} attendJob={attendJob} setProfileModal={setProfileModal}/>
                     ):
                     (
