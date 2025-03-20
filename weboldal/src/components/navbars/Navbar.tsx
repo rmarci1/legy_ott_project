@@ -1,7 +1,7 @@
 import { AiOutlinePlus } from "react-icons/ai";
 import { FaRegCircleUser } from "react-icons/fa6";
 import { IoArchiveOutline, IoHomeOutline } from "react-icons/io5";
-import NavItem from "./NavbarItem.tsx";
+import NavItem from "../NavbarItem";
 
 export default function Navbar(){
     const navItems = [

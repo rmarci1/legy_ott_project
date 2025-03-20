@@ -10,15 +10,11 @@ import DashBoard from './pages/admin/DashBoard';
 import AdminNavbar from './components/navbars/AdminNavBar';
 import Users from './pages/admin/Users';
 import Jobs from './pages/admin/Jobs';
-import AdminPage from './pages/admin/AdminPage';
 import CreateAd from "./pages/CreateAd.tsx";
 
 export default function AppLayout(){
     const location = useLocation();
     const isAdmin = location.pathname.startsWith('/admin');
-
-export default function AppLayout(){
-    const location = useLocation();
 
     return (
       <div className="flex flex-col md:flex-row h-screen w-full overflow-hidden font-poppins">
@@ -36,7 +32,6 @@ export default function AppLayout(){
                 <Route path="jobs" element={<Jobs/>} />
             </Route>
             <Route path="/createAd" element={<CreateAd />} />
-            <Route path="/admin" element={<AdminPage />} />
           </Routes>
         </AuthProvider>
       </div>
