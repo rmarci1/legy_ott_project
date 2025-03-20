@@ -1,4 +1,4 @@
-import { View, TouchableOpacity, Alert, Modal, RefreshControl, Text } from 'react-native'
+import { View, TouchableOpacity, Modal, RefreshControl, Text } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useGlobalContext } from '@/context/GlobalProvider'
@@ -10,9 +10,10 @@ import CustomButton from '@/components/CustomButton'
 import ShowJob from '@/components/views/ShowJob'
 import RenderJob from '@/components/RenderJob'
 import { router } from 'expo-router'
+import Toast from 'react-native-toast-message'
 
 const list = () => {
-  const {handleSubmit,handleProfile,user,setQuery} = useGlobalContext();
+  const {handleSubmit,handleProfile,user,setQuery,showToast,toastConfig} = useGlobalContext();
   const [filterJobs,setFilterJobs] = useState([]);
   const [currentJob,setCurrentJob] = useState(null);
   const [readMore,setReadMore] = useState(false);
@@ -35,7 +36,7 @@ const list = () => {
       setFilterJobs(response);
     }
     catch(error){
-      Alert.alert("Hiba",error.message);
+      showToast("error","Hiba",error.message);
     }
   }
   const toggleModal = () => {
@@ -148,6 +149,7 @@ const list = () => {
           </View>}
       </Modal>
       </View>
+      <Toast config={toastConfig}/>
     </SafeAreaView>
   )
 }

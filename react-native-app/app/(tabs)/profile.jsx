@@ -7,9 +7,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { FlashList } from '@shopify/flash-list';
 import { getReviews } from '@/lib/api';
 import Rating from '@/components/Rating';
+import Toast from 'react-native-toast-message';
 
 const profile = () => {
-  const {user,setUser} = useGlobalContext();
+  const {user,setUser,showToast,toastConfig} = useGlobalContext();
   const [isModalVisible,setIsModalVisible] = useState(false);
   const [ratings, setRatings] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -24,7 +25,7 @@ const profile = () => {
         setRatings(res);
       }
       catch(error){
-        Alert.alert("Hiba",error.message);
+        showToast("error","Hiba",error.message);
       }
       finally{
         setIsLoading(false);
@@ -85,6 +86,7 @@ const profile = () => {
             </View> 
           </ScrollView>
         </Modal>
+        <Toast config={toastConfig}/>
       </View>
   )
 }

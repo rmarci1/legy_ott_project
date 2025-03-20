@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity, Modal, TouchableWithoutFeedback, Keyboard, RefreshControl, Alert } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, Modal, TouchableWithoutFeedback, Keyboard, RefreshControl } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -15,7 +15,7 @@ import RenderJob from '@/components/RenderJob';
 import Toast from 'react-native-toast-message';
 
 const home = () => {
-  const {user,jobs,setJobs,handleSubmit,handleProfile,toastConfig} = useGlobalContext();
+  const {user,jobs,setJobs,handleSubmit,handleProfile,toastConfig,showToast} = useGlobalContext();
   const query = "";
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isFilterModalVisible,setIsFilterModalVisible] = useState(false);
@@ -45,7 +45,7 @@ const home = () => {
       setRefreshing(false);
     }
     catch(error){
-      Alert.alert("Hiba", error.message);
+      showToast("error","Hiba", error.message);
     }
   }
   return (

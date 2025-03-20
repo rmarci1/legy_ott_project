@@ -1,13 +1,14 @@
-import { View, Text, SafeAreaView, TouchableOpacity, Image, Alert,Animated, Easing } from 'react-native'
+import { View, Text, SafeAreaView, TouchableOpacity, Image,Animated, Easing } from 'react-native'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import Formfield from '@/components/inputFields/Formfield'
 import CustomButton from '@/components/CustomButton';
 import images from '@/constants/images';
 import { router } from 'expo-router';
 import { useGlobalContext } from '@/context/GlobalProvider';
+import Toast from 'react-native-toast-message';
 
 const signup = () => {
-  const {setFormPart} = useGlobalContext();
+  const {setFormPart,showToast,toastConfig} = useGlobalContext();
 
   const [form,setForm] = useState({
     email : '',
@@ -51,16 +52,20 @@ const signup = () => {
   }
   const submit = async () => {
     try{
-      if(!form.email && !form.password && !form.confirmPassword){
-        Alert.alert("Hiba", "Az összes mezőt ki kell tölteni!");
+      if(!form.email || !form.password || !form.confirmPassword){
+        showToast("error","Hiba","Az összes mezőt ki kell tölteni!");
+        return;
+      }
+      if(!form.email.includes('@') && form.email.length < 6){
+        showToast('error',"Hiba","Az email nem megfelelő formátumban van");
         return;
       }
       if(form.password !== form.confirmPassword){
-        Alert.alert("Hiba", "A jelszók nem egyeznek meg");
+        showToast("error","Hiba","A jelszók nem egyeznek meg");
         return;
       }
       if(progress != 5){
-        Alert.alert("Hiba", currentProblem);
+        showToast("error","Hiba",currentProblem);
         return;
       }
       setIsSubmitting(true);
@@ -68,7 +73,7 @@ const signup = () => {
       router.push('/welcome');
     }
     catch(error){
-      Alert.alert("Hiba",error.message);
+      showToast("error","Hiba",error.message);
     }
     finally{
       setIsSubmitting(false);
@@ -148,6 +153,7 @@ const signup = () => {
           <Text className='text-lg font-rmedium ml-2'>Google</Text>
         </TouchableOpacity>
       </View>
+      <Toast config={toastConfig}/>
     </SafeAreaView>
   )
 }
