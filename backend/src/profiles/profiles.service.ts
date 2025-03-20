@@ -15,6 +15,7 @@ export class ProfilesService {
 
   async create(createProfileDto: CreateProfileDto) {
     createProfileDto.profileImg = defaultProfilePicUrl;
+    createProfileDto.created = new Date();
     if (
       await this.db.profile.findFirst({
         where: {
