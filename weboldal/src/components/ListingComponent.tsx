@@ -1,7 +1,6 @@
 import {GoTriangleDown, GoTriangleRight} from "react-icons/go";
 import {Job} from "../Types/Job.ts";
 import JobCard from "./cards/JobCard.tsx";
-import {useEffect} from "react";
 
 interface ListingComponentProps {
     show: boolean,
@@ -11,10 +10,6 @@ interface ListingComponentProps {
 }
 
 export default function ListingComponent({title, show, setShow, jobs}: ListingComponentProps){
-    useEffect(() => {
-        console.log(title)
-        console.log(jobs)
-    }, [show]);
     return <>
         <div className="flex flex-col">
             <p className="flex flex-row items-center text-2xl">

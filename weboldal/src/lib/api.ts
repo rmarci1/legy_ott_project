@@ -84,7 +84,6 @@ export const getUser = async () => {
     }
     return {profile: data};
   } catch (error: any) {
-    console.log(error.message);
     throw error;
   }
 };
@@ -111,12 +110,10 @@ export const getAllJobs = async () =>{
 }
 export const getAllJobsforAdmin = async () => {
   try{
-    console.log("first");
     const res = await fetch(`${API_URL}/jobs/admin/allJobs`, {
       method: 'GET',
       credentials: "include"
     })
-    console.log(res);
     const data = await res.json();
     if (!res.ok) {
       throw new Error(data.message as string);
@@ -157,8 +154,6 @@ export const profilePicChange = async (formData: FormData) => {
         });
 
     const data = await result.json()
-
-    console.log(data)
 
     if (!result.ok) {
       throw new Error(data.message as string);
@@ -476,7 +471,6 @@ export const updateJobByAdmin = async (fields : UpdateJob, jobId : number) => {
 }
 export const createReview = async (reviewed_un: string, desc: string, review: number) => {
   try{
-    console.log('adatok:')
     const res = await fetch(`${API_URL}/reviews/add `, {
       method: 'POST',
       credentials: "include",
@@ -572,8 +566,6 @@ export const deleteJob = async (id: number) => {
         });
 
     const data = await result.json()
-
-    console.log(data)
 
     if (!result.ok) {
       throw new Error(data.message as string);

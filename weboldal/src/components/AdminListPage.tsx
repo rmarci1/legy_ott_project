@@ -2,7 +2,7 @@ import { IoIosArrowBack, IoIosArrowDown, IoIosArrowForward, IoIosArrowUp } from 
 import Loading from "./Loading";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { getAllJobs, getAllJobsforAdmin, getAllUsers } from "@/lib/api";
+import { getAllJobsforAdmin, getAllUsers } from "@/lib/api";
 import { User } from "@/Types/User";
 import { Job } from "@/Types/Job";
 import { IoSearchOutline } from "react-icons/io5";
@@ -36,7 +36,6 @@ export default function AdminListPage({listUsers} : {listUsers : boolean}){
         setIsListLoading(true);
           const fetchData = listUsers ? getAllUsers() : getAllJobsforAdmin();
           fetchData.then((res) => {
-          console.log(res);
           if(res){
               setAllContent(res);
               setAllFilteredContent(res);
@@ -56,7 +55,6 @@ export default function AdminListPage({listUsers} : {listUsers : boolean}){
       if(!isLoading && !isListLoading){
         const timeoutId = setTimeout(() => {
           const pages = Math.ceil(allFilteredContent.length / contentPerPage);
-          console.log("pageSet: ",pages);
           setTotalPages(pages);
           if(pages < currentPage){
             setCurrentPage(pages);

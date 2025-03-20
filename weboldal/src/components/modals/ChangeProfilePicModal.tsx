@@ -8,8 +8,8 @@ interface ChangeProfilePicModalProps{
     setModal: (value: boolean) => void
 }
 
-export default function ChangeProfilePicModal({setModal}: ChangeProfilePicModalProps){
-    const {user, profilKepUpdate, checkUser} = useAuth();
+export default function ChangeProfilePicModal({setModal}: ChangeProfilePicModalProps) {
+    const {user, profilKepUpdate, checkUser, isLoading} = useAuth();
     const [file, setFile] = useState<string | Blob>("");
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -18,9 +18,9 @@ export default function ChangeProfilePicModal({setModal}: ChangeProfilePicModalP
         }
     };
 
-    async function handleSendPic (e: any) {
+    async function handleSendPic(e: any) {
         e.preventDefault();
-        if(!file){
+        if (!file) {
             toast.warning('Adjon meg egy képet!', {
                 className: "bg-yellow-700 text-white font-semibold p-3 rounded-lg shadow-md",
                 progressClassName: "bg-red-400"
@@ -56,7 +56,9 @@ export default function ChangeProfilePicModal({setModal}: ChangeProfilePicModalP
             document.addEventListener("keydown", handleKeyDown);
         };
     }, []);
-    return (
+    return <>
+    {
+    !isLoading ?(
         <div
             className="fixed inset-0 bg-black  bg-opacity-50 flex justify-center items-center z-50"
             onClick={() => setModal(false)}
@@ -72,7 +74,7 @@ export default function ChangeProfilePicModal({setModal}: ChangeProfilePicModalP
                         className="text-gray-400 hover:bg-gray-600 rounded-lg p-1"
                         onClick={() => setModal(false)}
                     >
-                        <IoClose size={25} />
+                        <IoClose size={25}/>
                     </button>
                 </div>
 
@@ -91,7 +93,13 @@ export default function ChangeProfilePicModal({setModal}: ChangeProfilePicModalP
                     </button>
                 </form>
             </div>
-            <ToastContainer  />
+            <ToastContainer/>
         </div>
-    );
+        )
+        :
+        (<div className="flex justify-center items-center h-full">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+        </div>)
+    }
+    </>
 }

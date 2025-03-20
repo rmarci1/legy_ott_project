@@ -12,7 +12,6 @@ export default function DashBoard(){
     const {user,isLoading} = useAuth();
     const [data,setData] = useState<DashBoardData | null>(null);
     const [isDashBoardLoading,setIsDashBoardLoading] = useState(false);
-    console.log(data);
     useEffect(() => {
         setIsDashBoardLoading(true);
         getDashBoardDatas()

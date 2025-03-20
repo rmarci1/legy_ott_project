@@ -104,7 +104,6 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
         setIsLoading(true)
         try{
             const user = await getUser().then((res) => { return res.profile })
-            console.log(user)
             if (!user){
                 alert("Nincs bejelentkezve");
             }
