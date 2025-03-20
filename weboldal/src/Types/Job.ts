@@ -8,6 +8,7 @@ export interface Job{
     max_attending: number
     current_attending: number
     address: string
+    created: Date
     profiles: [{
         saveForLater: boolean
         isApplied: boolean
