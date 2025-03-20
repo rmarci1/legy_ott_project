@@ -6,8 +6,11 @@ import { getProfileView } from '@/lib/api';
 import { AntDesign } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import EmptyView from '@/components/views/EmptyView';
+import { useGlobalContext } from '@/context/GlobalProvider';
+import Toast from 'react-native-toast-message';
 
 const profileSearch = () => {
+  const {showToast,toastConfig} = useGlobalContext();
   const [profile,setProfile] = useState(null);
   const [isModalVisible,setIsModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -25,7 +28,7 @@ const profileSearch = () => {
       setProfile(res);
     }
     catch(error){
-      Alert.alert(error.message);
+      showToast("error","Hiba",error.message);
     }
     finally{
       setIsLoading(false);
@@ -80,6 +83,7 @@ const profileSearch = () => {
         </View> 
       </ScrollView>
       </Modal>
+      <Toast config={toastConfig}/>
     </View>
   )
 }

@@ -1,9 +1,9 @@
 //const API_URL = 'http://192.168.11.40:3000' // webváltó host nete;
-//const API_URL = 'http://192.168.10.89:3000' // webváltó ethernet;
-const API_URL = 'http://192.168.11.21:3000' // webváltó alap wifi;
+const API_URL = 'http://192.168.10.89:3000' // webváltó ethernet;
+//const API_URL = 'http://192.168.11.21:3000' // webváltó alap wifi;
 export const register = async (name,username, password, email)=> {
     try {
-        const response = await fetch(`${API_URL}/register`, {
+        const response = await fetch(`${API_URL}/auth/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name,username, password,email}),
@@ -14,8 +14,9 @@ export const register = async (name,username, password, email)=> {
             throw new Error(typeof data.message == "string" ? data.message : data.message[0])
         }
         return data;
-    } catch (error) {
-        console.error("1 Fetch error:", error);
+    } 
+    catch (error) {
+        console.log(error);
         throw new Error(error.message);
     }
 };

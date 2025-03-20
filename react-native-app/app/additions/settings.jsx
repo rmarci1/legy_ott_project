@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Image, TouchableOpacity, ActivityIndicator, Alert, TouchableWithoutFeedback, Keyboard } from 'react-native'
+import { View, Text, ScrollView, Image, TouchableOpacity, ActivityIndicator, TouchableWithoutFeedback, Keyboard } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useGlobalContext } from '@/context/GlobalProvider'
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -67,7 +67,7 @@ const settings = () => {
       router.replace('/(auth)/login');
     }
     catch(error){
-      Alert.alert("Hiba",error.message);
+      showToast("error","Hiba",error.message);
     }
   }
   return (

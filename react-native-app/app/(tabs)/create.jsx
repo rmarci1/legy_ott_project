@@ -11,7 +11,7 @@ import ShowJob from '@/components/views/ShowJob'
 import ConvertType from '@/components/ConvertType'
 import Toast from "react-native-toast-message";
 const create = () => {
-  const {user, query, setQuery, openPicker, showToast} = useGlobalContext();
+  const {user, query, setQuery, openPicker, showToast,toastConfig} = useGlobalContext();
   const [readMore,setReadMore] = useState(false);
   const [typingTimeout, setTypingTimeout] = useState(null);
   const [stashed,setStashed] = useState("");
@@ -86,7 +86,7 @@ const create = () => {
       await createJob(form);
     }
     catch(error){
-      Alert.alert("Hiba",error.message)
+      showToast("error","Hiba",error.message)
     }
   }
   const handleDelete = async () => {
@@ -102,7 +102,7 @@ const create = () => {
       ])
     }
     catch(error){
-      Alert.alert("Hiba", error.message);
+      showToast("error","Hiba", error.message);
     }
   }
   const handleUpdate = async () => {
@@ -117,7 +117,7 @@ const create = () => {
         })
       );
       if(Object.keys(updatedFields).length === 0){
-        Alert.alert("Nincs változás","Változtass meg benne valamit");
+        showToast("error","Nincs változás","Változtass meg benne valamit");
         return;
       }
       await updateJob(query?.id,updatedFields,query?.from);
@@ -125,7 +125,7 @@ const create = () => {
       toggleModal();
     }
     catch(error){
-      Alert.alert("Hiba", error.message);
+      showToast("error","Hiba", error.message);
     }
   }
   const handleChanges = () =>{
@@ -313,7 +313,7 @@ const create = () => {
           />
         </View>
       </Modal>
-      <Toast/>
+      <Toast config={toastConfig}/>
     </SafeAreaView>
   )
 }

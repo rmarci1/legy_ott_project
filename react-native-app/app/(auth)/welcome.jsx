@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView,Alert, Modal } from 'react-native'
+import { View, Text, SafeAreaView, Modal } from 'react-native'
 import React, { useState } from 'react'
 import Formfield from '@/components/inputFields/Formfield'
 import Swiper from 'react-native-swiper'
@@ -7,8 +7,9 @@ import { useGlobalContext } from '@/context/GlobalProvider'
 import AntDesign from '@expo/vector-icons/AntDesign';
 import {register} from '@/lib/api'
 import { router } from 'expo-router'
+import Toast from 'react-native-toast-message'
 const welcome = () => {
-  const {formPart} = useGlobalContext();
+  const {setUser,formPart,showToast,toastConfig} = useGlobalContext();
   const [isSubmitting,setIsSubmitting] = useState(false);
   const [changed,setChanged] = useState(false);
   const [form,setForm] = useState({
@@ -23,7 +24,7 @@ const welcome = () => {
   }
   const checking = () => {
     if(!form.name || !form.username){
-      Alert.alert("Hiba","Nem töltötted ki az összes mezőt");
+      showToast("error","Hiba","Nem töltötted ki az összes mezőt");
       return;
     }
     let s = "";
@@ -38,19 +39,13 @@ const welcome = () => {
   const submit = async () => {
     try{
       setIsSubmitting(true);
-      register(form.name,form.username,formPart.password,formPart.email)
-              .then((res) => {
-              if(res){
-                setUser(res.profile);
-              }
-              else{
-                setUser(null);
-              }
-            });
+      const res = await register(form.name,form.username,formPart.password,formPart.email);
+      setUser(res.profile);
       router.navigate('/(tabs)/home');
     }
     catch(error){
-      throw new Error(error);
+      console.log("hiba");
+      showToast("error","Hiba",error.message);
     }
     finally{
       setIsSubmitting(false);
@@ -147,6 +142,7 @@ const welcome = () => {
         </View>
       </Modal>
     </View>
+    <Toast config={toastConfig}/>
   </SafeAreaView>
   
   )

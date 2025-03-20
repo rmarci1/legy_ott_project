@@ -2,8 +2,6 @@ import { View, Text, Animated, TouchableOpacity, TextInput, Image, Modal, Alert 
 import React, { useRef, useState,useEffect } from 'react'
 import CustomButton from '../CustomButton'
 import { AntDesign, Entypo, Feather, FontAwesome, Ionicons } from '@expo/vector-icons'
-import ConvertType from '../ConvertType'
-import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router'
 import { createReview, getAverageRating, getCanReview } from '@/lib/api'
 import { useGlobalContext } from '@/context/GlobalProvider'
@@ -40,7 +38,6 @@ const ProfileView = ({isView, viewed_user, handleModal}) => {
     })
     canReview()
     .catch((error) => {
-      Alert.alert("Hiba",error);
     });
   },[])
   const slideAnim = useState(new Animated.Value(400))[0];

@@ -6,9 +6,10 @@ import images from '@/constants/images';
 import { router } from 'expo-router';
 import { getJobs, getUser, pflogin } from '@/lib/api';
 import { useGlobalContext } from '@/context/GlobalProvider';
+import Toast from 'react-native-toast-message';
 
 const login = () => {
-  const {setIsLoading,setIsloggedIn,setUser,isLoggedIn,user,isLoading,isJobsIn,setIsJobsIn,setJobs} = useGlobalContext();
+  const {setIsLoading,setIsloggedIn,setUser,isLoggedIn,user,isLoading,isJobsIn,setIsJobsIn,setJobs,showToast,toastConfig} = useGlobalContext();
   useEffect(() => {
     if(isLoggedIn && !isLoading && isJobsIn && user) router.push('/(tabs)/home');
   },[isLoggedIn,user,isJobsIn,isLoading])
@@ -42,7 +43,7 @@ const login = () => {
             }
           })
           .catch((error) => {
-            throw new Error(error.message);
+              showToast("error","Hiba",error.message);
           })
           .finally(() => {
             setIsLoading(false);
@@ -90,6 +91,7 @@ const login = () => {
           <Text className='text-lg font-rmedium ml-2'>Google</Text>
         </TouchableOpacity>
       </View>
+      <Toast config={toastConfig}/>
     </SafeAreaView>
   )
 }
