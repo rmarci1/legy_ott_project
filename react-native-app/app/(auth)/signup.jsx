@@ -70,7 +70,6 @@ const signup = () => {
       }
       setIsSubmitting(true);
       setFormPart(form);
-      showToast("success","Sikeres bejelentkezés");
       router.push('/welcome');
     }
     catch(error){

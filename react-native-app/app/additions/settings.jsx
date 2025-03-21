@@ -14,7 +14,7 @@ const settings = () => {
   const {user,setUser,openPicker,setJobs,setIsJobsIn,setIsloggedIn,showToast,toastConfig} = useGlobalContext();
   const [form,setForm] = useState(user);
   const [update, setUpdate] = useState(false);
-  const [updateDesc, setUpdateDesc] = useState(false);
+  const [updateDesc, setUpdateDesc] = useState(user?.description ? false : true);
   const [selection, setSelection] = useState({
       start: 0,
       end : 0
@@ -22,10 +22,6 @@ const settings = () => {
   const [stashed, setStashed] = useState("");
   const [undoStates,setUndoStates] = useState([]);
   const [typingTimeout,setTypingTimeout] = useState(null);
-   
-  useEffect(() => {
-    console.log(updateDesc);
-  }, [updateDesc])
   const handleImageUpdate = async (image) => {
     try{
       setUpdate(true);
@@ -49,19 +45,19 @@ const settings = () => {
     }
     try{
       const res = await updateProfile(updatedField);
-      console.log(res);
-      setUser(res);
+      setUser((prev) => res);
+      console.log("Változtatva");
+      showToast("success","Sikeres szerkesztés");
     }
     catch(error){
       showToast("error","Hiba",error.message);
     }
-    showToast("success","Sikeres szerkesztés");
   }
   const handleLogout = async () => {
     try{
       await logout();
-      setUser();
-      setJobs();
+      setUser(null);
+      setJobs(null);
       setIsJobsIn(false);
       setIsloggedIn(false);
       router.replace('/(auth)/login');
@@ -70,9 +66,6 @@ const settings = () => {
       showToast("error","Hiba",error.message);
     }
   }
-  useEffect(() => {
-    console.log(form?.description);
-  },[form])
   return (
       <TouchableWithoutFeedback
           onPress={() => Keyboard.dismiss()}
