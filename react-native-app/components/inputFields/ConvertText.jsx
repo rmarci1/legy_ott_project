@@ -34,7 +34,7 @@ export default function ConvertText({ text, isHeader, value }) {
     }
     return (
         <Text>
-        {sections.map((section, index) => {
+        {sections?.map((section, index) => {
             if(!add){
                 const contains = section.indexOf("n");
                 if(contains != -1) isHeader = false;

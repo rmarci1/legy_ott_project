@@ -70,6 +70,9 @@ const settings = () => {
       showToast("error","Hiba",error.message);
     }
   }
+  useEffect(() => {
+    console.log(form?.description);
+  },[form])
   return (
       <TouchableWithoutFeedback
           onPress={() => Keyboard.dismiss()}
@@ -158,7 +161,7 @@ const settings = () => {
                 <SettingsField
                   containerStyles="mb-6 w-[70%]"
                   value={!updateDesc ? 
-                    form?.description.substring(0,(form.description.length > 50 ? 50 : form.description.length))+(form.description.length > 50 && "...")
+                    form?.description?.substring(0,(form?.description?.length > 50 ? 50 : form?.description?.length))+(form?.description?.length > 50 && "...")
                     : form?.description}
                   handleChangeText={(e) => {
                     setForm({...form, description:e});

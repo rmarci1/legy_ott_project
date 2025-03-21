@@ -7,7 +7,7 @@ const SettingsField = ({title, value, handleChangeText, containerStyles, multili
   return (
     <View className={`${containerStyles}`}>
         {title && <Text className='text-xl font-extrabold text-white'>{title}</Text>}
-        <View className={`relative bg-gray-800 border-b-2 border-x border-white rounded-xl p-2 mt-4 ${!multiline && "h-[64px]"}`}>
+        <View className={`relative bg-gray-800 border-b-2 border-x border-white rounded-xl p-2 mt-4 ${!multiline && "h-[64px]"} ${showArrow && "min-h-28"}`}>
         <TextInput
             editable= {editable}
             value={value}

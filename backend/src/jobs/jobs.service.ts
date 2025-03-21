@@ -588,7 +588,6 @@ export class JobsService {
   }
   async canReview(username: string, review_username: string){
     const currDate = new Date();
-
     const profile = await this.db.profile.findUnique({
       where: {
         username: review_username

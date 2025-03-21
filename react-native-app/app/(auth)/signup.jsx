@@ -70,6 +70,7 @@ const signup = () => {
       }
       setIsSubmitting(true);
       setFormPart(form);
+      showToast("success","Sikeres bejelentkezés");
       router.push('/welcome');
     }
     catch(error){
@@ -103,7 +104,7 @@ const signup = () => {
     <SafeAreaView className='h-full'>
       <View className='w-full min-h-[85vh] flex-1 justify-center items-center'>
         <Text className='font-pbold color-primary text-3xl mt-8'>Regisztráció</Text>
-        <Text className='font-pmedium text-xl mt-4 text-center w-[85%]'>Csinálj egy fiókot hogy felvedeszd az új lehetőségeidet!</Text>
+        <Text className='font-pmedium text-xl mt-4 text-center w-[85%]'>Csinálj egy fiókot hogy felvedezd az új lehetőségeidet!</Text>
         <Formfield
           placeholder="Email"
           value={form.email}

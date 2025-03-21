@@ -12,7 +12,7 @@ const ConvertType = ({handleStash,selection,undoStates,handleUndoStates,handleSe
         let convert = "";
         if(selected){
           convert = (selection.start != 0  ? str.substring(0,selection.start) : "") + part + str.slice(selection.start,selection.end) +
-          part + (selection.end != description.length - 1 ? str.slice(selection.end) : "");
+          part + (selection.end != description.length - 1 ? str?.slice(selection.end) : "");
         }
         else{
           convert = part + (selection.start != 0 ? str.slice(0,selection.start) : "") + part + str.slice(selection.start);

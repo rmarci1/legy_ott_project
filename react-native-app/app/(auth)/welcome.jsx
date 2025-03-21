@@ -40,8 +40,7 @@ const welcome = () => {
     try{
       setIsSubmitting(true);
       const res = await register(form.name,form.username,formPart.password,formPart.email);
-      setUser(res.profile);
-      router.navigate('/(tabs)/home');
+      router.navigate('/login');
     }
     catch(error){
       console.log("hiba");

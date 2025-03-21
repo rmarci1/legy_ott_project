@@ -51,7 +51,7 @@ const index = () => {
               scrollEnabled={true}
               className=''
             >
-              {list.map((item) => renderItem(item))}
+              {list?.map((item) => renderItem(item))}
             </Swiper>
             <Text className='text-4xl font-rbold text-[#EFB8C8] text-center'> Légy ott!</Text>
             <Text className='font-rregular text-lg text-white text-center mt-3 mx-6'>Csatlakozz több mint 10000 felhasználóhóz mint hirdető vagy önkéntesként</Text>

@@ -6,9 +6,10 @@ import { router } from 'expo-router'
 import { createReview, getAverageRating, getCanReview } from '@/lib/api'
 import { useGlobalContext } from '@/context/GlobalProvider'
 import ConvertText from '../inputFields/ConvertText'
+import Toast from 'react-native-toast-message'
 
 const ProfileView = ({isView, viewed_user, handleModal}) => {
-  const {user} = useGlobalContext();
+  const {user,showToast,toastConfig} = useGlobalContext();
   const [reviewForm,setReviewForm] = useState({
     rating : 0,
     desc : ""
@@ -23,7 +24,7 @@ const ProfileView = ({isView, viewed_user, handleModal}) => {
   const [canProfileReview, setCanProfileReview] = useState(false);
   
   useEffect(() => {
-    if(viewed_user?.description.length > 50){
+    if(viewed_user?.description?.length > 50){
       setReadMore(true);
     }
     getAverageRating(viewed_user?.username).then((res) => {
@@ -36,9 +37,10 @@ const ProfileView = ({isView, viewed_user, handleModal}) => {
     }).catch((error) => {
       throw new Error(error);
     })
-    canReview()
+    if(isView){canReview()
     .catch((error) => {
-    });
+      showToast("error","Hiba",error.message);
+    })};
   },[])
   const slideAnim = useState(new Animated.Value(400))[0];
   const imageSlide = useRef(new Animated.Value(0.3)).current;
@@ -101,7 +103,7 @@ const ProfileView = ({isView, viewed_user, handleModal}) => {
   }
   const canReview = async () => {
     try{
-      const res = await getCanReview(viewed_user);
+      const res = await getCanReview(viewed_user.username);
       setCanProfileReview(res);
     }
     catch(error){
@@ -181,7 +183,7 @@ const ProfileView = ({isView, viewed_user, handleModal}) => {
               </View>
               <View>
                 <ConvertText
-                  text={((readMore && !showMore)) ? viewed_user?.description.substring(0,100)+"..." : viewed_user?.description}
+                  text={((readMore && !showMore)) ? viewed_user?.description.substring(0,100)+"..." : viewed_user?.description? viewed_user?.description : "Még nincs leírása"}
                 />
                 {readMore && <TouchableOpacity
                   onPress={() => setshowMore(!showMore)}
@@ -283,6 +285,7 @@ const ProfileView = ({isView, viewed_user, handleModal}) => {
               </View>
             </Modal>
           </View>
+          <Toast config={toastConfig}/>
     </View>
   )
 }

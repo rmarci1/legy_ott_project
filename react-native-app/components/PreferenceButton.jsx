@@ -33,7 +33,7 @@ const renderItem = (item,index,isFocused,handlePress,type) => {
 const PreferenceButton = ({titles,handlePress, givenDay, type}) => {
   return (
     <View className='flex-row flex-wrap w-[85%] mt-5 self-center gap-2 gap-y-4'>
-        {titles.map((item, index) => renderItem(item, index, givenDay? item===givenDay : false, handlePress, type))}
+        {titles?.map((item, index) => renderItem(item, index, givenDay? item===givenDay : false, handlePress, type))}
     </View>
   )
 }

@@ -18,7 +18,7 @@ const login = () => {
     password : ''
   });
   const submit = async () => {
-      await pflogin(form.email,form.password).then((res) => {
+      await pflogin(form.email,form.password).then(() => {
           setIsLoading(true);
           getUser()
           .then((result)=>{
@@ -43,12 +43,15 @@ const login = () => {
             }
           })
           .catch((error) => {
-              showToast("error","Hiba",error.message);
+            showToast("error","Hiba",error.message);
           })
           .finally(() => {
             setIsLoading(false);
-          })
-      });
+          })}
+    )
+    .catch((error) => {
+      showToast("error","Hiba",error.message);
+    });
     }
   return (
     <SafeAreaView className='h-full'>
