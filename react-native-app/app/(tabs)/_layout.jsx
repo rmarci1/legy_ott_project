@@ -1,6 +1,6 @@
 import { View, TouchableOpacity} from 'react-native'
 import React from 'react'
-import { AntDesign, Entypo, Feather, FontAwesome5, FontAwesome6 } from '@expo/vector-icons'
+import { AntDesign, Entypo, Feather, FontAwesome5, FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons'
 import { router, Tabs } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 const TabIcon = ({color,name,focused,containerStyles}) =>{
@@ -26,7 +26,11 @@ const TabIcon = ({color,name,focused,containerStyles}) =>{
                 <FontAwesome5 name="tasks" size={26} color={color} />
               )
             }
-            
+            {
+                name === "Message" && (
+                    <MaterialCommunityIcons name="chat" size={30} color={color} />               
+                )
+            }
 
         </View>
     )
@@ -66,14 +70,14 @@ const _layout = () => {
         }}
         />
         <Tabs.Screen
-        name='anotherone'
+        name='list'
         options={{
-            title : 'Anot',
+            title : 'List',
             headerShown : false,
             tabBarIcon: ({color,focused}) => (
                 <TabIcon
                     color={color}
-                    name="Anot"
+                    name="List"
                     focused={focused}
                 />
             ),
@@ -101,14 +105,14 @@ const _layout = () => {
         }}
         />
         <Tabs.Screen
-        name='list'
+        name='message'
         options={{
-            title : 'List',
+            title : 'Message',
             headerShown : false,
             tabBarIcon: ({color,focused}) => (
                 <TabIcon
                     color={color}
-                    name="List"
+                    name="Message"
                     focused={focused}
                 />
             ),
