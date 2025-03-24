@@ -3,6 +3,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router"
 import {getUser, pflogin} from '../../lib/api.ts'
 import {useAuth} from "../../context/AuthContext.tsx";
+import {User} from "@/Types/User.ts";
 
 
 export default function Login(){
@@ -28,15 +29,16 @@ export default function Login(){
                 loginMode = "username";
             }
             await pflogin(emailUsername, password, loginMode)
-            const user = await getUser().then((res)=>{
-                return res.profile
-            })
+            const user: User = await getUser().then((res) => res.profile);
+            console.log("User fetched:", user);
+
             bejelentkezes(user);
-            if(user.isAdmin){
-                navigate('/admin/dashboard');
-                return;
+            console.log(user.isAdmin);
+            if (!user.isAdmin) {
+                navigate("/");
+            } else {
+                navigate("/admin/dashboard");
             }
-            navigate("/")
         }
         catch(error){
             alert(error);
