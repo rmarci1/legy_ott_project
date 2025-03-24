@@ -10,11 +10,13 @@ import { ProfilesService } from './profiles/profiles.service';
 import { ReviewsModule } from './reviews/reviews.module';
 import { AuthModule } from './auth/auth.module';
 import * as cookieParser from 'cookie-parser';
+import { ChatModule } from './chat/chat.module';
+import { ChatGateway } from './chat/chat.gateway';
 
 @Module({
-  imports: [ProfilesModule, JobsModule, CloudinaryModule, ReviewsModule, AuthModule,],
+  imports: [ProfilesModule, JobsModule, CloudinaryModule, ReviewsModule, AuthModule, ChatModule,],
   controllers: [AppController],
-  providers: [AppService, PrismaService, ProfilesService],
+  providers: [ChatGateway,AppService, PrismaService, ProfilesService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
