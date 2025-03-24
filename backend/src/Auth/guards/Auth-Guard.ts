@@ -13,6 +13,7 @@ export class AuthGuard implements CanActivate {
     if (!token) {
       throw new UnauthorizedException();
     }
+
     try {
       const payload = await this.jwtService.verifyAsync(
         token,
@@ -21,6 +22,11 @@ export class AuthGuard implements CanActivate {
         }
       );
       request['profile'] = payload;
+
+      if (request.url.includes('/admin') && !payload.isAdmin) {
+        throw new UnauthorizedException()
+      }
+
     } catch {
       throw new UnauthorizedException();
     }
