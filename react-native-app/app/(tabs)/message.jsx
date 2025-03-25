@@ -1,39 +1,91 @@
-import { Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
-import { useGlobalContext } from '@/context/GlobalProvider'
-import Toast, { BaseToast } from 'react-native-toast-message';
+import { Image, RefreshControl, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { useGlobalContext } from '@/context/GlobalProvider';
+import Toast from 'react-native-toast-message';
+import { io } from 'socket.io-client';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { FlashList } from '@shopify/flash-list';
+import CustomButton from '@/components/CustomButton';
+import { createMessage, getDifferentProfiles, getMessages } from '@/lib/api';
+import { router } from 'expo-router';
 
-const anotherone = () => {
-  const showToast = (text) => {
-      Toast.show({
-        type: "success",   
-        text1: text,
-        text1Style:{
-          fontSize: 16
+const AnotherOne = () => {
+  const { toastConfig, showToast, user, setProfileForMessage } = useGlobalContext();
+
+  const [differentProfiles,setDifferentProfiles] = useState(null);
+  const [isDifferentProfilesLoading,setIsDifferentProfilesLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [showMessages,setShowMessages] = useState(false);
+
+  useEffect(() => {
+    const fetchDifferentProfiles = async () => {
+      setIsDifferentProfilesLoading(true);
+      getDifferentProfiles(user.id)
+      .then((res) => {
+        if(res){
+          setDifferentProfiles(res)
         }
       })
-  }
-  const toastConfig = {
-    custom_toast: (props) => (
-      <BaseToast
-        {...props}
-        style={{ borderLeftColor: "lime"}}
-        contentContainerStyle={{ backgroundColor: "black" }}
-        text1Style={{ color: "white", fontWeight: "bold" }}
-      />
-    ),
+      .catch((error) => {
+        showToast("error","Hiba",error.message);
+      })
+      .finally(() => {
+        setIsDifferentProfilesLoading(false);
+      })
+    }
+    fetchDifferentProfiles();
+  }, [])
+  const onRefresh = () => {
+    setRefreshing(true);
+    setTimeout(() => setRefreshing(false), 1000);
   };
-  return (
-    <SafeAreaView>
-      <TouchableOpacity
-        onPress={() => showToast("Sikeres feltöltés")}
-      >
-        <Text>Press me</Text>
-      </TouchableOpacity>
-      <Toast config={toastConfig}/>
-    </SafeAreaView>
-  )
-}
+  const formatDate = (date) => {
+    const currDate = new Date();
+    if(currDate.toISOString().split('T')[0] === date.split('T')[0]){
+      return date.split('T')[1].split(':').splice(0,2).join(':');
+    }
+    else {
+      return date.split('T')[0].split('-').splice(1).join('-');
+    }
+  }
+  const handlePress = (profile) => {
+    setProfileForMessage(profile);
+    router.push("/additions/messageView");
+  }
+  const renderProfiles = ({ item }) => (
+    <TouchableOpacity 
+      className="p-3 border-b border-gray-300 flex-row"
+      onPress={() => handlePress(item)}
+    >
+      <Image
+        source={{ uri: item.profileImg }}
+        resizeMode="cover"
+        className="w-16 h-16 mt-1 rounded-full"
+      />
+      <View className="ml-4 mt-1 flex-1">
+        <View className="flex-row justify-between items-center">
+          <Text className="text-xl color-[#1b1a57]">{item.username.length > 25 ? item.username.substring(0,25)+"..." : item.username}</Text>
+          <Text className="ml-auto">{formatDate(item.lastMessageDate)}</Text>
+        </View>
+        <Text className="color-gray-500">{item.lastMessage.length > 30 ? item.lastMessage.substring(0,30)+"..." : item.lastMessage}</Text>
+      </View>
+    </TouchableOpacity>
+  );
 
-export default anotherone
+  return (
+    <SafeAreaView className="flex-1 p-4">
+      <Text className='text-2xl font-rb color-slate-700'>Utóbbi üzeneteid</Text>
+      {showMessages}
+      <FlashList
+        data={differentProfiles}
+        keyExtractor={(item,index) => index.toString()}
+        renderItem={renderProfiles}
+        estimatedItemSize={50}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      />
+      <Toast config={toastConfig} />
+    </SafeAreaView>
+  );
+};
+
+export default AnotherOne;

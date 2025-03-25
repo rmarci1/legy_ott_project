@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState} from "react"
 import { Alert } from "react-native";
 import * as ImagePicker from 'expo-image-picker';
 import Toast, { BaseToast } from "react-native-toast-message";
+import { io } from "socket.io-client";
 const GlobalContext = createContext()
 
 export const useGlobalContext = () => useContext(GlobalContext)
@@ -18,6 +19,7 @@ const GlobalProvider = ({children}) => {
     const [isJobsIn,setIsJobsIn] = useState(false);
     const [queryReturn,setQueryReturn] = useState(null);
     const [query, setQuery] = useState(null);
+    const [profileForMessage,setProfileForMessage] = useState(null);
     useEffect(() => {
         getUser()
         .then((result)=>{
@@ -35,6 +37,8 @@ const GlobalProvider = ({children}) => {
                         setIsJobsIn(false);
                     }
                 });
+                const socket = io('http://192.168.10.89:3000', { transports: ['websocket'] });
+                socket.emit('join', user.id);
             }
             else{
                 setIsloggedIn(false);
@@ -130,7 +134,9 @@ const GlobalProvider = ({children}) => {
                 setQuery,
                 openPicker,
                 showToast,
-                toastConfig
+                toastConfig,
+                profileForMessage,
+                setProfileForMessage
             }}
         >
             {children}
