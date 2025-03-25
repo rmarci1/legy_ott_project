@@ -65,7 +65,7 @@ const GlobalProvider = ({children}) => {
         }
     }
     const handleProfile = (username, toggleModal) => {
-        toggleModal();
+        if(toggleModal) toggleModal();
         router.push(`/profileSearch/${username}`);
     }
     const openPicker = async (handleChange) => {
@@ -111,6 +111,16 @@ const GlobalProvider = ({children}) => {
             />
         )
     }
+    const formatDate = (date) => {
+        const currDate = new Date();
+        currDate.setDate(currDate.getDate() - 1)
+        if(new Date(date) > currDate){
+          return date.split('T')[1].split(':').splice(0,2).join(':');
+        }
+        else {
+          return date.split('T')[0].split('-').splice(1).join('-');
+        }
+    }
     return (
         <GlobalContext.Provider
             value = {{
@@ -136,7 +146,8 @@ const GlobalProvider = ({children}) => {
                 showToast,
                 toastConfig,
                 profileForMessage,
-                setProfileForMessage
+                setProfileForMessage,
+                formatDate
             }}
         >
             {children}

@@ -27,13 +27,12 @@ export class ChatService {
       },
       include: {
         senderProfile: {
-          select: { id: true, username: true, profileImg: true, email: true, created: true }
+          select: { id: true, name: true, username: true, profileImg: true, email: true, created: true }
         },
         receiverProfile: {
-          select: { id: true, username: true, profileImg: true, email: true, created: true }
+          select: { id: true, name: true, username: true, profileImg: true, email: true, created: true }
         }
       },
-      distinct: ['senderId','receiverId']
     });
     const profiles = [...messages.map(msg => msg.senderProfile), ...messages.map(msg => msg.receiverProfile)];
 

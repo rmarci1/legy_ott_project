@@ -10,7 +10,7 @@ import { createMessage, getDifferentProfiles, getMessages } from '@/lib/api';
 import { router } from 'expo-router';
 
 const AnotherOne = () => {
-  const { toastConfig, showToast, user, setProfileForMessage } = useGlobalContext();
+  const { toastConfig, showToast, user, setProfileForMessage,formatDate } = useGlobalContext();
 
   const [differentProfiles,setDifferentProfiles] = useState(null);
   const [isDifferentProfilesLoading,setIsDifferentProfilesLoading] = useState(true);
@@ -39,15 +39,6 @@ const AnotherOne = () => {
     setRefreshing(true);
     setTimeout(() => setRefreshing(false), 1000);
   };
-  const formatDate = (date) => {
-    const currDate = new Date();
-    if(currDate.toISOString().split('T')[0] === date.split('T')[0]){
-      return date.split('T')[1].split(':').splice(0,2).join(':');
-    }
-    else {
-      return date.split('T')[0].split('-').splice(1).join('-');
-    }
-  }
   const handlePress = (profile) => {
     setProfileForMessage(profile);
     router.push("/additions/messageView");
@@ -58,16 +49,16 @@ const AnotherOne = () => {
       onPress={() => handlePress(item)}
     >
       <Image
-        source={{ uri: item.profileImg }}
+        source={{ uri: item?.profileImg }}
         resizeMode="cover"
         className="w-16 h-16 mt-1 rounded-full"
       />
       <View className="ml-4 mt-1 flex-1">
         <View className="flex-row justify-between items-center">
-          <Text className="text-xl color-[#1b1a57]">{item.username.length > 25 ? item.username.substring(0,25)+"..." : item.username}</Text>
-          <Text className="ml-auto">{formatDate(item.lastMessageDate)}</Text>
+          <Text className="text-xl color-[#1b1a57]">{item?.name.length > 25 ? item?.name.substring(0,25)+"..." : item?.name}</Text>
+          <Text className="ml-auto">{formatDate(item?.lastMessageDate)}</Text>
         </View>
-        <Text className="color-gray-500">{item.lastMessage.length > 30 ? item.lastMessage.substring(0,30)+"..." : item.lastMessage}</Text>
+        <Text className="color-gray-500">{item?.lastMessage.length > 30 ? item?.lastMessage.substring(0,30)+"..." : item?.lastMessage}</Text>
       </View>
     </TouchableOpacity>
   );
