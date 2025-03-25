@@ -14,7 +14,7 @@ import {
   
     @SubscribeMessage('message')
     handleMessage(
-      @MessageBody() data: { senderId: string; receiverId: string; content: string },
+      @MessageBody() data: { senderId: string; receiverId: string; content: string, createdAt: Date },
       @ConnectedSocket() client: Socket,
     ) {
       console.log(`Message received from ${data.senderId} to ${data.receiverId}: ${data.content}`);

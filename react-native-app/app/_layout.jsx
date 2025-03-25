@@ -38,6 +38,7 @@ const Rootlayout = () => {
           <Stack.Screen name='preferenceSearch/[pref]' options={{headerShown : false}}/>
           <Stack.Screen name='additions/settings' options={{ headerShown : false}} />
           <Stack.Screen name='additions/messageView' options={{ headerShown : false}} />
+          <Stack.Screen name='additions/showProfiles' options={{ headerShown : false}} />
       </Stack>
     </GlobalProvider>
   )

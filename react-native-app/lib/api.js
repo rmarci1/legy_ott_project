@@ -386,7 +386,6 @@ export const getMessages = async (senderId,receiverId) => {
 }
 export const createMessage = async (message) => {
     try{
-        console.log(message);
         const response = await fetch(`${API_URL}/chat/send`,{
             method: 'POST',
             headers: {'Content-Type' : 'application/json'},
@@ -397,7 +396,6 @@ export const createMessage = async (message) => {
         if (!response.ok){
             throw new Error(typeof data.message == "string" ? data.message : data.message[0]);
         }
-        console.log("return: ",data);
         return data;
     }
     catch(error){
@@ -407,6 +405,22 @@ export const createMessage = async (message) => {
 export const getDifferentProfiles = async (userId) => {
     try{
         const response = await fetch(`${API_URL}/chat/different/${userId}`,{
+            method: 'GET',
+            credentials: 'include'
+        })
+        const data = await response.json();
+        if (!response.ok){
+            throw new Error(typeof data.message == "string" ? data.message : data.message[0]);
+        }
+        return data;
+    }
+    catch(error){
+        throw new Error(error);
+    }   
+}
+export const getAllProfiles = async () => {
+    try{
+        const response = await fetch(`${API_URL}/profiles`,{
             method: 'GET',
             credentials: 'include'
         })

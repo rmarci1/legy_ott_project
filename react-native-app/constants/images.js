@@ -13,4 +13,5 @@ import empty from "../assets/images/empty.png"
 import search from "../assets/images/search.png"
 import emptyStar from "../assets/images/emptyStar.png"
 import activeStar from "../assets/images/activeStar.png"
-export default { welcomebg, growing, communication, logo, dot, active_dot, expand, google, test, fetch, blur, empty, search, emptyStar, activeStar};
+import chat from "../assets/images/vector.png"
+export default { welcomebg, growing, communication, logo, dot, active_dot, expand, google, test, fetch, blur, empty, search, emptyStar, activeStar, chat};

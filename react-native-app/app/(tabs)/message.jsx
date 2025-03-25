@@ -8,6 +8,8 @@ import { FlashList } from '@shopify/flash-list';
 import CustomButton from '@/components/CustomButton';
 import { createMessage, getDifferentProfiles, getMessages } from '@/lib/api';
 import { router } from 'expo-router';
+import images from '@/constants/images';
+import { AntDesign } from '@expo/vector-icons';
 
 const AnotherOne = () => {
   const { toastConfig, showToast, user, setProfileForMessage,formatDate } = useGlobalContext();
@@ -66,7 +68,6 @@ const AnotherOne = () => {
   return (
     <SafeAreaView className="flex-1 p-4">
       <Text className='text-2xl font-rb color-slate-700'>Utóbbi üzeneteid</Text>
-      {showMessages}
       <FlashList
         data={differentProfiles}
         keyExtractor={(item,index) => index.toString()}
@@ -74,6 +75,14 @@ const AnotherOne = () => {
         estimatedItemSize={50}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       />
+      <TouchableOpacity 
+        className='absolute bottom-6 right-6'
+        onPress={() => router.push('/additions/showProfiles')}
+      >
+         <View className='h-[68px] w-[68px] rounded-full bg-[#2F80ED] items-center justify-center'>
+            <AntDesign name="message1" size={30} color="white" />
+         </View>
+      </TouchableOpacity>
       <Toast config={toastConfig} />
     </SafeAreaView>
   );

@@ -18,19 +18,20 @@ const messageView = () => {
   const [refreshing,setRefreshing] = useState(false);
   const flashListRef = useRef(null);
   useEffect(() => {
-  const fetchMessage = async () => {
-      await getMessages(user.id, profileForMessage.id)
-      .then((res) => {
-        if(res){
-          setMessages(res);
-        }
-      })
-      .catch((error) => {
-        showToast("error","Hiba",error.message);
-      })
-      .finally(() => {
-        setIsMessage(false);
-      })
+    const fetchMessage = async () => {
+        await socket.connect();
+        await getMessages(user.id, profileForMessage.id)
+        .then((res) => {
+          if(res){
+            setMessages(res);
+          }
+        })
+        .catch((error) => {
+          showToast("error","Hiba",error.message);
+        })
+        .finally(() => {
+          setIsMessage(false);
+        })
   }
   setIsMessage(true);
   fetchMessage()
@@ -46,14 +47,21 @@ const messageView = () => {
     return () => {
       keyboardDidShowListener.remove();
     };
-  });
-  useEffect(() => {
-    socket.on('message', (message) => {
-      setMessages((prev) => [...prev, message]);
-    });
-
-    return () => socket.disconnect();
   }, []);
+  useEffect(() => {
+    socket.emit('join', user.id);
+
+    const handleMessage = (message) => {
+        console.log("received message: ", message);
+        setMessages((prev) => [...prev, message]);
+    };
+
+    socket.on('message', handleMessage);
+
+    return () => {
+        socket.off('message', handleMessage);
+    };
+}, [user.id]);
   useEffect(() => {
     if(flashListRef.current && messages.length > 0){
       setTimeout(() => {
@@ -69,9 +77,10 @@ const messageView = () => {
   };
   const sendMessage = async () => {
     try{
-      await socket.emit('message', { senderId: user.id, receiverId: profileForMessage?.id, content: formMessage });
+      await socket.emit('message', { senderId: user.id, receiverId: profileForMessage?.id, content: formMessage, createdAt: new Date() });
       const res = await createMessage({senderId: user?.id, receiverId: profileForMessage?.id, content: formMessage});
       setMessages((prev) => [...prev, res]);
+      setFormMessage("");
     }
     catch(error){
       showToast("error","Hiba",error.message);
@@ -124,6 +133,12 @@ const messageView = () => {
             estimatedItemSize={50}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             contentContainerStyle={{ paddingBottom: 80 }}
+            ListEmptyComponent={() => (
+              <View className='min-h-[80vh] self-center items-center justify-center'>
+                  <Text className='text-center'>Még nincsenek üzeneteitek</Text>
+                  <Text className='text-center'>Írj <Text className='text-blue-500'>valamit...</Text></Text>
+              </View>
+            )}
           />
         )}
       </View>
