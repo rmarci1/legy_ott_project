@@ -40,6 +40,8 @@ model profile{
   created DateTime
   reviews review[]
   jobs jobProfile[]
+  messageSent Message[] @relation(name: "Sender")
+  messageReceived Message[] @relation(name: "Receiver")
 }
 
 model review{
@@ -62,3 +64,15 @@ model jobProfile {
   isApplied Boolean
   @@id([profileId, jobId])
 }
+
+model Message {
+  id Int @id @default(autoincrement())
+  senderProfile  profile @relation(name: "Sender",fields: [senderId], references: [id], onDelete: Cascade)
+  senderId Int
+  receiverProfile profile @relation(name: "Receiver",fields: [receiverId], references: [id], onDelete: Cascade)
+  receiverId Int
+
+  content    String
+  createdAt  DateTime @default(now())
+}
+

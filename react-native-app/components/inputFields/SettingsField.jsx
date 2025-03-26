@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { AntDesign, Ionicons } from '@expo/vector-icons'
 
 const SettingsField = ({title, value, handleChangeText, containerStyles, multiline, handleUpdate, editable, showArrow, handleArrowPress, handleSelection}) => {
-  const [arrowState,setArrowState] = useState(false);
+  const [arrowState,setArrowState] = useState(editable);
   return (
     <View className={`${containerStyles}`}>
         {title && <Text className='text-xl font-extrabold text-white'>{title}</Text>}

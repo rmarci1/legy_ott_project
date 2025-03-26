@@ -1,7 +1,6 @@
 //const API_URL = 'http://192.168.11.40:3000' // webváltó host nete;
-//const API_URL = 'http://192.168.10.89:3000' // webváltó ethernet;
+const API_URL = 'http://192.168.10.89:3000' // webváltó ethernet;
 //const API_URL = 'http://192.168.11.21:3000' // webváltó alap wifi;
-const API_URL = 'http://192.168.0.179:3000'
 export const register = async (name,username, password, email)=> {
     try {
         const response = await fetch(`${API_URL}/auth/register`, {
@@ -154,6 +153,7 @@ export const getAdvertisement = async (endpoint) => {
             credentials : 'include'
         })
         const data = await response.json();
+        console.log(data);
         if(!response.ok){
             throw new Error(data.message);
         }
@@ -165,17 +165,18 @@ export const getAdvertisement = async (endpoint) => {
 }
 export const createJob = async (job) => {
     try{
+        const sendJob = {...job, max_attending: parseInt(job.max_attending)};
         const response = await fetch(`${API_URL}/jobs`,{
             method : "POST",
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ date:new Date(job.date), ...job}),
+            body: JSON.stringify(sendJob),
             credentials: "include"
         })
         const data = await response.json();
         if(!response.ok){
             throw new Error(typeof data.message == "string" ? data.message : data.message[0])
         }   
-        await UpdateProfilePic(data.id,job.img);
+        await UpdateJobPic(data.id,job.img);
         return data;
     }
     catch(error){
@@ -321,7 +322,7 @@ export const attending = async (jobId, update) => {
 }
 export const updateJob = async (jobId,update,from) => {
     try{
-        const response = await fetch(`${API_URL}/jobs/${jobId}/${from}`,{
+        const response = await fetch(`${API_URL}/jobs/${jobId}`,{
             method : 'PATCH',
             headers: {'Content-Type' : 'application/json'},
             body: JSON.stringify(update),
@@ -368,4 +369,70 @@ export const logout = async () => {
     catch(error){
         throw new Error(error.message)
     }
+}
+export const getMessages = async (senderId,receiverId) => {
+    try{
+        const response = await fetch(`${API_URL}/chat/messages/${senderId}/${receiverId}`,{
+            method: 'GET',
+            credentials: 'include'
+        })
+        const data = await response.json();
+        if (!response.ok){
+            throw new Error(data.message);
+        }
+        return data;
+    }
+    catch(error){
+        throw new Error(error.message)
+    }
+}
+export const createMessage = async (message) => {
+    try{
+        const response = await fetch(`${API_URL}/chat/send`,{
+            method: 'POST',
+            headers: {'Content-Type' : 'application/json'},
+            body: JSON.stringify({senderId : message.senderId, receiverId: message.receiverId, content:message.content}),
+            credentials: 'include'
+        })
+        const data = await response.json();
+        if (!response.ok){
+            throw new Error(typeof data.message == "string" ? data.message : data.message[0]);
+        }
+        return data;
+    }
+    catch(error){
+        throw new Error(error);
+    }    
+}
+export const getDifferentProfiles = async (userId) => {
+    try{
+        const response = await fetch(`${API_URL}/chat/different/${userId}`,{
+            method: 'GET',
+            credentials: 'include'
+        })
+        const data = await response.json();
+        if (!response.ok){
+            throw new Error(typeof data.message == "string" ? data.message : data.message[0]);
+        }
+        return data;
+    }
+    catch(error){
+        throw new Error(error);
+    }   
+}
+export const getAllProfiles = async () => {
+    try{
+        const response = await fetch(`${API_URL}/profiles`,{
+            method: 'GET',
+            credentials: 'include'
+        })
+        const data = await response.json();
+        if (!response.ok){
+            throw new Error(typeof data.message == "string" ? data.message : data.message[0]);
+        }
+        return data;
+    }
+    catch(error){
+        throw new Error(error);
+    }   
 }
