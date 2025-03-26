@@ -16,10 +16,12 @@ interface JobModalProps {
 export default function JobModal({ job, user, setModal, attendJob, setProfileModal }: JobModalProps) {
     const date = new Date(job.date);
     const today = new Date();
-    const { getAdvertiserProfile, deleteJobById } = useAuth();
+    const { getAdvertiserProfile, deleteJobById, advertiser } = useAuth();
 
     useEffect(() => {
-        getAdvertiserProfile(job.from);
+        if (!advertiser || advertiser.username !== job.from) {
+            getAdvertiserProfile(job.from);
+        }
 
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key === "Escape") {

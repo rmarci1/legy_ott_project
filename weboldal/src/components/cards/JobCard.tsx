@@ -14,7 +14,7 @@ export default function JobCard({Job, canSaveForLater}: jobProps){
     const [jobModal, setJobModal] = useState(false);
     const [profileModal, setProfileModal] = useState(false);
     const {user, setSave, attendJob} = useAuth();
-    const whenCreated = new Date(Job.created);
+    const date = new Date(Job.date);
 
     const trimmedText = (text: string) => {
         const lines = text.split('\n');
@@ -28,7 +28,7 @@ export default function JobCard({Job, canSaveForLater}: jobProps){
 
     return<>
         <div className="rounded-lg shadow-secondary-1 bg-surface-dark mt-2 md:m-2 cursor-default">
-            <div className="p-6 text-surface flex flex-col border-2 w-dvw max-w-sm md:max-w-[500px] md:h-[300px] ">
+            <div className="p-6 text-surface flex flex-col border-2 w-dvw max-w-sm md:max-w-[500px]">
                 <div className="flex flex-row flex-grow w-full items-center">
                     <h5 className="mb-2 text-xl font-medium leading-tight flex-grow whitespace-pre-wrap break-words">
                         {Job.name}
@@ -63,12 +63,13 @@ export default function JobCard({Job, canSaveForLater}: jobProps){
                     </button>
                 </div>
 
-
-                <span className="text-gray-800/60 place-self-end">
-                    {
-                        whenCreated.toLocaleDateString()
-                    }
-                </span>
+                <div className=" place-self-end text-right flex flex-row">
+                    <p className="">
+                        {
+                            date.toLocaleDateString()
+                        }
+                    </p>
+                </div>
 
             </div>
 

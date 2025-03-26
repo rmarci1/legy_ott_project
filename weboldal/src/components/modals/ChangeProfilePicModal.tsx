@@ -5,11 +5,12 @@ import {IoClose} from "react-icons/io5";
 import {toast, ToastContainer} from "react-toastify";
 
 interface ChangeProfilePicModalProps{
-    setModal: (value: boolean) => void
+    setModal: (value: boolean) => void,
+    setIsLoading: (value: boolean) => void
 }
 
-export default function ChangeProfilePicModal({setModal}: ChangeProfilePicModalProps) {
-    const {user, profilKepUpdate, checkUser, isLoading} = useAuth();
+export default function ChangeProfilePicModal({setModal, setIsLoading}: ChangeProfilePicModalProps) {
+    const {user, checkUser} = useAuth();
     const [file, setFile] = useState<string | Blob>("");
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -31,10 +32,16 @@ export default function ChangeProfilePicModal({setModal}: ChangeProfilePicModalP
         formData.append('file', file);
         formData.append('username', user?.username || "");
 
-        user && await profilePicChange(formData).then((res) => {
-            profilKepUpdate(res.profileImg, user);
-
-        });
+        try{
+            setIsLoading(true)
+            user && await profilePicChange(formData)
+        }
+        catch (e) {
+            throw e
+        }
+        finally {
+            setIsLoading(false);
+        }
 
         checkUser()
 
@@ -57,8 +64,6 @@ export default function ChangeProfilePicModal({setModal}: ChangeProfilePicModalP
         };
     }, []);
     return <>
-    {
-    !isLoading ?(
         <div
             className="fixed inset-0 bg-black  bg-opacity-50 flex justify-center items-center z-50"
             onClick={() => setModal(false)}
@@ -95,11 +100,5 @@ export default function ChangeProfilePicModal({setModal}: ChangeProfilePicModalP
             </div>
             <ToastContainer/>
         </div>
-        )
-        :
-        (<div className="flex justify-center items-center h-full">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-        </div>)
-    }
     </>
 }
