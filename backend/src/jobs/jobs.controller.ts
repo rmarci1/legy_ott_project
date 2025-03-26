@@ -164,44 +164,7 @@ export class JobsController {
     return this.jobsService.canReview(req['profile']['username'], reviewed_username);
   }
 
-  @ApiOperation({
-    summary: 'Deletes one job with admin role'
-  })
-  @Delete('/admin/deleteJob/:jobId')
-  @UseGuards(AuthGuard)
-  deleteJob(@Param('jobId') jobId: string, @Request() req: Request) {
-    if(req['profile']['isAdmin']){
-      const data = this.jobsService.deleteOne(+jobId);
-      return data;
-    }
-    else{
-      throw new ForbiddenException('Nincs jogosultságod ehhez a művelethez');
-    }
-  }
-  @ApiOperation({
-    summary: 'Returns all of the jobs with admin role'
-  })
-  @Get('/admin/allJobs')
-  @UseGuards(AuthGuard)
-  async findAllJobs(@Request() req: Request) {
-    if(req['profile']['isAdmin']){
-      const data = await this.jobsService.findAllJobs();
-      return data;
-    }
-    else{
-      throw new ForbiddenException('Nincs jogosultságod ehhez a művelethez');
-    }
-  }
-    @ApiOperation({
-      summary: 'Updateing user with admin role'
-    })
-    @Patch('/admin/updateJob/:jobId')
-    @UseGuards(AuthGuard)
-    updateJob(@Request() req: Request, @Param('jobId') jobId : string, @Body() updateJobDto : UpdateJobDto){
-      if(req['profile']['isAdmin']){
-      }
-      else{
-        throw new ForbiddenException('Nincs jogosultságod ehhez a művelethez');
-      }
-    }
+
+
+
 }

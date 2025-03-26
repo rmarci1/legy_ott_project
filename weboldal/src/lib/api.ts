@@ -90,7 +90,7 @@ export const getAllJobs = async () =>{
     return data;
 }
 export const getAllJobsforAdmin = async () => {
-    const res = await fetch(`${API_URL}/jobs/admin/allJobs`, {
+    const res = await fetch(`${API_URL}/admin/allJobs`, {
       method: 'GET',
       credentials: "include"
     })
@@ -285,7 +285,7 @@ export const getAverageRating = async (username: string) => {
 }
 
 export const getDashBoardDatas = async () => {
-    const response = await fetch(`${API_URL}/profiles/admin/dashboard`,{
+    const response = await fetch(`${API_URL}/admin/dashboard`,{
       method: 'GET',
       credentials: 'include'
     })
@@ -308,7 +308,7 @@ export const getAllUsers = async () => {
     return data;
 }
 export const updateUserByAdmin = async (fields : UpdateUser, username : string) => {
-    const response = await fetch(`${API_URL}/profiles/admin/updateUser/${username}`,{
+    const response = await fetch(`${API_URL}/admin/updateUser/${username}`,{
       method: 'PATCH',
       headers: {'Content-Type' : "application/json"},
       body: JSON.stringify(fields),
@@ -321,7 +321,7 @@ export const updateUserByAdmin = async (fields : UpdateUser, username : string) 
     return data;
 }
 export const deleteUserByAdmin = async (username : string) => {
-    const response = await fetch(`${API_URL}/profiles/admin/deleteUser/${username}`,{
+    const response = await fetch(`${API_URL}/admin/deleteUser/${username}`,{
       method: "DELETE", 
       credentials: "include"
     });
@@ -332,7 +332,7 @@ export const deleteUserByAdmin = async (username : string) => {
     return data;
 }
 export const deleteJobByAdmin = async (jobId: number) => {
-    const response = await fetch(`${API_URL}/jobs/admin/deleteJob/${jobId}`,{
+    const response = await fetch(`${API_URL}/admin/deleteJob/${jobId}`,{
       method: "DELETE", 
       credentials: "include"
     });
@@ -343,7 +343,7 @@ export const deleteJobByAdmin = async (jobId: number) => {
     return data;
 }
 export const updateJobByAdmin = async (fields : UpdateJob, jobId : number) => {
-    const response = await fetch(`${API_URL}/job/admin/updateJob/${jobId}`,{
+    const response = await fetch(`${API_URL}/admin/updateJob/${jobId}`,{
       method: 'PATCH',
       headers: {'Content-Type' : "application/json"},
       body: JSON.stringify(fields),
