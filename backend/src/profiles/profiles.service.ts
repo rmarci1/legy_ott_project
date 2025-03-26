@@ -69,30 +69,38 @@ export class ProfilesService {
     throw new NotFoundException("Nem létezik ilyen profil");
   }
   async update(username: string, updateProfileDto: UpdateProfileDto): Promise<{access_token: string, refresh_token: string, profile}> {
-    try{
-      const profile = await this.db.profile.update({
+      const profile = await this.db.profile.findFirst({
+        where: {
+          OR: [
+            {username: updateProfileDto.username},
+            {email: updateProfileDto.email}
+          ]
+        }
+      })
+    console.log(username)
+      if(profile != null){
+        throw new HttpException("Már foglalt email cím vagy felhasználónév!", HttpStatus.CONFLICT);
+      }
+      const updatedProfile = await this.db.profile.update({
         where:{
           username
         },
         data: updateProfileDto
       });
 
-      profile.password = null;
+      updatedProfile.password = null;
 
       return {
-        access_token: await this.jwtService.signAsync(profile, {
+        access_token: await this.jwtService.signAsync(updatedProfile, {
           secret: `${process.env.jwt_secret}`,
           expiresIn: '1h'
         }),
-        refresh_token: this.jwtService.sign(profile, {
+        refresh_token: this.jwtService.sign(updatedProfile, {
           expiresIn: '1d',
           secret: `${process.env.refresh_secret}`,
         }),
-        profile: profile
+        profile: updatedProfile
       };
-    }catch(err){
-      throw new Error("Nem létezik ilyen profil!");
-    }
   }
 
   async uploadProfilePic(username: string, file: Buffer): Promise<{access_token: string, refresh_token: string}> {

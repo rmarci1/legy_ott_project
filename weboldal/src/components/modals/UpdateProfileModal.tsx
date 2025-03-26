@@ -1,6 +1,6 @@
 import {Textarea} from "flowbite-react";
 import {useEffect, useState} from "react";
-import {toast} from "react-toastify";
+import {toast, ToastContainer} from "react-toastify";
 import {updateProfile} from "@/lib/api.ts";
 import {useAuth} from "@/context/AuthContext.tsx";
 import {User} from "@/Types/User.ts";
@@ -39,19 +39,23 @@ export default function UpdateProfileModal({setModal} : UpdateProfileModalProps)
                 })
             );
             if(Object.keys(updatedField).length === 0){
-                toast("Nincs változás");
+                toast.warn("Nincs változás", {
+                    className: "bg-yellow-300 text-white"
+                });
                 return;
             }
 
             try{
                 const res = await updateProfile(updatedField);
                 bejelentkezes(res);
-                console.log("Változtatva");
-                setModal(false);
+                toast.success("Sikeres változtatás!", {
+                    className: "bg-green-300 text-white"
+                })
             }
-            catch (e){
-
-                toast(e instanceof Error ? e.message : "Hiba történt")
+            catch (e: any){
+                toast.error(e.message, {
+                    className: "bg-red-300 text-white"
+                })
             }
         }
     }
@@ -69,18 +73,18 @@ export default function UpdateProfileModal({setModal} : UpdateProfileModalProps)
         [&::-webkit-scrollbar-thumb]:bg-gray-300"
                 onClick={(e) => e.stopPropagation()}
             >
+                <div className="flex flex-row justify-between text-white p-2 pb-4">
+                    <h5 className="text-xl font-medium ">Profil szerkesztése</h5>
+                    <button
+                        type="button"
+                        className="text-gray-400 bg-transparent rounded-lg text-sm w-8 h-8  hover:bg-gray-600 hover:text-white"
+                        onClick={() => setModal(false)}
+                    >
+                        <IoClose className="place-self-center" size={25}/>
+                    </button>
+                </div>
                 <form className="space-y-6 flex flex-col text-left text-white w-2/3 place-self-center "
                       onSubmit={handleSave}>
-                    <div className="flex flex-row justify-between">
-                        <h5 className="text-xl font-medium ">Profil szerkesztése</h5>
-                        <button
-                            type="button"
-                            className="text-gray-400 bg-transparent rounded-lg text-sm w-8 h-8  hover:bg-gray-600 hover:text-white"
-                            onClick={() => setModal(false)}
-                        >
-                            <IoClose className="place-self-center" size={25}/>
-                        </button>
-                    </div>
 
                     <div>
                         <label htmlFor="name"
@@ -139,6 +143,7 @@ export default function UpdateProfileModal({setModal} : UpdateProfileModalProps)
                     </button>
                 </form>
             </div>
+            <ToastContainer/>
         </div>
     </>
 }
