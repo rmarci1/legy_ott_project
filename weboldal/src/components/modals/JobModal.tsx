@@ -1,9 +1,11 @@
 import { Job } from "../../Types/Job.ts";
 import { User } from "../../Types/User.ts";
-import { useEffect } from "react";
+import {useEffect} from "react";
 import { useAuth } from "../../context/AuthContext.tsx";
 import { IoClose } from "react-icons/io5";
 import {toast, ToastContainer} from "react-toastify";
+import {Advertiser} from "@/Types/Advertiser.ts";
+import {getAverageRating, getProfile} from "@/lib/api.ts";
 
 interface JobModalProps {
     job: Job;
@@ -11,17 +13,26 @@ interface JobModalProps {
     setModal: (value: boolean) => void;
     setProfileModal: (value: boolean) => void;
     attendJob: (id: number, value: boolean) => void;
+    setAdvertiser : (value: Advertiser) => void;
 }
 
-export default function JobModal({ job, user, setModal, attendJob, setProfileModal }: JobModalProps) {
+export default function JobModal({ job, user, setModal, attendJob, setProfileModal, setAdvertiser }: JobModalProps) {
     const date = new Date(job.date);
     const today = new Date();
-    const { getAdvertiserProfile, deleteJobById, advertiser } = useAuth();
+    const { deleteJobById } = useAuth();
+
+    const getAdvertiser = async(username: string) => {
+        setAdvertiser( {
+            ...(await getProfile(username)),
+            averageRating: await getAverageRating(username).then((res) => {
+                return res._avg.review;
+            })
+        })
+    }
 
     useEffect(() => {
-        if (!advertiser || advertiser.username !== job.from) {
-            getAdvertiserProfile(job.from);
-        }
+
+        getAdvertiser(job.from);
 
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key === "Escape") {

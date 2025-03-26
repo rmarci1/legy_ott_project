@@ -4,6 +4,7 @@ import { PiHeartLight, PiHeartFill } from "react-icons/pi";
 import {useAuth} from "../../context/AuthContext.tsx";
 import JobModal from "../modals/JobModal.tsx";
 import ProfileModal from "../modals/ProfileModal.tsx";
+import {Advertiser} from "@/Types/Advertiser.ts";
 
 interface jobProps{
     Job: Job,
@@ -13,6 +14,7 @@ interface jobProps{
 export default function JobCard({Job, canSaveForLater}: jobProps){
     const [jobModal, setJobModal] = useState(false);
     const [profileModal, setProfileModal] = useState(false);
+    const [advertiser, setAdvertiser] = useState<Advertiser>({} as Advertiser);
     const {user, setSave, attendJob} = useAuth();
     const date = new Date(Job.date);
 
@@ -75,20 +77,20 @@ export default function JobCard({Job, canSaveForLater}: jobProps){
 
             {jobModal && (
                 user ? (
-                        <JobModal job={Job} user={user} setModal={setJobModal} attendJob={attendJob} setProfileModal={setProfileModal}/>
+                        <JobModal job={Job} user={user} setAdvertiser={setAdvertiser} setModal={setJobModal} attendJob={attendJob} setProfileModal={setProfileModal}/>
                     ):
                     (
-                        <JobModal job={Job} setModal={setJobModal} attendJob={attendJob} setProfileModal={setProfileModal}/>
+                        <JobModal job={Job} setModal={setJobModal} setAdvertiser={setAdvertiser} attendJob={attendJob} setProfileModal={setProfileModal}/>
                     )
             )}
 
             {
                 profileModal && (
                     user? (
-                        <ProfileModal user={user} setModal={setProfileModal} setJobModal={setJobModal}/>
+                        <ProfileModal advertiser={advertiser} user={user} setModal={setProfileModal} setJobModal={setJobModal}/>
                     ):
                     (
-                        <ProfileModal setModal={setProfileModal}  setJobModal={setJobModal}/>
+                        <ProfileModal advertiser={advertiser} setModal={setProfileModal}  setJobModal={setJobModal}/>
                     )
                 )
             }

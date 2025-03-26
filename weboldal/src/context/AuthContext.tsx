@@ -3,22 +3,17 @@ import {User} from "../Types/User.ts";
 import {Job} from "../Types/Job.ts";
 import {
     attend, deleteJob,
-    getAllJobs, getArchivedAds, getArchivedJobs,
-    getAvailableJobs, getAverageRating,
-    getProfile, getSavedForLater,
+    getAllJobs,
+    getAvailableJobs, getSavedForLater,
     getUser,
     saveForLater
 } from "../lib/api.ts";
-import {Advertiser} from "../Types/Advertiser.ts";
 
 interface AuthContextType {
     user: User | null,
     jobs: Job[],
     allJobs: Job[],
     savedJobs: Job[],
-    archivedJobs: Job[],
-    archivedAds: Job[],
-    advertiser: Advertiser | null,
     isLoading: boolean,
     setIsLoading: (value: boolean)=> void,
     kijelentkezes: () => void,
@@ -27,7 +22,6 @@ interface AuthContextType {
     attendJob: (id: number, value: boolean) => void,
     deleteJobById: (id: number) => void,
     getAll: () => void,
-    getAdvertiserProfile: (username: string) => void,
     checkUser: () => void,
     isListUser: (list: (Job | User)[]) => Promise<boolean>,
     isUser: (list: Job | User) => Promise<boolean>,
@@ -46,9 +40,6 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
     const [isLoading, setIsLoading] = useState(true);
     const [allJobs, setAllJobs] = useState<Job[]>([]);
     const [savedJobs, setSavedJobs] = useState<Job[]>([]);
-    const [archivedJobs, setArchivedJobs] = useState<Job[]>([])
-    const [archivedAds, setArchivedAds] = useState<Job[]>([]);
-    const [advertiser, setAdvertiser] = useState<Advertiser | null>(null);
     const [jobs, setJobs] = useState<Job[]>([])
 
     useEffect(() => {
@@ -154,15 +145,6 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
 
         setIsLoading(false);
     }
-
-    const getAdvertiserProfile = async (username: string) =>{
-        setAdvertiser({
-            ...(await getProfile(username)),
-            averageRating: await getAverageRating(username).then((res) => {
-                return res._avg.review;
-            })
-        });
-    }
     const isListUser = async (list: (User | Job)[]) : Promise<boolean> => {
         return Array.isArray(list) && list.every(item => 'name' in item && 'username' in item);
     }
@@ -182,11 +164,8 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
                 user,
                 jobs,
                 allJobs,
-                advertiser,
                 isLoading,
                 savedJobs,
-                archivedJobs,
-                archivedAds,
                 setIsLoading,
                 kijelentkezes,
                 bejelentkezes,
@@ -195,7 +174,6 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
                 attendJob,
                 deleteJobById,
                 getAll,
-                getAdvertiserProfile,
                 isListUser,
                 isUser
             }}

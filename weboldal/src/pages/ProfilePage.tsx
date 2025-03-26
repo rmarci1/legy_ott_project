@@ -5,6 +5,7 @@ import JobCard from "../components/cards/JobCard.tsx";
 import {Job} from "../Types/Job.ts";
 import ChangeProfilePicModal from "../components/modals/ChangeProfilePicModal.tsx";
 import {getAdvertised, getSelectedJobs, logout} from "../lib/api.ts";
+import UpdateProfileModal from "@/components/modals/UpdateProfileModal.tsx";
 
 export default function ProfilePage(){
     const {user, isLoading} = useAuth();
@@ -14,6 +15,7 @@ export default function ProfilePage(){
     const [profilePicChangeModal, setProfilePicChangeModal] = useState(false);
     const navigate = useNavigate();
     const [isProfilePicLoading, setIsProfilePicLoading] = useState<boolean>(false);
+    const [updateProfileModal, setUpdateProfileModal] = useState<boolean>(false);
 
     const fetchJobs = async () => {
         setSelectedJobs(await getSelectedJobs().then((res) => {
@@ -65,10 +67,18 @@ export default function ProfilePage(){
                                 )
                             }
 
+                            {
+                                updateProfileModal && (
+                                    <UpdateProfileModal setModal={setUpdateProfileModal}/>
+                                )
+                            }
+
                             <div className="justify-center content-center p-3">
                                 <h2 className="font-black text-2xl">{user?.name}</h2>
                                 <h3>@{user?.username}</h3>
+                                {/*TODO: kijelentkezés fix*/}
                                 <button onClick={logout}>Kijelentkezés</button>
+                                <button onClick={() => setUpdateProfileModal(true)} >Profil szerkesztése</button>
                             </div>
                         </div>
                         <div className=" bg-indigo-950 h-px w-4/5  my-6"></div>
