@@ -3,6 +3,7 @@ import {createAdv, jobPicChange} from "../lib/api.ts";
 import {useAuth} from "../context/AuthContext.tsx";
 import {toast, ToastContainer} from "react-toastify";
 import ConvertType from "@/components/ConvertType.tsx";
+import ConvertText from "@/components/ConvertText.tsx";
 
 export default function CreateAd(){
     const tomorrow: Date = new Date();
@@ -164,6 +165,11 @@ export default function CreateAd(){
                                 setSelection({ start: target.selectionStart, end: target.selectionEnd });
                             }}
                             required
+                        />
+                    </div>
+                    <div className="block max-w-full">
+                        <ConvertText
+                            text={desc}
                         />
                     </div>
                     <div>

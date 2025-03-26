@@ -69,7 +69,8 @@ const ConvertType = ({handleStash,selection,undoStates,handleUndoStates,handleSe
         </div>
         <div>
             <button
-                onClick={() => {
+                onClick={(e) => {
+                    e.preventDefault();
                     if(undoStates.length == 0){
                         alert("Nem lehet jelenleg visszaállítani")
                     }
