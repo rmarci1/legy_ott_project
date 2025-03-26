@@ -1,5 +1,6 @@
 import { UpdateJob } from "@/Types/UpdateJob";
 import { UpdateUser } from "@/Types/UpdateUser";
+import {Job} from "@/Types/Job.ts";
 
 const API_URL = `${window.location.protocol}//${window.location.hostname}:3000`;
 
@@ -454,6 +455,24 @@ export const updateProfile = async (attributes: Partial<UpdateUser>) => {
   }
 
   return data;
+}
+
+export const updateJob = async (attributes: Partial<Job>, id: number) => {
+    const result = await fetch(`${API_URL}/jobs/${id}`,
+        {
+            method: "PATCH",
+            credentials: "include",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(attributes)
+        });
+
+    const data = await result.json()
+
+    if (!result.ok) {
+        throw new Error(data.message as string);
+    }
+
+    return data;
 }
 
 

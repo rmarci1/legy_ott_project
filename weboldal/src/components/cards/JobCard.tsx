@@ -5,6 +5,7 @@ import {useAuth} from "../../context/AuthContext.tsx";
 import JobModal from "../modals/JobModal.tsx";
 import ProfileModal from "../modals/ProfileModal.tsx";
 import {Advertiser} from "@/Types/Advertiser.ts";
+import UpdateJobModal from "@/components/modals/UpdateJobModal.tsx";
 
 interface jobProps{
     Job: Job,
@@ -14,6 +15,7 @@ interface jobProps{
 export default function JobCard({Job, canSaveForLater}: jobProps){
     const [jobModal, setJobModal] = useState(false);
     const [profileModal, setProfileModal] = useState(false);
+    const [updateJobModal, setUpdateJobModal] = useState(false);
     const [advertiser, setAdvertiser] = useState<Advertiser>({} as Advertiser);
     const {user, setSave, attendJob} = useAuth();
     const date = new Date(Job.date);
@@ -77,10 +79,10 @@ export default function JobCard({Job, canSaveForLater}: jobProps){
 
             {jobModal && (
                 user ? (
-                        <JobModal job={Job} user={user} setAdvertiser={setAdvertiser} setModal={setJobModal} attendJob={attendJob} setProfileModal={setProfileModal}/>
+                        <JobModal job={Job} user={user} setUpdateJobModal={setUpdateJobModal} setAdvertiser={setAdvertiser} setModal={setJobModal} attendJob={attendJob} setProfileModal={setProfileModal}/>
                     ):
                     (
-                        <JobModal job={Job} setModal={setJobModal} setAdvertiser={setAdvertiser} attendJob={attendJob} setProfileModal={setProfileModal}/>
+                        <JobModal job={Job} setModal={setJobModal} setUpdateJobModal={setUpdateJobModal} setAdvertiser={setAdvertiser} attendJob={attendJob} setProfileModal={setProfileModal}/>
                     )
             )}
 
@@ -92,6 +94,12 @@ export default function JobCard({Job, canSaveForLater}: jobProps){
                     (
                         <ProfileModal advertiser={advertiser} setModal={setProfileModal}  setJobModal={setJobModal}/>
                     )
+                )
+            }
+
+            {
+                updateJobModal && (
+                    <UpdateJobModal setModal={setUpdateJobModal} setJobModal={setJobModal} job={Job}/>
                 )
             }
 

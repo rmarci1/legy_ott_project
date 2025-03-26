@@ -1,23 +1,24 @@
-import {Textarea} from "flowbite-react";
-import {useEffect, useState} from "react";
-import {toast, ToastContainer} from "react-toastify";
-import {updateProfile} from "@/lib/api.ts";
-import {useAuth} from "@/context/AuthContext.tsx";
-import {User} from "@/Types/User.ts";
 import {IoClose} from "react-icons/io5";
+import {Textarea} from "flowbite-react";
+import {toast, ToastContainer} from "react-toastify";
+import {useEffect, useState} from "react";
+import {Job} from "@/Types/Job.ts";
+import {updateJob} from "@/lib/api.ts";
 
-interface UpdateProfileModalProps{
-    setModal: (value: boolean) => void,
+interface UpdateJobModalProps{
+    setModal: (value: boolean) => void;
+    setJobModal: (value: boolean) => void;
+    job: Job
 }
 
-export default function UpdateProfileModal({setModal} : UpdateProfileModalProps){
-    const {user, bejelentkezes} = useAuth();
-    const [form, setForm] = useState<User>(user ?? {} as User);
+export default function UpdateJobModal({setModal, job, setJobModal}: UpdateJobModalProps){
+    const [form, setForm] = useState<Job>(job ?? {} as Job);
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key === "Escape") {
                 setModal(false);
+                setJobModal(true);
             }
         };
 
@@ -30,40 +31,43 @@ export default function UpdateProfileModal({setModal} : UpdateProfileModalProps)
         };
     }, []);
 
-    const handleSave = async (e: any) =>{
+    const handleSave = async (e: any) => {
         e.preventDefault();
-        if(user){
-            const updatedField = Object.fromEntries(
-                Object.entries(form).filter(([key,value]) => {
-                    return value !== (user as Record<string, any>)[key];
-                })
-            );
-            if(Object.keys(updatedField).length === 0){
-                toast.warn("Nincs változás", {
-                    className: "bg-yellow-300 text-white"
-                });
-                return;
-            }
+        const updatedField = Object.fromEntries(
+            Object.entries(form).filter(([key,value]) => {
+                return value !== (job as Record<string, any>)[key];
+            })
+        );
+        if(Object.keys(updatedField).length === 0){
+            toast.warn("Nincs változás", {
+                className: "bg-yellow-300 text-white"
+            });
+            return;
+        }
 
-            try{
-                const res = await updateProfile(updatedField);
-                bejelentkezes(res);
-                toast.success("Sikeres változtatás!", {
-                    className: "bg-green-300 text-white"
-                })
-            }
-            catch (e: any){
-                toast.error(e.message, {
-                    className: "bg-red-300 text-white"
-                })
-            }
+        try{
+            await updateJob(updatedField, job.id);
+
+            Object.assign(job, updatedField);
+
+            toast.success("Sikeres változtatás!", {
+                className: "bg-green-300 text-white"
+            })
+        }
+        catch (e: any){
+            toast.error(e.message, {
+                className: "bg-red-300 text-white"
+            })
         }
     }
 
     return <>
         <div
             className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
-            onClick={() => setModal(false)}
+            onClick={() => {
+                setModal(false)
+                setJobModal(true)
+            }}
         >
             <div
                 className="relative bg-indigo-950 rounded-lg flex flex-col shadow-sm max-h-[95%] p-6 w-full max-w-2xl overflow-auto [&::-webkit-scrollbar]:w-1
@@ -74,11 +78,14 @@ export default function UpdateProfileModal({setModal} : UpdateProfileModalProps)
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="flex flex-row justify-between text-white p-2 pb-4">
-                    <h5 className="text-xl font-medium ">Profil szerkesztése</h5>
+                    <h5 className="text-xl font-medium ">Munka szerkesztése</h5>
                     <button
                         type="button"
                         className="text-gray-400 bg-transparent rounded-lg text-sm w-8 h-8  hover:bg-gray-600 hover:text-white"
-                        onClick={() => setModal(false)}
+                        onClick={() => {
+                            setModal(false)
+                            setJobModal(true);
+                        }}
                     >
                         <IoClose className="place-self-center" size={25}/>
                     </button>
@@ -99,27 +106,24 @@ export default function UpdateProfileModal({setModal} : UpdateProfileModalProps)
                         />
                     </div>
                     <div>
-                        <label htmlFor="username"
-                               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Felhasználónév</label>
-                        <input type="text" name="username" id="username"
+                        <label htmlFor="date"
+                               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Dátum</label>
+                        <input type="date" name="date" id="date"
                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                               placeholder="jakab.zoltan"
-                               value={form.username}
                                onChange={(e) => {
-                                   setForm({...form, username: e.target.value})
+                                   setForm({...form, date: new Date(e.target.value)})
                                }}
                         />
                     </div>
                     <div>
-                        <label htmlFor="email"
-                               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email
-                            cím</label>
-                        <input type="email" name="email" id="email"
+                        <label htmlFor="address"
+                               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Cím</label>
+                        <input type="text" name="address" id="address"
                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                               placeholder="pelda@gmail.com"
-                               value={form.email}
+                               placeholder="pl.: Rózsavirág utca 3"
+                               value={form.address}
                                onChange={(e) => {
-                                   setForm({...form, email: e.target.value})
+                                   setForm({...form, address: e.target.value})
                                }}
                         />
                     </div>

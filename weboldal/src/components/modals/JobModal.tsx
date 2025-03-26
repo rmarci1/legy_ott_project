@@ -12,11 +12,12 @@ interface JobModalProps {
     user?: User;
     setModal: (value: boolean) => void;
     setProfileModal: (value: boolean) => void;
+    setUpdateJobModal: (value: boolean) => void;
     attendJob: (id: number, value: boolean) => void;
     setAdvertiser : (value: Advertiser) => void;
 }
 
-export default function JobModal({ job, user, setModal, attendJob, setProfileModal, setAdvertiser }: JobModalProps) {
+export default function JobModal({ job, user, setModal,setUpdateJobModal, attendJob, setProfileModal, setAdvertiser }: JobModalProps) {
     const date = new Date(job.date);
     const today = new Date();
     const { deleteJobById } = useAuth();
@@ -119,7 +120,16 @@ export default function JobModal({ job, user, setModal, attendJob, setProfileMod
                     )}
 
                     {(user && (job.from == user.username) && (date > today)) && (
-                        <div className=" flex mt-4 justify-center w-full">
+                        <div className=" flex flex-col mt-4 space-y-2 justify-center items-center w-full">
+                            <button type="button"
+                                    onClick={() => {
+                                        setUpdateJobModal(true)
+                                        setModal(false);
+                                    }}
+                                    className="bg-blue-400 rounded p-2 w-2/3 text-white">
+                                Szerkesztés
+                            </button>
+
                             <button type="button"
                                     onClick={() => {
                                         handleDelete()
