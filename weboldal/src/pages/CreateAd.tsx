@@ -1,24 +1,28 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {createAdv, jobPicChange} from "../lib/api.ts";
 import {useAuth} from "../context/AuthContext.tsx";
 import {toast, ToastContainer} from "react-toastify";
+import ConvertType from "@/components/ConvertType.tsx";
 
 export default function CreateAd(){
     const tomorrow: Date = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const [name, setName] = useState("");
     const [date, setDate] = useState<Date>(new Date(tomorrow.toISOString().split('T')[0]));
+    const [typingTimeout, setTypingTimeout] = useState<number | null>(null);
     const [desc, setDesc] = useState("");
     const [maxPart, setMaxPart] = useState(1);
     const [address, setAddress] = useState("");
     const [file, setFile] = useState<string | Blob>("");
     const {user, checkUser} = useAuth();
+    const [stashed,setStashed] = useState<string>("");
+    const [selection, setSelection] = useState<{start: number, end:number}>({ start: 0, end: 0});
+    const [undoStates, setUndoStates] = useState<string[]>([""]);
+    const [unsavedChanges,setUnsavedChanges] = useState<boolean>(false);
 
     useEffect(() => {
         checkUser()
     }, []);
-
-
     useEffect(() => {
         if(maxPart <= 0){
             toast.warn('Minimum 1 résztvevőnek lennie kell!', {
@@ -72,6 +76,11 @@ export default function CreateAd(){
         setDate(new Date());
     }
 
+    const handleChanges = () =>{
+        if(!unsavedChanges){
+          setUnsavedChanges(true);
+        }
+      }
     return <>
         <div className=" md:w-dvw w-full flex flex-wrap h-screen overflow-auto justify-center items-center">
             <div
@@ -106,21 +115,56 @@ export default function CreateAd(){
                                min={formatDate(tomorrow.toLocaleDateString())}
                                onChange={(e) => {
                                    handleDateChange(e.target.value);
-
                                }}
                                required/>
                     </div>
+                    <hr/>
+                    <ConvertType
+                        selection={selection}
+                        description={desc}
+                        handleForm={(e) => {
+                            setDesc(e);
+                            handleChanges();
+                        }}
+                        undoStates={undoStates}
+                        handleSelection={(e) => setSelection(e)}
+                        handleUndoStates={(e) => setUndoStates(e)}
+                        stashed={stashed}
+                        handleStash={(e) => setStashed(e)}
+                        iconColor="white"                  
+                    />
+                    <hr />
                     <div>
                         <label htmlFor="desc"
                                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Leírás</label>
-                        <textarea name="desc"
-                                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                  placeholder="pl.: 14:00-kor várok mindenkit a Blaha Lújza téren egy közös virág ültetésre"
-                                  value={desc}
-                                  onChange={(e) => {
-                                      setDesc(e.target.value)
-                                  }}
-                                  required/>
+                        <textarea 
+                            name="desc"
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                            placeholder="pl.: 14:00-kor várok mindenkit a Blaha Lújza téren egy közös virág ültetésre"
+                            value={desc}
+                            onChange={(e) => {
+                            handleChanges();
+                            setDesc(e.target.value);
+
+                            if (typingTimeout) {
+                                clearTimeout(typingTimeout);
+                            }
+
+                            const newTimeout = window.setTimeout(() => {
+                                let temp = undoStates;
+                                if (stashed) temp.push(stashed);
+                                setStashed(e.target.value);
+                                setUndoStates(temp);
+                            }, 1000);
+
+                            setTypingTimeout(newTimeout);
+                            }}
+                            onSelect={(e) => {
+                                const target = e.target as HTMLTextAreaElement
+                                setSelection({ start: target.selectionStart, end: target.selectionEnd });
+                            }}
+                            required
+                        />
                     </div>
                     <div>
                         <label htmlFor="maxPart"
