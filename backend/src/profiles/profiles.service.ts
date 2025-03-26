@@ -35,7 +35,17 @@ export class ProfilesService {
   }
 
   async findAll() {
-    return this.db.profile.findMany();
+    return this.db.profile.findMany({
+      select:{
+        id: true,
+        name: true,
+        username: true,
+        reviews: true,
+        description: true,
+        isAdmin: true,
+        profileImg: true
+      }
+    });
   }
 
   async findOneProfileView(username: string) {

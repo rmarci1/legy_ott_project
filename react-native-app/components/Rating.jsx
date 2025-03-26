@@ -8,7 +8,7 @@ const Rating = ({item,handleProfile}) => {
   const [showMoreRating,setShowMoreRating] = useState(false);
   const [readMoreRating,setReadMoreRating] = useState(false);
   useEffect(() => {
-    if(item.desc.length > 100){
+    if(item.desc?.length > 100){
         setReadMoreRating(true);
     }
   })

@@ -17,7 +17,7 @@ const create = () => {
   const [stashed,setStashed] = useState("");
   const [form,setForm] = useState({
     name: "",
-    max_attending : 1,
+    max_attending : "1",
     date : new Date(),
     address : "",
     description : "",
@@ -33,7 +33,6 @@ const create = () => {
   useFocusEffect(
     useCallback(() => {
       return () => {
-        console.log(isModalVisible);
         if (unsavedChanges && !isModalVisible) {
           Alert.alert(
             "Elvéted a változtatásokat?",
@@ -50,6 +49,7 @@ const create = () => {
                 style: "destructive",
                 onPress: () => {
                   defaultSet();
+                  setUnsavedChanges(false);
                 }
               },
             ]
@@ -61,13 +61,12 @@ const create = () => {
   
   useEffect(() => {
     if(query) {
-      setForm({...query, date : new Date(query.date), max_attending: parseInt(query.max_attending), current_attending: parseInt(query.current_attending)});
+      setForm({...query, date : new Date(query.date), max_attending: query.max_attending, current_attending: parseInt(query.current_attending)});
       setUnsavedChanges(true);
     }
   }, [query])
   const defaultSet = () => {
-    setUnsavedChanges(false);
-    setForm({name: "", max_attending : 1, date : new Date(), address : "",
+    setForm({name: "", max_attending: "1", date : new Date(), address : "",
       description : "", img : null, from : user.username, current_attending: 0});
     setQuery(null);
   }
@@ -84,6 +83,9 @@ const create = () => {
   const submit = async () => {
     try{
       await createJob(form);
+      await defaultSet();
+      toggleModal();
+      showToast("success","Sikeres Létrehozás");
     }
     catch(error){
       showToast("error","Hiba",error.message)
@@ -182,7 +184,7 @@ const create = () => {
                 <Formfield
                   value={form.max_attending}
                   handleChangeText={(e) => {
-                    setForm({...form, max_attending: parseInt(e)})
+                    setForm({...form, max_attending: e})
                     handleChanges();
                   }}
                   keyboardType={true}
@@ -312,6 +314,7 @@ const create = () => {
             containerStyles={`${query ? "bg-teal-400" : "bg-primary"} w-[95%] rounded-full`}
           />
         </View>
+        <Toast config={toastConfig}/>
       </Modal>
       <Toast config={toastConfig}/>
     </SafeAreaView>

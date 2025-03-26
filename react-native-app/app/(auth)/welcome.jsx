@@ -39,7 +39,8 @@ const welcome = () => {
   const submit = async () => {
     try{
       setIsSubmitting(true);
-      const res = await register(form.name,form.username,formPart.password,formPart.email);
+      await register(form.name,form.username,formPart.password,formPart.email);
+      showToast("success","Sikeres Regisztrálás");
       router.navigate('/login');
     }
     catch(error){

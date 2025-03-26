@@ -72,7 +72,7 @@ const home = () => {
           </View>
       </View>
       <FlashList
-        data={jobs}
+        data={jobs? jobs : []}
         renderItem={renderItem}
         estimatedItemSize={121}
         ListFooterComponent={<View style={{height: 100}}/>}
