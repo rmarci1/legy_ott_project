@@ -8,7 +8,7 @@ import {getAdvertised, getSelectedJobs, logout} from "../lib/api.ts";
 import UpdateProfileModal from "@/components/modals/UpdateProfileModal.tsx";
 
 export default function ProfilePage(){
-    const {user, isLoading} = useAuth();
+    const {user, isLoading, kijelentkezes} = useAuth();
     const [selectedJobs, setSelectedJobs] = useState<Job[]>([]);
     const [ads, setAds] = useState<Job[]>([]);
     const [mode, setMode] = useState<1|2>(1)
@@ -33,6 +33,12 @@ export default function ProfilePage(){
             navigate('/login');
         }
     }, [user, isLoading]);
+
+    const handleLogout = async () => {
+        await logout();
+        kijelentkezes();
+    }
+
     return <>
         {
             !isLoading?(
@@ -76,9 +82,9 @@ export default function ProfilePage(){
                             <div className="justify-center content-center p-3">
                                 <h2 className="font-black text-2xl">{user?.name}</h2>
                                 <h3>@{user?.username}</h3>
-                                {/*TODO: kijelentkezés fix*/}
-                                <button onClick={logout}>Kijelentkezés</button>
-                                <button onClick={() => setUpdateProfileModal(true)} >Profil szerkesztése</button>
+                                <button onClick={() => setUpdateProfileModal(true)}>Profil szerkesztése</button>
+                                <br/>
+                                <button className="text-red-600" onClick={handleLogout}>Kijelentkezés</button>
                             </div>
                         </div>
                         <div className=" bg-indigo-950 h-px w-4/5  my-6"></div>
