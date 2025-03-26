@@ -24,7 +24,7 @@ export class JobsService {
           return await this.db.job.create({
             data: {...createJobDto,
               date: new Date(createJobDto.date),
-              created: new Date()
+              created: new Date(),
             }
           })
         }catch(err){
@@ -517,8 +517,7 @@ export class JobsService {
         where: {id},
         select: {
           img: true
-        }});
-
+      }});
       console.log(job.img);
 
       if(job.img != defaultProfilePicUrl){
@@ -528,7 +527,6 @@ export class JobsService {
 
       const newPicUrl = await this.cloudinary.uploadImage(readStream);
       const update = await this.update(id,{img: newPicUrl.url}, req)
-      console.log(update)
       return update;
     }
     catch (err) {

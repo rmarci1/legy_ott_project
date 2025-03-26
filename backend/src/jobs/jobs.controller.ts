@@ -30,9 +30,9 @@ export class JobsController {
   })
   @Post()
   @UseGuards(AuthGuard)
-  create(@Body() createJobDto: CreateJobDto, @Request() req: Request) {
-    createJobDto.from = req['profile']['username']
-    return this.jobsService.create(createJobDto);
+  async create(@Body() createJobDto: CreateJobDto, @Request() req: Request) {
+    createJobDto.from = req['profile']['username'];
+    return await this.jobsService.create(createJobDto);
   }
 
   @ApiOperation({
@@ -114,7 +114,7 @@ export class JobsController {
   }
 
   @ApiOperation({
-    summary: 'Alter job by id and checking if the user username equals to who created the job'
+    summary: 'Alter job by id'
   })
   @Patch('/:id')
   @UseGuards(AuthGuard)
@@ -125,8 +125,8 @@ export class JobsController {
   @Post('/:id/updateJobPic')
   @UseInterceptors(FileInterceptor('file'))
   @UseGuards(AuthGuard)
-  updateJobPic(@UploadedFile() file: Express.Multer.File, @Param('id') id: string, @Request() req:Request){
-    return this.jobsService.updateJobPic(+id, file.buffer, req);
+  async updateJobPic(@UploadedFile() file: Express.Multer.File, @Param('id') id: string, @Request() req:Request){
+    return await this.jobsService.updateJobPic(+id, file.buffer, req);
   }
 
   @ApiOperation({
