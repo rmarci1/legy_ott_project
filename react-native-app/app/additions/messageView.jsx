@@ -38,7 +38,7 @@ const messageView = () => {
   }, []);
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener("keyboardDidShow", () => {
-      if (flashListRef?.current) {
+      if (flashListRef?.current && messages.length > 0) {
         setTimeout(() => {
           flashListRef.current.scrollToEnd({ animated: true });
         }, 100); 
@@ -65,7 +65,7 @@ const messageView = () => {
   useEffect(() => {
     if(flashListRef.current && messages.length > 0){
       setTimeout(() => {
-        if (flashListRef.current) {
+        if (flashListRef.current && messages.length > 0) {
           flashListRef.current.scrollToEnd({ animated: true });
         }
       }, 100);
@@ -76,6 +76,10 @@ const messageView = () => {
     setTimeout(() => setRefreshing(false), 1000);
   };
   const sendMessage = async () => {
+    if(!formMessage){
+      showToast("error","Hiba","Írj be valamit...");
+      return;
+    }
     try{
       await socket.emit('message', { senderId: user.id, receiverId: profileForMessage?.id, content: formMessage, createdAt: new Date() });
       const res = await createMessage({senderId: user?.id, receiverId: profileForMessage?.id, content: formMessage});

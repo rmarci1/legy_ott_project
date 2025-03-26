@@ -39,7 +39,7 @@ const showProfiles = () => {
     }
     const handleSearch = () => {
         const searchTerm = search.toLowerCase();
-        const searchProfiles = profiles.filter((curr) => !curr.username.toLowerCase().contains(searchTerm) || !curr.name.toLowerCase().contains(searchTerm));
+        const searchProfiles = profiles.filter((curr) => curr.username.toLowerCase().includes(searchTerm) || curr.name.toLowerCase().includes(searchTerm));
         setFilterProfiles(searchProfiles);
     }
     const renderProfiles = ({item}) => {

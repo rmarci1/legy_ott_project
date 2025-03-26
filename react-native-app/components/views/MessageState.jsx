@@ -1,11 +1,15 @@
-import { View, Text, Image } from 'react-native'
+import { View, Text, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { useGlobalContext } from '@/context/GlobalProvider'
 
 const MessageState = ({ isSender, containerStyles, item }) => { 
     const { formatDate, user } = useGlobalContext();
     return (
-      <View className={`w-full flex-row ${containerStyles} ${isSender && "justify-end"}`}>
+      <TouchableOpacity 
+        onLongPress={() => console.log("You held it for long enough")}
+        activeOpacity={1}
+        className={`w-full flex-row ${containerStyles} ${isSender && "justify-end"}`}
+      >
         {!isSender && (
           <View className='items-end justify-end mx-2'>
             <Image
@@ -20,7 +24,7 @@ const MessageState = ({ isSender, containerStyles, item }) => {
           <Text className={`${isSender && "text-white"}`}>{item.content}</Text>
           <Text className="text-right text-sm">{formatDate(item.createdAt)}</Text>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   }
 

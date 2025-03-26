@@ -17,7 +17,6 @@ const AnotherOne = () => {
   const [differentProfiles,setDifferentProfiles] = useState(null);
   const [isDifferentProfilesLoading,setIsDifferentProfilesLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [showMessages,setShowMessages] = useState(false);
 
   useEffect(() => {
     const fetchDifferentProfiles = async () => {
