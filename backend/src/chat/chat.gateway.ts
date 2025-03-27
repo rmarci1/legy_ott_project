@@ -7,7 +7,12 @@ import {
   } from '@nestjs/websockets';
   import { Server, Socket } from 'socket.io';
   
-  @WebSocketGateway({ cors: { origin: '*' } })
+  @WebSocketGateway({ 
+    cors: { 
+      origin: '*',
+      methods: ["GET", "POST"]
+    } 
+  })
   export class ChatGateway {
     @WebSocketServer()
     server: Server;
@@ -18,7 +23,6 @@ import {
       @ConnectedSocket() client: Socket,
     ) {
       console.log(`Message received from ${data.senderId} to ${data.receiverId}: ${data.content}`);
-  
       this.server.to(data.receiverId).emit('message', data);
     }
   

@@ -50,12 +50,10 @@ const messageView = () => {
   }, []);
   useEffect(() => {
     socket.emit('join', user.id);
-
     const handleMessage = (message) => {
         console.log("received message: ", message);
         setMessages((prev) => [...prev, message]);
     };
-
     socket.on('message', handleMessage);
 
     return () => {
