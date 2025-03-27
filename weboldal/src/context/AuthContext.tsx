@@ -15,6 +15,8 @@ interface AuthContextType {
     allJobs: Job[],
     savedJobs: Job[],
     isLoading: boolean,
+    isProfilePicChanged: boolean,
+    indexForConvert : number,
     setIsLoading: (value: boolean)=> void,
     kijelentkezes: () => void,
     bejelentkezes: (newUser: User) => void,
@@ -25,6 +27,7 @@ interface AuthContextType {
     checkUser: () => void,
     isListUser: (list: (Job | User)[]) => Promise<boolean>,
     isUser: (list: Job | User) => Promise<boolean>,
+    setIndexForConvert: (index : number) => void,
 }
 interface AuthContextTypeProps {
     children : ReactNode;
@@ -37,6 +40,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({children} : AuthContextTypeProps) => {
     const [user, setUser] = useState<User | null>(null);
+    const [indexForConvert,setIndexForConvert] = useState<number>(0);
     const [isLoading, setIsLoading] = useState(true);
     const [allJobs, setAllJobs] = useState<Job[]>([]);
     const [savedJobs, setSavedJobs] = useState<Job[]>([]);
@@ -166,6 +170,9 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
                 allJobs,
                 isLoading,
                 savedJobs,
+                archivedJobs,
+                archivedAds,
+                indexForConvert,
                 setIsLoading,
                 kijelentkezes,
                 bejelentkezes,
@@ -175,7 +182,8 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
                 deleteJobById,
                 getAll,
                 isListUser,
-                isUser
+                isUser,
+                setIndexForConvert,
             }}
         >
             {children}
