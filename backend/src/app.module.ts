@@ -12,9 +12,10 @@ import { AuthModule } from './auth/auth.module';
 import * as cookieParser from 'cookie-parser';
 import { ChatModule } from './chat/chat.module';
 import { ChatGateway } from './chat/chat.gateway';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
-  imports: [ProfilesModule, JobsModule, CloudinaryModule, ReviewsModule, AuthModule, ChatModule,],
+  imports: [ProfilesModule, JobsModule, CloudinaryModule, ReviewsModule, AuthModule, ChatModule, AdminModule,],
   controllers: [AppController],
   providers: [ChatGateway,AppService, PrismaService, ProfilesService],
 })

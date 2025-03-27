@@ -3,38 +3,27 @@ import {User} from "../Types/User.ts";
 import {Job} from "../Types/Job.ts";
 import {
     attend, deleteJob,
-    getAdvertised,
-    getAllJobs, getArchivedAds, getArchivedJobs,
-    getAvailableJobs, getAverageRating,
-    getProfile, getSavedForLater,
-    getSelectedJobs,
+    getAllJobs,
+    getAvailableJobs, getSavedForLater,
     getUser,
     saveForLater
 } from "../lib/api.ts";
-import {Advertiser} from "../Types/Advertiser.ts";
 
 interface AuthContextType {
     user: User | null,
     jobs: Job[],
     allJobs: Job[],
-    selectedJobs: Job[],
-    ads: Job[],
     savedJobs: Job[],
-    archivedJobs: Job[],
-    archivedAds: Job[],
-    advertiser: Advertiser | null,
     isLoading: boolean,
     isProfilePicChanged: boolean,
     indexForConvert : number,
     setIsLoading: (value: boolean)=> void,
     kijelentkezes: () => void,
     bejelentkezes: (newUser: User) => void,
-    profilKepUpdate: (url: string, user: User) => void,
     setSave: (job: Job ,value: boolean) => void,
     attendJob: (id: number, value: boolean) => void,
     deleteJobById: (id: number) => void,
     getAll: () => void,
-    getAdvertiserProfile: (username: string) => void,
     checkUser: () => void,
     isListUser: (list: (Job | User)[]) => Promise<boolean>,
     isUser: (list: Job | User) => Promise<boolean>,
@@ -53,14 +42,8 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
     const [user, setUser] = useState<User | null>(null);
     const [indexForConvert,setIndexForConvert] = useState<number>(0);
     const [isLoading, setIsLoading] = useState(true);
-    const [isProfilePicChanged, setIsProfilePicChanged] = useState(false);
     const [allJobs, setAllJobs] = useState<Job[]>([]);
-    const [selectedJobs, setSelectedJobs] = useState<Job[]>([])
-    const [ads, setAds] = useState<Job[]>([])
     const [savedJobs, setSavedJobs] = useState<Job[]>([]);
-    const [archivedJobs, setArchivedJobs] = useState<Job[]>([])
-    const [archivedAds, setArchivedAds] = useState<Job[]>([]);
-    const [advertiser, setAdvertiser] = useState<Advertiser | null>(null);
     const [jobs, setJobs] = useState<Job[]>([])
 
     useEffect(() => {
@@ -98,7 +81,6 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
         setUser({
             ...newUser
         });
-
         await resetJobs();
         setIsLoading(false)
     }
@@ -122,8 +104,6 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
     const resetJobs = async () => {
         setIsLoading(true)
         setJobs(await getAvailableJobs());
-        await userSelectedJobs()
-        await userAdvertisedJobs();
         await userSavedJobs();
         await userArchivedJobs();
         await userArchivedAds();
@@ -134,17 +114,6 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
         setIsLoading(true)
         setUser(null);
         getAll()
-        setIsLoading(false)
-    }
-
-    const profilKepUpdate = (url: string, user: User) =>{
-        setIsLoading(true)
-        setIsProfilePicChanged(false);
-        setUser({
-            ...user,
-            profileImg: url
-        })
-        setIsProfilePicChanged(true);
         setIsLoading(false)
     }
     const setSave = async (job: Job ,value: boolean) => {
@@ -163,20 +132,6 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
         setIsLoading(false)
     }
 
-    const userSelectedJobs = async () => {
-        setIsLoading(true)
-        setSelectedJobs(await getSelectedJobs().then((res) => {
-            return res
-        }))
-        setIsLoading(false)
-    }
-
-    const userAdvertisedJobs = async () => {
-        setIsLoading(true);
-        setAds(await getAdvertised());
-        setIsLoading(false);
-    }
-
     const userSavedJobs = async () => {
         setIsLoading(true);
         setSavedJobs(await getSavedForLater());
@@ -185,25 +140,14 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
 
     const userArchivedJobs = async () => {
         setIsLoading(true);
-        setArchivedJobs(await getArchivedJobs());
+
         setIsLoading(false);
     }
 
     const userArchivedAds = async () => {
         setIsLoading(true);
-        setArchivedAds(await getArchivedAds());
-        setIsLoading(false);
-    }
 
-    const getAdvertiserProfile = async (username: string) =>{
-        setIsLoading(true)
-        setAdvertiser({
-            ...(await getProfile(username)),
-            averageRating: await getAverageRating(username).then((res) => {
-                return res._avg.review;
-            })
-        });
-        setIsLoading(false)
+        setIsLoading(false);
     }
     const isListUser = async (list: (User | Job)[]) : Promise<boolean> => {
         return Array.isArray(list) && list.every(item => 'name' in item && 'username' in item);
@@ -224,11 +168,7 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
                 user,
                 jobs,
                 allJobs,
-                advertiser,
                 isLoading,
-                isProfilePicChanged,
-                selectedJobs,
-                ads,
                 savedJobs,
                 archivedJobs,
                 archivedAds,
@@ -237,12 +177,10 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
                 kijelentkezes,
                 bejelentkezes,
                 checkUser,
-                profilKepUpdate,
                 setSave,
                 attendJob,
                 deleteJobById,
                 getAll,
-                getAdvertiserProfile,
                 isListUser,
                 isUser,
                 setIndexForConvert,

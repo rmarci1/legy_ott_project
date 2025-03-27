@@ -1,6 +1,5 @@
 import { User } from "../../Types/User.ts";
 import { useEffect, useState} from "react";
-import { useAuth } from "../../context/AuthContext.tsx";
 import { FaStar } from "react-icons/fa";
 import ReviewCard from "../cards/ReviewCard.tsx";
 import {IoClose} from "react-icons/io5";
@@ -8,15 +7,16 @@ import {canReview} from "../../lib/api.ts";
 import WriteReview from "../WriteReview.tsx";
 import {Review} from "../../Types/Review.ts";
 import { useRef } from "react";
+import {Advertiser} from "@/Types/Advertiser.ts";
 
 interface ProfileModalProps {
     user?: User;
     setModal: (value: boolean) => void;
     setJobModal: (value: boolean) => void;
+    advertiser: Advertiser;
 }
 
-export default function ProfileModal({ setModal, setJobModal }: ProfileModalProps) {
-    const { advertiser } = useAuth();
+export default function ProfileModal({ setModal, setJobModal, advertiser }: ProfileModalProps) {
     const [canRev, setCanRev] = useState(false);
     const [reviewList, setReviewList] = useState<Review[]>([])
     const myRef = useRef<HTMLDivElement>(null);

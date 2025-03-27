@@ -11,6 +11,7 @@ import AdminNavbar from './components/navbars/AdminNavBar';
 import Users from './pages/admin/Users';
 import Jobs from './pages/admin/Jobs';
 import CreateAd from "./pages/CreateAd.tsx";
+import AdminRoute from "@/pages/admin/AdminRoute.tsx";
 
 export default function AppLayout(){
     const location = useLocation();
@@ -26,10 +27,10 @@ export default function AppLayout(){
             <Route path="/register" element={<Register />} />
             <Route path="/interacted" element={<InteractedJobs />} />
             <Route path="/profile" element={<ProfilePage />} />
-            <Route path='/admin'>
-                <Route path="dashboard" element={<DashBoard />} />
-                <Route path="users" element={<Users/>} />
-                <Route path="jobs" element={<Jobs/>} />
+            <Route path="/admin" element={<AdminRoute />}>
+                <Route path="/admin/dashboard" element={<DashBoard />} />
+                <Route path="/admin/users" element={<Users/>} />
+                <Route path="/admin/jobs" element={<Jobs/>} />
             </Route>
             <Route path="/createAd" element={<CreateAd />} />
           </Routes>

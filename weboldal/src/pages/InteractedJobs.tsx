@@ -2,19 +2,25 @@ import {useEffect, useState} from "react";
 import {useAuth} from "../context/AuthContext.tsx";
 import ListingComponent from "../components/ListingComponent.tsx";
 import {useNavigate} from "react-router";
+import {Job} from "@/Types/Job.ts";
+import {getArchivedAds, getArchivedJobs} from "@/lib/api.ts";
 
 export default function InteractedJobs(){
     const [saved, setSaved] = useState(false)
     const [jobs, setJobs] = useState(true);
     const [ads, setAds] = useState(false);
+    const [archivedJobs, setArchivedJobs] = useState<Job[]>([])
+    const [archivedAds, setArchivedAds] = useState<Job[]>([])
     const navigate = useNavigate();
-    const { user, savedJobs, archivedJobs, archivedAds, checkUser } = useAuth();
+    const { user, savedJobs, checkUser } = useAuth();
 
     useEffect(() => {
-        const fetchUser = async () => {
+        const fetchData = async () => {
             await checkUser();
+            setArchivedJobs(await getArchivedJobs());
+            setArchivedAds(await getArchivedAds());
         };
-        fetchUser();
+        fetchData();
     }, []);
 
     return <>

@@ -4,7 +4,7 @@ import {useAuth} from "../context/AuthContext.tsx";
 import {toast, ToastContainer} from "react-toastify";
 import ConvertType from "@/components/ConvertType.tsx";
 import ConvertText from "@/components/ConvertText.tsx";
-
+import {AiOutlineLoading3Quarters} from "react-icons/ai";
 export default function CreateAd(){
     const tomorrow: Date = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -22,6 +22,7 @@ export default function CreateAd(){
     const [unsavedChanges,setUnsavedChanges] = useState<boolean>(false);
     const [isDescShowVisible,setIsDescShowVisible] = useState<boolean>(false);
     const scrollRef = useRef<HTMLDivElement>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     useEffect(() => {
         checkUser()
@@ -54,10 +55,12 @@ export default function CreateAd(){
 
     const handleSubmit = async (e: { preventDefault: () => void; }) =>{
         e.preventDefault();
+        setIsLoading(true)
         if(!user){
             toast.error('Jelentkezzen be a hírdetés létrehozásához!', {
                 className: "bg-red-300 text-white"
             })
+            setIsLoading(false)
             return;
         }
 
@@ -65,22 +68,25 @@ export default function CreateAd(){
             toast.warn('Leghamarabb holnapra hírdethet meg munkát!', {
                 className: "bg-yellow-300 text-white"
             })
+            setIsLoading(false)
             return;
         }
 
+        console.log("kezdodik")
         const createdAd = await createAdv(name, date, desc, "temp", maxPart, address);
-
+        console.log("csinalodik")
         const formData = new FormData();
         formData.append('file', file);
-
+        console.log("kepkesz")
         await jobPicChange(formData, createdAd.id);
-
+        console.log("megcsinalt")
         setName("");
         setDesc("");
         setAddress("")
         setFile("")
         setMaxPart(1)
         setDate(new Date());
+        setIsLoading(false);
     }
 
     const handleChanges = () =>{
@@ -107,6 +113,7 @@ export default function CreateAd(){
                             <label htmlFor="name"
                                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Név</label>
                             <input type="text"
+                                disabled={isLoading}
                                 name="name"
                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                 value={name}
@@ -126,6 +133,7 @@ export default function CreateAd(){
                             <label htmlFor="date"
                                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Dátum</label>
                             <input type="date"
+                                disabled={isLoading}
                                 name="date"
                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                 min={formatDate(tomorrow.toLocaleDateString())}
@@ -154,6 +162,7 @@ export default function CreateAd(){
                             <label htmlFor="desc"
                                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Leírás</label>
                             <textarea 
+                                disabled={isLoading}
                                 name="desc"
                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                 placeholder="pl.: 14:00-kor várok mindenkit a Blaha Lújza téren egy közös virág ültetésre"
@@ -189,6 +198,7 @@ export default function CreateAd(){
                                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Maximum
                                 résztvevő</label>
                             <input type="number"
+                                disabled={isLoading}
                                 name="maxPart"
                                 min={1}
                                 value={maxPart}
@@ -202,6 +212,7 @@ export default function CreateAd(){
                             <label htmlFor="address"
                                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Cím</label>
                             <input type="text"
+                                disabled={isLoading}
                                 name="address"
                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                 value={address}
@@ -220,15 +231,20 @@ export default function CreateAd(){
                                 />
                         </div>
                         <button type="submit"
-                                className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                            Létrehozás
+                                className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 flex justify-center items-center"
+                                disabled={isLoading}>
+                            {isLoading ? (
+                                <span className="flex items-center">
+                                    <AiOutlineLoading3Quarters className="animate-spin mr-2" size={18} />
+                                    Betöltés...
+                                </span>
+                            ) : (
+                                "Létrehozás"
+                            )}
                         </button>
                     </form>
-                </div>
+              </div>
             </div>
-            <ToastContainer
-             autoClose={2000}/>
-        </div>
-
-    </>
+        </>
+    );
 }
