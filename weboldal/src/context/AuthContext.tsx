@@ -8,6 +8,7 @@ import {
     getUser,
     saveForLater
 } from "../lib/api.ts";
+import { io } from "socket.io-client";
 
 interface AuthContextType {
     user: User | null,
@@ -27,6 +28,7 @@ interface AuthContextType {
     isListUser: (list: (Job | User)[]) => Promise<boolean>,
     isUser: (list: Job | User) => Promise<boolean>,
     setIndexForConvert: (index : number) => void,
+    formatDate: (date: string) => string,
 }
 interface AuthContextTypeProps {
     children : ReactNode;
@@ -55,7 +57,9 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
                     if(jobs){
                         setJobs(jobs);
                     }
-                })
+                });
+                const socket = io('http://192.168.10.89:3000', { transports: ['websocket'] });
+                socket.emit('join', result.profile.id);
             }
         })
         .catch((error) => {
@@ -159,7 +163,16 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
         await resetJobs();
     }
 
-
+    const formatDate = (date : string) : string => {
+        const currDate = new Date();
+        currDate.setDate(currDate.getDate() - 1)
+        if(new Date(date) > currDate){
+          return date.split('T')[1].split(':').splice(0,2).join(':');
+        }
+        else {
+          return date.split('T')[0].split('-').splice(1).join('-');
+        }
+    }
     return (
         <AuthContext.Provider
             value = {{
@@ -180,6 +193,7 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
                 isListUser,
                 isUser,
                 setIndexForConvert,
+                formatDate,
             }}
         >
             {children}

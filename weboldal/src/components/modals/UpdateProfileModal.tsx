@@ -1,10 +1,12 @@
 import {Textarea} from "flowbite-react";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {toast, ToastContainer} from "react-toastify";
 import {updateProfile} from "@/lib/api.ts";
 import {useAuth} from "@/context/AuthContext.tsx";
 import {User} from "@/Types/User.ts";
 import {IoClose} from "react-icons/io5";
+import ConvertType from "../ConvertType";
+import ConvertText from "../ConvertText";
 
 interface UpdateProfileModalProps{
     setModal: (value: boolean) => void,
@@ -13,6 +15,13 @@ interface UpdateProfileModalProps{
 export default function UpdateProfileModal({setModal} : UpdateProfileModalProps){
     const {user, bejelentkezes} = useAuth();
     const [form, setForm] = useState<User>(user ?? {} as User);
+    const [stashed,setStashed] = useState<string>("");
+    const [selection, setSelection] = useState<{start: number, end:number}>({ start: 0, end: 0});
+    const [undoStates, setUndoStates] = useState<string[]>([""]);
+    const [unsavedChanges,setUnsavedChanges] = useState<boolean>(false);
+    const [typingTimeout, setTypingTimeout] = useState<number | null>(null);
+    const [isDescShowVisible,setIsDescShowVisible] = useState<boolean>(false);
+    const scrollRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -29,7 +38,11 @@ export default function UpdateProfileModal({setModal} : UpdateProfileModalProps)
             document.addEventListener("keydown", handleKeyDown);
         };
     }, []);
-
+    useEffect(() => {
+        if (scrollRef.current) {
+            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        }
+    }, [form.description]);
     const handleSave = async (e: any) =>{
         e.preventDefault();
         if(user){
@@ -59,20 +72,32 @@ export default function UpdateProfileModal({setModal} : UpdateProfileModalProps)
             }
         }
     }
-
+    const handleChanges = () =>{
+        if(!unsavedChanges){
+          setUnsavedChanges(true);
+        }
+    }
     return <>
         <div
             className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
             onClick={() => setModal(false)}
-        >
+        >   
+            {isDescShowVisible && 
+            <div className="absolute z-50 top-12">
+                <div ref={scrollRef} className="w-full bg-gray-800 rounded-xl flex flex-wrap whitespace-pre-line break-words p-2 max-h-20 overflow-y-auto">
+                    <ConvertText text={form?.description} />
+                </div>
+            </div>
+            }
             <div
                 className="relative bg-indigo-950 rounded-lg flex flex-col shadow-sm max-h-[95%] p-6 w-full max-w-2xl overflow-auto [&::-webkit-scrollbar]:w-1
-        [&::-webkit-scrollbar-track]:rounded-full
-        [&::-webkit-scrollbar-track]:bg-gray-100
-        [&::-webkit-scrollbar-thumb]:rounded-full
-        [&::-webkit-scrollbar-thumb]:bg-gray-300"
+                    [&::-webkit-scrollbar-track]:rounded-full
+                    [&::-webkit-scrollbar-track]:bg-gray-100
+                    [&::-webkit-scrollbar-thumb]:rounded-full
+                    [&::-webkit-scrollbar-thumb]:bg-gray-300"
                 onClick={(e) => e.stopPropagation()}
-            >
+            >   
+
                 <div className="flex flex-row justify-between text-white p-2 pb-4">
                     <h5 className="text-xl font-medium ">Profil szerkesztése</h5>
                     <button
@@ -123,6 +148,22 @@ export default function UpdateProfileModal({setModal} : UpdateProfileModalProps)
                                }}
                         />
                     </div>
+                    <hr/>
+                    <ConvertType
+                        selection={selection}
+                        description={form.description}
+                        handleForm={(e) => {
+                            setForm({...form, description: e});
+                            handleChanges();
+                        }}
+                        undoStates={undoStates}
+                        handleSelection={(e) => setSelection(e)}
+                        handleUndoStates={(e) => setUndoStates(e)}
+                        stashed={stashed}
+                        handleStash={(e) => setStashed(e)}
+                        iconColor="white"                  
+                    />
+                    <hr/>
                     <div>
                         <label htmlFor="desc"
                                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -134,7 +175,29 @@ export default function UpdateProfileModal({setModal} : UpdateProfileModalProps)
                                   value={form.description}
                                   onChange={(e) => {
                                       setForm({...form, description: e.target.value})
-                                  }}
+                                    handleChanges();
+                                    setForm({...form, description: e.target.value});
+    
+                                    if (typingTimeout) {
+                                        clearTimeout(typingTimeout);
+                                    }
+    
+                                    const newTimeout = window.setTimeout(() => {
+                                        let temp = undoStates;
+                                        if (stashed) temp.push(stashed);
+                                        setStashed(e.target.value);
+                                        setUndoStates(temp);
+                                    }, 1000);
+    
+                                    setTypingTimeout(newTimeout);
+                                    }}
+                                    onSelect={(e) => {
+                                        const target = e.target as HTMLTextAreaElement
+                                        setSelection({ start: target.selectionStart, end: target.selectionEnd });
+                                    }}
+                                    onFocus={() => setIsDescShowVisible(true)}
+                                    onBlur={() => setIsDescShowVisible(false)}
+                                    required
                         />
                     </div>
                     <button type="submit"

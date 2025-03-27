@@ -29,7 +29,7 @@ export default function ConvertText({ text, isHeader, value }: {text: string  | 
         return [next,curr];
     }
     return (
-        <pre className="text-white break-all whitespace-pre-wrap">
+        <pre className="text-white break-all whitespace-pre-wrap font-poppins">
         {sections?.map((section, index) => {
             if(!add){
                 if (/^\*\*\*.*\*\*\*$/s.test(section)) {

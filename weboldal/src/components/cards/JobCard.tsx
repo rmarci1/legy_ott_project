@@ -1,5 +1,5 @@
 import { Job } from "../../Types/Job.ts";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import { PiHeartLight, PiHeartFill } from "react-icons/pi";
 import {useAuth} from "../../context/AuthContext.tsx";
 import JobModal from "../modals/JobModal.tsx";
@@ -26,9 +26,6 @@ export default function JobCard({Job, canSaveForLater}: jobProps){
 
         return limitedText.length > 150 ? limitedText.slice(0, 150) + "..." : text;
     };
-
-    useEffect(() => {
-    }, []);
 
     return<>
         <div className="rounded-lg shadow-secondary-1 bg-surface-dark mt-2 md:m-2 cursor-default">

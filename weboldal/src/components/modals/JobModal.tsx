@@ -6,6 +6,7 @@ import { IoClose } from "react-icons/io5";
 import {toast, ToastContainer} from "react-toastify";
 import {Advertiser} from "@/Types/Advertiser.ts";
 import {getAverageRating, getProfile} from "@/lib/api.ts";
+import ConvertText from "../ConvertText.tsx";
 
 interface JobModalProps {
     job: Job;
@@ -97,7 +98,7 @@ export default function JobModal({ job, user, setModal,setUpdateJobModal, attend
                                       [&::-webkit-scrollbar-track]:bg-gray-600/25
                                       [&::-webkit-scrollbar-thumb]:rounded-full
                                       [&::-webkit-scrollbar-thumb]:bg-gray-700/30">
-                        <p className="text-white break-words whitespace-pre-line">{job.description}</p>
+                        <ConvertText text={job.description}/>
                     </div>
 
                     <p className="text-gray-300 mt-2 break-words">Helyszín: {job.address}</p>

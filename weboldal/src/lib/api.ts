@@ -485,6 +485,22 @@ export const updateJob = async (attributes: Partial<Job>, id: number) => {
 
     return data;
 }
+export const getDifferentProfiles = async (userId: number) => {
+  try{
+      const response = await fetch(`${API_URL}/chat/different/${userId}`,{
+          method: 'GET',
+          credentials: 'include'
+      })
+      const data = await response.json();
+      if (!response.ok){
+          throw new Error(typeof data.message == "string" ? data.message : data.message[0]);
+      }
+      return data;
+  }
+  catch(error : any){
+      throw new Error(error);
+  }   
+}
 
 
 

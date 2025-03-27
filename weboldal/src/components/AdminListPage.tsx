@@ -2,7 +2,7 @@ import { IoIosArrowBack, IoIosArrowDown, IoIosArrowForward, IoIosArrowUp } from 
 import Loading from "./Loading";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { getAllJobsforAdmin, getAllUsers, getAllUsersForAdmin } from "@/lib/api";
+import { getAllJobsforAdmin, getAllUsersForAdmin } from "@/lib/api";
 import { User } from "@/Types/User";
 import { Job } from "@/Types/Job";
 import { IoSearchOutline } from "react-icons/io5";

@@ -31,7 +31,7 @@ export default function CreateAd(){
         if(maxPart <= 0){
             toast.warn('Minimum 1 résztvevőnek lennie kell!', {
                 className: "bg-yellow-300 text-white"
-            })
+            });
             setMaxPart(1);
         }
     }, [maxPart]);

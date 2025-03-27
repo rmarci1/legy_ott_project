@@ -2,13 +2,14 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { FaRegCircleUser } from "react-icons/fa6";
 import { IoArchiveOutline, IoHomeOutline } from "react-icons/io5";
 import NavItem from "../NavbarItem";
-
+import { LuMessageCircle } from "react-icons/lu";
 export default function Navbar(){
     const navItems = [
         { to: "/", icon: IoHomeOutline, label: "Hirdetések" },
         { to: "/createAd", icon: AiOutlinePlus, label: "Létrehozás" },
         { to: "/interacted", icon: IoArchiveOutline, label: "Előzmények" },
         { to: "/profile", icon: FaRegCircleUser, label: "Profil" },
+        { to: "/chat", icon: LuMessageCircle, label: "Message" },
     ];
 
     return <>
