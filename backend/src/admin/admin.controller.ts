@@ -49,7 +49,20 @@ export class AdminController {
       throw new ForbiddenException('Nincs jogosultságod ehhez a művelethez');
     }
   }
-
+  @ApiOperation({
+    summary: 'Returns all of the jobs with admin role'
+  })
+  @Get('/allProfiles')
+  @UseGuards(AuthGuard)
+  async findProfiles(@Request() req: Request) {
+    if(req['profile']['isAdmin']){
+      const data = await this.adminService.findAllProfiles();
+      return data;
+    }
+    else{
+      throw new ForbiddenException('Nincs jogosultságod ehhez a művelethez');
+    }
+  }
 
   @ApiOperation({
     summary: 'Deletes one job with admin role'

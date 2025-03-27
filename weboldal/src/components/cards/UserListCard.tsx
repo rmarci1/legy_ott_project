@@ -178,12 +178,14 @@ export default function UserListCard({user,searchTerm,onDelete, onUpdate} : {use
                 }     
             </td>
             <td>
-                <button 
-                    className="bg-blue-400 h-8 w-20 text-white font-light rounded-md hover:bg-gray-600"
-                    onClick={handleUpdate}
-                >
-                    Modósítás
-                </button>
+                {(isCurrentUser ? !(user as User)?.isAdmin : true) &&
+                    <button 
+                        className="bg-blue-400 h-8 w-20 text-white font-light rounded-md hover:bg-gray-600"
+                        onClick={handleUpdate}
+                    >
+                        Modósítás
+                    </button>
+                }
             </td>
             <td>{updateing && 
                 <button

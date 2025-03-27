@@ -94,7 +94,8 @@ export default function CreateAd(){
           setUnsavedChanges(true);
         }
     }
-    return <>
+    return (
+    <>
         <div className="md:w-dvw w-full flex flex-wrap h-screen overflow-auto border">
             <div className="place-content-center justify-items-center w-full">
                 <div
@@ -245,6 +246,9 @@ export default function CreateAd(){
                     </form>
               </div>
             </div>
-        </>
-    );
+        <ToastContainer
+             autoClose={2000}/>
+        </div>
+      </>
+    )
 }

@@ -307,6 +307,17 @@ export const getAllUsers = async () => {
     }
     return data;
 }
+export const getAllUsersForAdmin = async () => {
+  const response = await fetch(`${API_URL}/admin/allProfiles`,{
+    method: 'GET',
+    credentials: 'include'
+  })
+  const data = await response.json();
+  if(!response.ok){
+    throw new Error(data.message);
+  }
+  return data;
+}
 export const updateUserByAdmin = async (fields : UpdateUser, username : string) => {
     const response = await fetch(`${API_URL}/admin/updateUser/${username}`,{
       method: 'PATCH',

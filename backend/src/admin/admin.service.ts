@@ -11,6 +11,20 @@ export class AdminService {
   async findAllJobs() {
     return this.db.job.findMany();
   }
+  async findAllProfiles() {
+    return this.db.profile.findMany({
+      select: {
+        created: true,
+        description: true,
+        email: true,
+        id: true,
+        isAdmin: true,
+        name: true,
+        username: true,
+        profileImg: true,
+      }
+    });
+  }
 
   async deleteOne(jobId: number){
     return this.db.job.delete({

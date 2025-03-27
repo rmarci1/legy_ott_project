@@ -15,7 +15,6 @@ interface AuthContextType {
     allJobs: Job[],
     savedJobs: Job[],
     isLoading: boolean,
-    isProfilePicChanged: boolean,
     indexForConvert : number,
     setIsLoading: (value: boolean)=> void,
     kijelentkezes: () => void,
@@ -45,7 +44,6 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
     const [allJobs, setAllJobs] = useState<Job[]>([]);
     const [savedJobs, setSavedJobs] = useState<Job[]>([]);
     const [jobs, setJobs] = useState<Job[]>([])
-
     useEffect(() => {
         setIsLoading(true);
         getUser()
@@ -170,8 +168,6 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
                 allJobs,
                 isLoading,
                 savedJobs,
-                archivedJobs,
-                archivedAds,
                 indexForConvert,
                 setIsLoading,
                 kijelentkezes,

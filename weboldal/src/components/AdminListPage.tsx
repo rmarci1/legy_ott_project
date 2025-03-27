@@ -2,7 +2,7 @@ import { IoIosArrowBack, IoIosArrowDown, IoIosArrowForward, IoIosArrowUp } from 
 import Loading from "./Loading";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { getAllJobsforAdmin, getAllUsers } from "@/lib/api";
+import { getAllJobsforAdmin, getAllUsers, getAllUsersForAdmin } from "@/lib/api";
 import { User } from "@/Types/User";
 import { Job } from "@/Types/Job";
 import { IoSearchOutline } from "react-icons/io5";
@@ -34,7 +34,7 @@ export default function AdminListPage({listUsers} : {listUsers : boolean}){
         }, [currentPage,totalPages]);
     useEffect(() => {
         setIsListLoading(true);
-          const fetchData = listUsers ? getAllUsers() : getAllJobsforAdmin();
+          const fetchData = listUsers ? getAllUsersForAdmin() : getAllJobsforAdmin();
           fetchData.then((res) => {
           if(res){
               setAllContent(res);
@@ -71,10 +71,10 @@ export default function AdminListPage({listUsers} : {listUsers : boolean}){
           filtered = allContent.filter((item) => {
                 const created = (item as User).created.toString().split('T')[0];
                 if (date && created !== date){
-                return false;
+                  return false;
                 }
                 if (!date && dateSearch && created !== dateSearch){
-                return false;
+                  return false;
                 }
                 return item.name?.toLowerCase().includes(term) ||
                 (item as User).username?.toLowerCase().includes(term);
