@@ -28,9 +28,8 @@ export default function ConvertText({ text, isHeader, value }: {text: string  | 
         }
         return [next,curr];
     }
-    console.log(sections);
     return (
-        <pre>
+        <pre className="text-white break-all whitespace-pre-wrap">
         {sections?.map((section, index) => {
             if(!add){
                 if (/^\*\*\*.*\*\*\*$/s.test(section)) {
@@ -38,7 +37,7 @@ export default function ConvertText({ text, isHeader, value }: {text: string  | 
                     data = getNext(section, [3, -3]);
                     add = false;
                     return (
-                        <span key={index} style={{ fontWeight: "bold", fontStyle: "italic"}} className={`${(isHeader && value)? HashValue(value) : "text-base"}`}>
+                        <span key={index} style={{ fontWeight: "bold", fontStyle: "italic"}} className={`${(isHeader && value)? HashValue(value) : "text-base"} break-words whitespace-pre-line`}>
                             {!data[0]? section.slice(3, -3) : <ConvertText text={data[1]} isHeader={isHeader} value={value}/>}
                         </span>
                     );
@@ -48,7 +47,7 @@ export default function ConvertText({ text, isHeader, value }: {text: string  | 
                     data = getNext(section, [2, -2]);
                     add = false;
                     return (
-                        <span key={index} style={{ fontWeight: "bold"}} className={`${(isHeader && value)? HashValue(value!) : "text-base"}`}>
+                        <span key={index} style={{ fontWeight: "bold"}} className={`${(isHeader && value)? HashValue(value!) : "text-base"} break-words whitespace-pre-line`}>
                             {!data[0]? section.slice(2, -2): <ConvertText text={data[1]} isHeader={isHeader} value={value}/>}
                         </span>
                     );         
@@ -59,7 +58,7 @@ export default function ConvertText({ text, isHeader, value }: {text: string  | 
                     data = getNext(section, [1, -1]);
                     add = false;
                     return (
-                        <span key={index} style={{ fontStyle: "italic" }} className={`${(isHeader && value)? HashValue(value!) : "text-base"}`}>
+                        <span key={index} style={{ fontStyle: "italic" }} className={`${(isHeader && value)? HashValue(value!) : "text-base"} break-words whitespace-pre-line`}>
                             {!data[0]? section.slice(1, -1): <ConvertText text={data[1]} isHeader={isHeader} value={value}/>}
                         </span>
                     );
@@ -72,7 +71,7 @@ export default function ConvertText({ text, isHeader, value }: {text: string  | 
 
                     }
                     return (
-                        <span key={index} className={`font-psemibold ${HashValue(hashCount)}`}>
+                        <span key={index} className={`font-psemibold ${HashValue(hashCount)} break-words whitespace-pre-line`}>
                             <ConvertText
                                 text={section.replace(/#+/, "").trim().split(/(\*\*\*[^*]*\*\*\*|\*\*[^*]*\*\*|\*[^*]*\*|^#\s*[^#\n]+(?:\n|$))/).filter(Boolean)}
                                 isHeader={true}
@@ -81,8 +80,7 @@ export default function ConvertText({ text, isHeader, value }: {text: string  | 
                         </span>
                     );
                 }
-                console.log("curr: ", section)
-                return <span key={index} className={`${(isHeader && value)? HashValue(value!) : "text-base"}`}>{section}</span>;
+                return <span key={index} className={`${(isHeader && value)? HashValue(value!) : "text-base"} break-words whitespace-pre-line`}>{section}</span>;
             }
 
         })}
