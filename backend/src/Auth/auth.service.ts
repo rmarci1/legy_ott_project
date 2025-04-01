@@ -21,7 +21,6 @@ export class AuthService {
     let loginMode: "email" | "username";
     let profileWithEmail : ProfileInterface;
     let profileWithUsername : ProfileInterface;
-    console.log(LoginDto)
     LoginDto.email?
       profileWithEmail = await this.db.profile.findUnique({where: {email: LoginDto.email}})
       :
@@ -42,7 +41,6 @@ export class AuthService {
       : (isPasswordValid = await bcrypt.compare(LoginDto.password, profileWithEmail.password),
       loginMode = "email");
 
-    console.log(loginMode)
     if (!isPasswordValid) {
       throw new HttpException(
         'Nem megfelelő jelszó.',

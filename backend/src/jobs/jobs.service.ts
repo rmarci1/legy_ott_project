@@ -509,7 +509,6 @@ export class JobsService {
         select: {
           img: true
       }});
-      console.log(job.img);
 
       if(job.img != defaultProfilePicUrl){
         const publicId = extractPublicId(job.img);
@@ -582,8 +581,6 @@ export class JobsService {
         username: review_username
       }
     })
-
-    console.log(profile)
 
     if(profile == null){
       throw new NotFoundException("Nem létezik ilyen profil!")

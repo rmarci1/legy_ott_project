@@ -77,7 +77,6 @@ export class ProfilesService {
           ]
         }
       })
-    console.log(username)
       if(profile != null){
         throw new HttpException("Már foglalt email cím vagy felhasználónév!", HttpStatus.CONFLICT);
       }

@@ -10,8 +10,6 @@ import {
   UploadedFile,
   Request,
   UseGuards,
-  Res,
-  ForbiddenException,
 } from '@nestjs/common';
 import { JobsService } from './jobs.service';
 import { CreateJobDto } from './dto/create-job.dto';
@@ -19,7 +17,6 @@ import { UpdateJobDto } from './dto/update-job.dto';
 import { ApiOperation } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from 'src/Auth/guards/Auth-Guard';
-import { Response } from 'express';
 
 @Controller('jobs')
 export class JobsController {
@@ -122,6 +119,9 @@ export class JobsController {
     return this.jobsService.update(+id, updateJobDto, req);
   }
 
+  @ApiOperation({
+    summary: "Updates jobs picture"
+  })
   @Post('/:id/updateJobPic')
   @UseInterceptors(FileInterceptor('file'))
   @UseGuards(AuthGuard)
@@ -160,7 +160,7 @@ export class JobsController {
   })
   @UseGuards(AuthGuard)
   @Get('/review/:reviewed_username')
-  canReview(@Request() req: Request, @Param('reviewed_username') reviewed_username){
+  canReview(@Request() req: Request, @Param('reviewed_username') reviewed_username: string){
     return this.jobsService.canReview(req['profile']['username'], reviewed_username);
   }
 
