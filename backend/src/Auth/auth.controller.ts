@@ -64,19 +64,6 @@ export class AuthController {
       .json({message: "Sikeresen kijelentkezett!"});
   }
 
-  @Post('refresh')
-  @UseGuards(RefreshAuthGuard)
-  async refreshToken(@Req() req: R,  @Res({ passthrough: true }) response: Response): Promise<{access_token: string}> {
-    const refreshToken: string = req.cookies['refreshToken'];
-    if(!refreshToken){
-      throw new NotAcceptableException('Invalid authorization token!');
-    }
-    const token = await this.authService.refresh_token(refreshToken);
-    response.clearCookie('ac');
-    response.cookie('ac', token.access_token, {httpOnly: true, expires: new Date(2322, 1, 1)});
-    return token;
-  }
-
 
   @ApiOperation({
     summary: 'Returns logged in profile',

@@ -4,7 +4,6 @@ import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { ApiOperation } from '@nestjs/swagger';
 import { AuthGuard } from '../Auth/guards/Auth-Guard';
-import { Response } from 'express';
 
 @Controller('reviews')
 export class ReviewsController {
@@ -33,8 +32,9 @@ export class ReviewsController {
   })
   @Get(':reviewedUsername')
   async findAllByUsername(@Param('reviewedUsername') username: string) {
-    return await this.reviewsService.findAllByUsername(username);
+    return this.reviewsService.findAllByUsername(username);
   }
+
   @ApiOperation({
     summary: 'Returns the average rating of a specific user found by username'
   })

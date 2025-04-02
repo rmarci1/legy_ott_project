@@ -7,7 +7,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class ChatService {
   constructor(private prisma: PrismaService) {}
   async getMessages(senderId: number, receiverId: number) {
-    return await this.prisma.message.findMany({
+    return this.prisma.message.findMany({
       where: {
         OR: [
           { senderId: senderId, receiverId: receiverId },
@@ -54,7 +54,7 @@ export class ChatService {
     return profilesWithLastMessage;
   }
   async createMessage(createChatDto : CreateChatDto){
-    return await this.prisma.message.create({
+    return this.prisma.message.create({
       data : {...createChatDto,createdAt : new Date()}
     })
   }
