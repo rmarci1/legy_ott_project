@@ -35,8 +35,8 @@ export class ChatService {
       },
     });
     const profiles = [...messages.map(msg => msg.senderProfile), ...messages.map(msg => msg.receiverProfile)];
-
     const uniqueProfiles = Array.from(new Map(profiles.filter(profile => profile.id !== userId).map(profile => [profile.id, profile])).values());
+    console.log(uniqueProfiles);
 
     const profilesWithLastMessage = uniqueProfiles.map(profile => {
       const profileMessages = messages.filter(

@@ -177,13 +177,16 @@ export default function ChatPage(){
                   <div>
                   {
                     isSearchFocused ?
-                    allFilteredProfiles.map((curr) => 
-                      <SearchProfile 
-                        key={curr.id} 
-                        profile={curr} 
-                        searchTerm={searchTerm} 
-                        handlePress={(profile) => loadMessages(profile)}
-                      />) : 
+                    allFilteredProfiles.map((curr) => {
+                      if(curr.username !== user?.username){
+                        return <SearchProfile 
+                          key={curr.id} 
+                          profile={curr} 
+                          searchTerm={searchTerm} 
+                          handlePress={(profile) => loadMessages(profile)}
+                         />
+                      }
+                    }) : 
                     differentProfiles.map((curr) => 
                       <ChatProfile 
                         key={curr.id} 

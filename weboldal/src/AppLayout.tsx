@@ -12,7 +12,7 @@ import Users from './pages/admin/Users';
 import Jobs from './pages/admin/Jobs';
 import CreateAd from "./pages/CreateAd.tsx";
 import AdminRoute from "@/pages/admin/AdminRoute.tsx";
-import ChatPage from './pages/ChatPage.tsx';
+import ChatRoute from './pages/ChatRoute.tsx';
 
 export default function AppLayout(){
     const location = useLocation();
@@ -34,7 +34,7 @@ export default function AppLayout(){
                 <Route path="/admin/jobs" element={<Jobs/>} />
             </Route>
             <Route path="/createAd" element={<CreateAd />} />
-            <Route path="/chat" element={<ChatPage/>}/>
+            <Route path="/chat" element={<ChatRoute />}/>
           </Routes>
         </AuthProvider>
       </div>
