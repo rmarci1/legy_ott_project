@@ -58,8 +58,6 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
                         setJobs(jobs);
                     }
                 });
-                const socket = io('http://192.168.10.89:3000', { transports: ['websocket'] });
-                socket.emit('join', result.profile.id);
             }
         })
         .catch((error) => {

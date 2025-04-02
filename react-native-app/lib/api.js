@@ -1,6 +1,7 @@
 //const API_URL = 'http://192.168.11.40:3000' // webváltó host nete;
-const API_URL = 'http://192.168.10.89:3000' // webváltó ethernet;
+//const API_URL = 'http://192.168.10.89:3000' // webváltó ethernet;
 //const API_URL = 'http://192.168.11.21:3000' // webváltó alap wifi;
+const API_URL = 'http://192.168.0.179:3000' // temp
 export const register = async (name,username, password, email)=> {
     try {
         const response = await fetch(`${API_URL}/auth/register`, {

@@ -6,7 +6,6 @@ import * as ImagePicker from 'expo-image-picker';
 import Toast, { BaseToast } from "react-native-toast-message";
 import { io } from "socket.io-client";
 const GlobalContext = createContext()
-
 export const useGlobalContext = () => useContext(GlobalContext)
 
 const GlobalProvider = ({children}) => {

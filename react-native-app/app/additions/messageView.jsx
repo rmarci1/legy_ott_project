@@ -10,16 +10,15 @@ import Toast from 'react-native-toast-message';
 import MessageState from '@/components/views/MessageState';
 
 const messageView = () => {
-  const {user, showToast, toastConfig, profileForMessage, handleProfile} = useGlobalContext();
+  const {user,isLoading, showToast, toastConfig, profileForMessage, handleProfile} = useGlobalContext();
   const [messages, setMessages] = useState([]);
   const [formMessage,setFormMessage] = useState("");
   const [isMessage,setIsMessage] = useState(true);
-  const socket = io('http://192.168.10.89:3000', { transports: ['websocket'] });
+  const socket = io('http://192.168.0.179:3000', { transports: ['websocket'] });
   const [refreshing,setRefreshing] = useState(false);
   const flashListRef = useRef(null);
   useEffect(() => {
     const fetchMessage = async () => {
-        await socket.connect();
         await getMessages(user.id, profileForMessage.id)
         .then((res) => {
           if(res){
@@ -49,17 +48,19 @@ const messageView = () => {
     };
   }, []);
   useEffect(() => {
-    socket.emit('join', user.id);
-    const handleMessage = (message) => {
-        console.log("received message: ", message);
-        setMessages((prev) => [...prev, message]);
-    };
-    socket.on('message', handleMessage);
-
-    return () => {
+    if(!isLoading && user.id){
+      socket.emit('join', user.id);
+      const handleMessage = (message) => {
+          console.log("received message: ", message);
+          setMessages((prev) => [...prev, message]);
+      };
+      socket.on('message', handleMessage);
+  
+      return () => {
         socket.off('message', handleMessage);
-    };
-}, [user.id]);
+      };
+    }
+}, [isLoading,user.id]);
   useEffect(() => {
     if(flashListRef.current && messages.length > 0){
       setTimeout(() => {

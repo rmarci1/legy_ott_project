@@ -3,14 +3,15 @@ import { useAuth } from "@/context/AuthContext";
 import { createMessage, getDifferentProfiles, getMessages } from "@/lib/api";
 import { ChatProfiles } from "@/Types/ChatProfiles";
 import { Message } from "@/Types/Message";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IoIosSearch, IoMdSend } from "react-icons/io";
 import { toast, ToastContainer } from "react-toastify";
-import { io } from 'socket.io-client';
 import { HiDotsVertical } from "react-icons/hi";
 import { IoCall } from "react-icons/io5";
 import { FaVideo } from "react-icons/fa";
 import ChatPanel from "@/components/cards/ChatPanel";
+import socket from "@/lib/socket"; 
+import { ReceivedMessage } from "@/Types/ReceivedMessage";
 export default function ChatPage(){
     const {user, isLoading} = useAuth();
     const [differentProfiles,setDifferentProfiles] = useState<ChatProfiles[]>([]);
@@ -20,9 +21,7 @@ export default function ChatPage(){
     const [messages, setMessages] = useState<Message[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [message,setMessage] = useState<string>("");
-    const socket = io('http://localhost:3000', { 
-      transports: ['websocket'],
-    });
+    const chatContainerRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
         if(!isLoading){
           const fetchDifferentProfiles = async () => {
@@ -35,7 +34,6 @@ export default function ChatPage(){
                   setIsMessageLoading(true);
                   if(res.length > 0){
                       setProfileForMessage(res[0]);
-                      await socket.connect();
                       await getMessages(user!.id, res[0].id)
                       .then((res) => {
                         if(res){
@@ -64,19 +62,28 @@ export default function ChatPage(){
         }    
     }, [isLoading])
     useEffect(() => {
-      if(user?.id){
-        socket.emit('join', user.id);
-        const handleMessage = (message : Message) => {
-          console.log("received message: ", message);
-          setMessages((prev) => [...prev, message]);
+      if (!isLoading && user?.id) {
+        if (!socket.connected) {
+          socket.connect();
+        }
+  
+        socket.on("connect", () => {
+          console.log("Socket connected!");
+          socket.emit("join", user.id);
+        });
+  
+        const handleMessage = (message: ReceivedMessage) => {
+          console.log("Received message:", message);
+          setMessages((prev) => [...prev, {...message, id: prev.length + 1}]);
         };
-        socket.on('message', handleMessage);
-    
+  
+        socket.on("message", handleMessage);
+  
         return () => {
-            socket.off('message', handleMessage);
+          socket.off("message", handleMessage);
         };
       }
-    }, [user?.id]);
+    }, [user?.id, isLoading]);
     const handleSendMessage = async () => {
       if (!message.trim()) {
         toast.error("Írj be valamit...");
@@ -85,18 +92,19 @@ export default function ChatPage(){
       
       if (user?.id && profileForMessage?.id) {
         try {
-          const date = new Date();
           const messageData = {
             senderId: user.id.toString(),
             receiverId: profileForMessage.id.toString(),
             content: message,
-            createdAt: date,
           };
-          await socket.emit('join', user.id);
-          socket.emit('message', messageData, (response: any) => {
-            console.log("Server response:", response);
-          });
-    
+          if (socket.connected) {
+            console.log("happen");
+            socket.emit('message', messageData, (ack: any) => {
+              console.log("Server ACK:", ack);
+            });
+          } else {
+            console.error("Socket is not connected!");
+          }
           const res = await createMessage({...messageData, senderId: parseInt(messageData.senderId), receiverId: parseInt(messageData.receiverId)});
     
           setMessages((prev) => [...prev, res]);
@@ -106,6 +114,14 @@ export default function ChatPage(){
         }
       }
     }
+    useEffect(() => {
+      if (chatContainerRef.current) {
+        chatContainerRef.current.scrollTo({
+          top : chatContainerRef.current.scrollHeight,
+          behavior: "smooth"
+        })
+      }
+    }, [messages]);    
     return (
         <div className="h-screen w-screen flex flex-row">
             <div className="w-[30%] ml-4 border-r pr-4">
@@ -142,7 +158,10 @@ export default function ChatPage(){
                 </div>
               </div> 
 
-              <div className="flex-1 overflow-y-auto bg-gray-200 px-4 py-2 flex flex-col items-center">
+              <div
+                ref={chatContainerRef} 
+                className="flex-1 overflow-y-auto bg-gray-200 px-4 py-2 flex flex-col items-center"
+              >
                 <div className="w-[80%] flex flex-col">
                   {messages.map((message, index) => (
                     <ChatPanel 
