@@ -296,17 +296,6 @@ export const getDashBoardDatas = async () => {
     return data;
 }
 
-export const getAllUsers = async () => {
-    const response = await fetch(`${API_URL}/profiles`,{
-      method: 'GET',
-      credentials: 'include'
-    })
-    const data = await response.json();
-    if(!response.ok){
-      throw new Error(data.message);
-    }
-    return data;
-}
 export const getAllUsersForAdmin = async () => {
   const response = await fetch(`${API_URL}/admin/allProfiles`,{
     method: 'GET',
@@ -535,7 +524,22 @@ export const createMessage = async (message : {senderId: number, receiverId: num
       throw new Error(error);
   }    
 }
-
+export const getAllProfiles = async () => {
+  try{
+      const response = await fetch(`${API_URL}/profiles`,{
+          method: 'GET',
+          credentials: 'include'
+      })
+      const data = await response.json();
+      if (!response.ok){
+          throw new Error(typeof data.message == "string" ? data.message : data.message[0]);
+      }
+      return data;
+  }
+  catch(error : any){
+      throw new Error(error);
+  }   
+}
 
 
 

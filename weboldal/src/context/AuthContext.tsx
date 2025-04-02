@@ -29,6 +29,7 @@ interface AuthContextType {
     isUser: (list: Job | User) => Promise<boolean>,
     setIndexForConvert: (index : number) => void,
     formatDate: (date: string) => string,
+    highlightText : (text: string, searchTerm: string) => React.JSX.Element,
 }
 interface AuthContextTypeProps {
     children : ReactNode;
@@ -171,6 +172,43 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
           return date.split('T')[0].split('-').splice(1).join('-');
         }
     }
+
+    const highlightText = (text : string, searchTerm: string) : React.JSX.Element => {
+        let elements = [];
+        let dontHighlight = "";
+        let buffer = "";
+        let matchIndex = 0;
+        for (let index = 0; index < text.length; index++) {
+            if(text[index].toLowerCase() === searchTerm[matchIndex]){
+                buffer += text[index];
+                matchIndex++;
+                if(matchIndex === searchTerm.length){
+                    if(dontHighlight)elements.push(<span key={elements.length}>{dontHighlight}</span>);
+                    elements.push(<span key={elements.length} className="text-green-600">{buffer}</span>);
+                    buffer = "";
+                    matchIndex = 0;
+                    dontHighlight = "";
+                }
+            }
+            else{
+                if(buffer){
+                    elements.push(<span key={elements.length}>{dontHighlight}</span>);
+                    elements.push(<span key={elements.length}>{buffer}</span>);
+                    dontHighlight = "";
+                    buffer = "";
+                    matchIndex = 0;
+                }
+                dontHighlight+=text[index];
+            }
+        }
+        if (dontHighlight){
+            elements.push(<span key={elements.length}>{dontHighlight}</span>)
+        }
+        if (buffer) {
+            elements.push(<span key={elements.length}>{buffer}</span>);
+        }
+        return <span>{elements}</span>;
+    }
     return (
         <AuthContext.Provider
             value = {{
@@ -192,6 +230,7 @@ export const AuthProvider = ({children} : AuthContextTypeProps) => {
                 isUser,
                 setIndexForConvert,
                 formatDate,
+                highlightText,
             }}
         >
             {children}

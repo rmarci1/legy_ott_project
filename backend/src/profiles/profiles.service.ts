@@ -40,9 +40,6 @@ export class ProfilesService {
         id: true,
         name: true,
         username: true,
-        reviews: true,
-        description: true,
-        isAdmin: true,
         profileImg: true
       }
     });
