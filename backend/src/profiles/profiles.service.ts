@@ -40,7 +40,7 @@ export class ProfilesService {
         id: true,
         name: true,
         username: true,
-        profileImg: true
+        profileImg: true,
       }
     });
   }

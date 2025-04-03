@@ -16,7 +16,7 @@ import Loading from "@/components/Loading";
 import { Profile } from "@/Types/Profile";
 import SearchProfile from "@/components/cards/SearchProfile";
 export default function ChatPage(){
-    const {user, isLoading} = useAuth();
+    const {user, isLoading, formatDate} = useAuth();
     const [differentProfiles,setDifferentProfiles] = useState<ChatProfiles[]>([]);
     const [profileForMessage,setProfileForMessage] = useState<Profile | null>(null);
     const [isDifferentProfilesLoading,setIsDifferentProfilesLoading] = useState<boolean>(true);
@@ -47,6 +47,7 @@ export default function ChatPage(){
             })
             .finally(() => {
               setIsDifferentProfilesLoading(false);
+              setIsMessageLoading(false);
             })
           }
           const fetchAllProfiles = () => {
@@ -105,8 +106,8 @@ export default function ChatPage(){
             receiverId: profileForMessage.id.toString(),
             content: message,
           };
+          const messageDate = new Date();
           if (socket.connected) {
-            console.log("happen");
             socket.emit('message', messageData, (ack: any) => {
               console.log("Server ACK:", ack);
             });
@@ -114,8 +115,14 @@ export default function ChatPage(){
             console.error("Socket is not connected!");
           }
           const res = await createMessage({...messageData, senderId: parseInt(messageData.senderId), receiverId: parseInt(messageData.receiverId)});
-    
           setMessages((prev) => [...prev, res]);
+          const containsProfile = differentProfiles.some(profile => profile.username === profileForMessage.username)
+          if(!containsProfile){
+            setDifferentProfiles((prev => [...prev, {...profileForMessage, lastMessage: message, lastMessageDate: messageDate.toISOString()}]))
+          }
+          else{
+            setDifferentProfiles((prev) => prev.map((curr) => curr.id == profileForMessage.id ? {...curr, lastMessage: message, lastMessageDate: messageDate.toISOString()} : curr))
+          }
           setMessage("");
         } catch (error: any) {
           toast.error(error.message);
@@ -198,6 +205,7 @@ export default function ChatPage(){
                 </div> : <Loading/> }
             </div>
             {!isDifferentProfilesLoading && !isMessageLoading ?
+             profileForMessage? 
             <div className="w-[70%] h-full flex flex-col mx-auto">
               <div className="flex flex-row items-center justify-between border-b pb-4 px-3 mt-4 max-h-[10%]">
                   <div className="flex items-center gap-4">
@@ -249,7 +257,6 @@ export default function ChatPage(){
                         if (e.shiftKey) {
                           e.preventDefault();
                           setMessage((prev) => prev + "\n");
-                          console.log(message);
                         } else {
                           e.preventDefault();
                           handleSendMessage();
@@ -265,6 +272,10 @@ export default function ChatPage(){
                   </button>
                 </div>
               </div>
+            </div> 
+            : 
+            <div className="w-[70%] h-full flex flex-col mx-auto">
+
             </div> : <Loading/>
             }
             <ToastContainer

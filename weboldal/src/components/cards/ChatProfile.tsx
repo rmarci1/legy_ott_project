@@ -14,7 +14,7 @@ export default function ChatProfile({profile, handlePress} : {profile : ChatProf
             <div className="ml-2 py-1 w-full">
                 <div className="flex flex-row justify-between w-full">
                     <p className="font-bold">{profile.name}</p>
-                    {profile.created && <p>{formatDate(profile.created)}</p>}
+                    <p>{formatDate(profile.lastMessageDate)}</p>
                 </div>
                 <p className="text-sm">{profile.lastMessage.length > 30 ? profile.lastMessage.substring(0,30) + "..." : profile.lastMessage}</p>
             </div>

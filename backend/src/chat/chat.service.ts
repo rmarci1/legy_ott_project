@@ -27,10 +27,10 @@ export class ChatService {
       },
       include: {
         senderProfile: {
-          select: { id: true, name: true, username: true, profileImg: true, email: true, created: true }
+          select: { id: true, name: true, username: true, profileImg: true }
         },
         receiverProfile: {
-          select: { id: true, name: true, username: true, profileImg: true, email: true, created: true }
+          select: { id: true, name: true, username: true, profileImg: true }
         }
       },
     });
