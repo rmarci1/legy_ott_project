@@ -5,6 +5,16 @@ import {toast, ToastContainer} from "react-toastify";
 import ConvertType from "@/components/ConvertType.tsx";
 import ConvertText from "@/components/ConvertText.tsx";
 import {AiOutlineLoading3Quarters} from "react-icons/ai";
+
+/**
+ * A `CreateAd` komponens lehetővé teszi a felhasználók számára, hogy új hirdetéseket hozzanak létre.
+ * A hirdetés tartalmazhatja a nevét, dátumát, leírását, résztvevők számát, címét és egy képet.
+ *
+ * A komponens kezeli a felhasználó által végrehajtott változtatásokat, és validálja a hirdetés létrehozását.
+ *
+ * @component
+ * @returns {JSX.Element} A hirdetés létrehozásához szükséges űrlap.
+ */
 export default function CreateAd(){
     const tomorrow: Date = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -24,9 +34,16 @@ export default function CreateAd(){
     const scrollRef = useRef<HTMLDivElement>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
+    /**
+     * Ellenőrzi a felhasználó bejelentkezési állapotát a komponens betöltésekor.
+     */
     useEffect(() => {
         checkUser()
     }, []);
+
+    /**
+     * Figyeli, hogy ne legyen 1-nél kevesebb résztvevő
+     */
     useEffect(() => {
         if(maxPart <= 0){
             toast.warn('Minimum 1 résztvevőnek lennie kell!', {
@@ -35,23 +52,41 @@ export default function CreateAd(){
             setMaxPart(1);
         }
     }, [maxPart]);
+
     useEffect(() => {
         if (scrollRef.current) {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }
     }, [desc]);
 
+    /**
+     * Kezeli a dátum változtatását.
+     *
+     * @param {string} inputDate - Az új dátum string formátumban.
+     */
     const handleDateChange = (inputDate: string) => {
         const newDate = new Date(formatDate(inputDate));
             setDate(newDate);
     }
 
+    /**
+     * A dátum formázására szolgáló segédfüggvény.
+     *
+     * @param {string} inputDate - A dátum formátum nélküli szöveges reprezentációja.
+     * @returns {string} A formázott dátum.
+     */
     const formatDate = (inputDate: string) => {
         return inputDate
             .trim()
             .replace(/\.\s?/g, "-")
             .replace(/-$/, "");
     }
+
+    /**
+     * Hirdetés létrehozása, a form beküldésekor végrehajtódik.
+     *
+     * @param {Event} e - Az űrlap submit eseménye.
+     */
 
     const handleSubmit = async (e: { preventDefault: () => void; }) =>{
         e.preventDefault();
@@ -89,6 +124,9 @@ export default function CreateAd(){
         setIsLoading(false);
     }
 
+    /**
+     * Kezeli a változások észlelését a leírás szövegében.
+     */
     const handleChanges = () =>{
         if(!unsavedChanges){
           setUnsavedChanges(true);

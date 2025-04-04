@@ -5,11 +5,20 @@ import NavItem from "../NavbarItem";
 import { LuMessageCircle } from "react-icons/lu";
 import { useAuth } from "@/context/AuthContext";
 import { useCallback, useEffect } from "react";
+
+/**
+ * A navigációs sáv komponens, amely a felhasználó számára elérhető navigációs lehetőségeket tartalmazza.
+ * A komponens dinamikusan frissíti a navigációs elemeket a felhasználó státusza alapján.
+ * Ha a felhasználó be van jelentkezve, megjelenik egy üzenet ikon is.
+ *
+ * @returns {JSX.Element} A navigációs sávot tartalmazó komponens.
+ */
 export default function Navbar(){
     const {user, checkUser} = useAuth();
 
     const memoizedCheckUser = useCallback(checkUser, []);
 
+    /** A komponens betöltésekor a felhasználó bejelentkezési státuszát ellenőrzi */
     useEffect(() => {
         const fetchUser = async () => {
             await checkUser();
@@ -17,12 +26,14 @@ export default function Navbar(){
         fetchUser();
     }, [memoizedCheckUser]);
 
+    // Navigációs elemek definíciója
     const navItems = [
         { to: "/", icon: IoHomeOutline, label: "Hirdetések" },
         { to: "/createAd", icon: AiOutlinePlus, label: "Létrehozás" },
         { to: "/interacted", icon: IoArchiveOutline, label: "Előzmények" },
         { to: "/profile", icon: FaRegCircleUser, label: "Profil" },
     ];
+    // Ha a felhasználó be van jelentkezve, hozzáadjuk az üzenet gombot
     if(user){
         navItems.push({to: "/chat", icon: LuMessageCircle, label: "Message" })
     }

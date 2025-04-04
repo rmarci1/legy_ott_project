@@ -10,16 +10,38 @@ interface WriteReviewProps {
     setReviewList: (reviews: Review[] | ((prev: Review[]) => Review[])) => void;
     manuallyAddedReview:  React.MutableRefObject<boolean>;
 }
-
+/**
+ * A felhasználói értékelés írását lehetővé tevő komponens.
+ * A felhasználók ezen keresztül értékelhetik az adott hirdetőt.
+ *
+ * @component
+ * @param {Advertiser} advertiser - Az értékelt hirdető adatai.
+ * @param {Function} setReviewList - A hirdető értékeléseinek frissítésére szolgáló függvény.
+ * @param {React.MutableRefObject<boolean>} manuallyAddedReview - Ref, amely jelzi, hogy az értékelés manuálisan lett hozzáadva.
+ */
 export default function WriteReview({advertiser, setReviewList, manuallyAddedReview}: WriteReviewProps){
+    // Állapotok a hover, leírás és értékelés kezelésére
     const [hover, setHover] = useState(0);
     const [reviewDesc, setReviewDesc] = useState("");
     const [rating, setRating] = useState(0);
 
+    /**
+     * Kezeli a csillagok kiválasztását.
+     * Beállítja az aktuális értékelést (csillagszám).
+     *
+     * @param {number} star - A kiválasztott csillag értéke (1-5).
+     */
     const handleClick = (star: number) => {
         setRating(star);
     };
 
+    /**
+     * Kezeli az értékelés beküldését.
+     * Ha nincs értékelés (rating == 0), akkor értesíti a felhasználót.
+     * Beküldi az értékelést a backend API-nak és frissíti a hirdető értékeléseit.
+     *
+     * @param {React.FormEvent} e - A form beküldésének eseménye.
+     */
     const handleReview = async (e: any) => {
         e.preventDefault();
         if(rating == 0){
@@ -33,7 +55,7 @@ export default function WriteReview({advertiser, setReviewList, manuallyAddedRev
         })
 
 
-
+        // Űrlap törlése
         setReviewDesc("")
         setRating(0);
     }

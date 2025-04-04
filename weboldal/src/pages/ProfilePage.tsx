@@ -7,16 +7,33 @@ import ChangeProfilePicModal from "../components/modals/ChangeProfilePicModal.ts
 import {getAdvertised, getSelectedJobs, logout} from "../lib/api.ts";
 import UpdateProfileModal from "@/components/modals/UpdateProfileModal.tsx";
 
+/**
+ * A ProfilePage komponens a felhasználó profiloldalát jeleníti meg.
+ *
+ * - Betölti a felhasználó kiválasztott és hirdetett munkáit.
+ * - Lehetőséget biztosít a profilkép módosítására és a profil szerkesztésére.
+ * - Kijelentkezési opciót kínál.
+ * - Aszinkron adatlekéréseket végez az API-ból.
+ *
+ * @component
+ */
 export default function ProfilePage(){
     const {user, isLoading, kijelentkezes} = useAuth();
     const [selectedJobs, setSelectedJobs] = useState<Job[]>([]);
     const [ads, setAds] = useState<Job[]>([]);
+    /**
+     * 1: önkéntes munkák nézet
+     * 2: saját hirdetések nézet
+     */
     const [mode, setMode] = useState<1|2>(1)
     const [profilePicChangeModal, setProfilePicChangeModal] = useState(false);
     const navigate = useNavigate();
     const [isProfilePicLoading, setIsProfilePicLoading] = useState<boolean>(false);
     const [updateProfileModal, setUpdateProfileModal] = useState<boolean>(false);
 
+    /**
+     * Aszinkron függvény, amely lekéri a felhasználóhoz tartozó munkákat az API-ból.
+     */
     const fetchJobs = async () => {
         setSelectedJobs(await getSelectedJobs().then((res) => {
             return res
@@ -28,12 +45,18 @@ export default function ProfilePage(){
         fetchJobs();
     }, []);
 
+    /**
+     * Figyeli, hogy a felhasználó be van-e jelentkezve. Ha nincs, akkor átirányít a bejelentkezési oldalra.
+     */
     useEffect(() => {
         if (!isLoading && user === null) {
             navigate('/login');
         }
     }, [user, isLoading]);
 
+    /**
+     * Kijelentkezteti a felhasználót.
+     */
     const handleLogout = async () => {
         await logout();
         kijelentkezes();
@@ -47,6 +70,7 @@ export default function ProfilePage(){
         [&::-webkit-scrollbar-track]:bg-gray-100
         [&::-webkit-scrollbar-thumb]:rounded-full
         [&::-webkit-scrollbar-thumb]:bg-gray-300 ">
+                    {/* Profil fejléc és kép */}
                     <div className=" flex flex-col w-full p-3 items-center text-center ">
 
                         <div className="flex items-center text-center">
@@ -88,6 +112,7 @@ export default function ProfilePage(){
                             </div>
                         </div>
                         <div className=" bg-indigo-950 h-px w-4/5  my-6"></div>
+                        {/* Nézet váltó */}
                         <div
                             className="flex text-2xl flex-row text-center md:w-1/3 md:min-w-fit min-w-[60%] justify-between">
                             <p className="cursor-pointer grow-0 flex-none hover:underline decoration-indigo-950 decoration-1 underline-offset-4"
@@ -97,6 +122,7 @@ export default function ProfilePage(){
                                onClick={() => setMode(2)}>Hírdetés</p>
                         </div>
                     </div>
+                    {/* Tartalom */}
                     {
                         mode == 1 ?
                             (<div className="flex flex-wrap justify-center">

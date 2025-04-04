@@ -5,6 +5,20 @@ import { UpdateUser } from "@/Types/UpdateUser";
 import { User } from "@/Types/User";
 import { useEffect, useState } from "react";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+/**
+ * `UserListCard` komponens, amely egy felhasználói vagy munkaleíró kártyát jelenít meg az adminisztrátor számára.
+ * Tartalmazza a felhasználó vagy munka adatait, és lehetőséget ad azok módosítására és törlésére.
+ *
+ * @component
+ * @example
+ * return <UserListCard user={user} searchTerm="John" onDelete={handleDelete} onUpdate={handleUpdate} />;
+ *
+ * @param {Object} props - A komponens paraméterei
+ * @param {User | Job} props.user - A felhasználó vagy munka, amelyet a kártya megjelenít
+ * @param {string} props.searchTerm - A keresett kifejezés a kiemeléshez
+ * @param {Function} props.onDelete - Funkció, amely a felhasználó vagy munka törlésére szolgál
+ * @param {Function} props.onUpdate - Funkció, amely a felhasználó vagy munka frissítésére szolgál
+ */
 export default function UserListCard({user,searchTerm,onDelete, onUpdate} : {user: User | Job, searchTerm: string, onDelete : (id: string | number) => void, onUpdate : () => void}){
     const {isUser} = useAuth();
     const [isOpen,setIsOpen] = useState(false);
@@ -13,6 +27,10 @@ export default function UserListCard({user,searchTerm,onDelete, onUpdate} : {use
     const [updatedValues,setUpdatesValues] = useState<UpdateUser | null>(null);
     const [isCurrentUser, setIsCurrentUser] = useState<boolean | null>(null);
     useEffect(() => {
+        /**
+         * Ellenőrzi, hogy az elem a jelenlegi felhasználó-e.
+         * Frissíti az `isCurrentUser` állapotot.
+         */
         const fetchUserStatus = async () => {
             const result = await isUser(user);
             setIsCurrentUser(result);
@@ -20,19 +38,40 @@ export default function UserListCard({user,searchTerm,onDelete, onUpdate} : {use
     
         fetchUserStatus();
     }, []);
- 
+
+    /**
+     * Beállítja a felhasználó admin jogosultságát.
+     *
+     * @param {boolean} isAdmin - Az admin jogosultság beállítása
+     */
     const changeAdmin = (isAdmin : boolean) =>{
         setItem({...item, isAdmin: isAdmin});
-    } 
+    }
+    /**
+     * Egy megerősítő üzenetet jelenít meg a törlés előtt.
+     *
+     * @param {string} text - A megerősítő szöveg
+     * @returns {boolean} - A felhasználó válasza (OK vagy Mégse)
+     */
     const showAlertConfirm = (text : string) => {
         return window.confirm(text);
     }
+
+    /**
+     * A módosítások visszavonására szolgáló funkció.
+     * Visszaállítja az elem eredeti állapotát, ha a felhasználó elveti a módosításokat.
+     */
     const handleCancel = () => {
         if(showAlertConfirm("Biztos elakarod vetni?")){
             setItem(user);
             setUpdateing(false);
         }
     }
+
+    /**
+     * A felhasználó vagy munka törlésére szolgáló funkció.
+     * A megerősítés után törli az adatot.
+     */
     const handleDelete = async () => {
         if(showAlertConfirm("Biztos kiakarod törölni?")){
             try{
@@ -50,6 +89,11 @@ export default function UserListCard({user,searchTerm,onDelete, onUpdate} : {use
             }
         }
     }
+
+    /**
+     * A felhasználó vagy munka frissítésére szolgáló funkció.
+     * Ha vannak változások, elküldi az új adatokat a backend-nek.
+     */
     const handleUpdate = async () => {
         if(!updateing){
             alert("Változtass meg valamit!");
@@ -69,6 +113,10 @@ export default function UserListCard({user,searchTerm,onDelete, onUpdate} : {use
         }
     }
     useEffect(() => {
+        /**
+         * Ellenőrzi, hogy van-e módosítás a felhasználó vagy munka adataiban.
+         * Ha vannak, frissíti az állapotokat a módosításokkal.
+         */
         const fetch = async () => {
             const updatedFields : UpdateUser =  await getUpdatedFields();
             if(Object.keys(updatedFields).length !== 0) {
@@ -79,6 +127,13 @@ export default function UserListCard({user,searchTerm,onDelete, onUpdate} : {use
         }
         fetch();
     }, [item])
+
+    /**
+     * Visszaadja a frissített adatokat a felhasználó vagy munka esetén.
+     * Összehasonlítja az eredeti és a módosított adatokat.
+     *
+     * @returns {Promise<UpdateUser>} - A frissített mezők
+     */
     const getUpdatedFields = async () : Promise<UpdateUser> => {
         if(await isUser(user)){
             return Object.fromEntries(
@@ -97,6 +152,13 @@ export default function UserListCard({user,searchTerm,onDelete, onUpdate} : {use
             );
         }
     }
+
+    /**
+     * A keresett kifejezést kie    meli a szövegben.
+     *
+     * @param {string} text - A szöveg, amelyben a keresett kifejezést kiemeljük
+     * @returns {JSX.Element} - A kiemelt szöveg
+     */
     const highLightText = (text : string) => {
         let elements = [];
         let dontHighlight = "";

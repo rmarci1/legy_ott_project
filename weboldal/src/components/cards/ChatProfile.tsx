@@ -2,6 +2,16 @@ import { useAuth } from "@/context/AuthContext";
 import { ChatProfiles } from "@/Types/ChatProfiles";
 import { Profile } from "@/Types/Profile";
 
+/**
+ * `ChatProfile` komponens, amely egy csevegési profil információit jeleníti meg.
+ * A felhasználó rákattinthat, hogy további interakciókat végezzen a kiválasztott profillal.
+ *
+ * @component
+ *
+ * @param {Object} props - A komponens paraméterei
+ * @param {ChatProfiles} props.profile - A csevegés profilját tartalmazó objektum
+ * @param {Function} props.handlePress - A függvény, amely a profil kiválasztásakor fut le
+ */
 export default function ChatProfile({profile, handlePress} : {profile : ChatProfiles, handlePress : (profile: Profile) => void}){
     const {formatDate} = useAuth();
     return (

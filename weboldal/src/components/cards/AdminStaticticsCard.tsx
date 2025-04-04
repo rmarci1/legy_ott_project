@@ -11,6 +11,22 @@ interface Props{
     iconColor: string,
     mainIcon: IconType
 }
+
+/**
+ * `AdminStaticticsCard` komponens, amely különböző adminisztrátori statisztikák megjelenítésére szolgál.
+ * Az információk, mint a statisztikai számok, a különbség, az előző hónaphoz képesti változás és egy szimbólum mind megjelenítésre kerülnek.
+ *
+ * @component
+ *
+ * @param {Object} props - A komponens paraméterei
+ * @param {number} props.count - Az aktuális szám, amit meg kell jeleníteni (pl. felhasználók száma)
+ * @param {number} props.difference - Az aktuális szám és az előző hónap közötti különbség, százalékban kifejezve
+ * @param {string} props.title - A kártya címe, amely leírja, hogy mit jelent a szám
+ * @param {string} props.background - A kártya háttérszíne
+ * @param {string} [props.containerStyles] - Egy opcionális osztály a kártya testreszabásához
+ * @param {string} props.iconColor - Az ikon színe
+ * @param {IconType} props.mainIcon - Az ikon típusa, amely az adott statisztikát szimbolizálja
+ */
 export default function AdminStaticticsCard({count,containerStyles,iconColor,difference,background,title,mainIcon: MainIcon} : Props){
     const isPositive = difference > 1;
     return(

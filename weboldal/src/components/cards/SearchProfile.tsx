@@ -1,6 +1,17 @@
 import { useAuth } from "@/context/AuthContext";
 import { Profile } from "@/Types/Profile";
 
+/**
+ * `SearchProfile` komponens, amely egy keresési eredményként megjeleníti egy felhasználó profilját.
+ * A profil adatainak kiemelése és kattintásra történő feldolgozása történik.
+ *
+ * @component
+ *
+ * @param {Object} props - A komponens paraméterei
+ * @param {Profile} props.profile - A felhasználó profil adatai, amelyeket meg szeretnénk jeleníteni
+ * @param {string} props.searchTerm - A keresési kifejezés, amelyet a szöveg kiemelésére használunk
+ * @param {Function} props.handlePress - Funkció, amely a profilra történő kattintás esetén hívódik meg
+ */
 export default function SearchProfile({profile,searchTerm, handlePress} : {profile : Profile, searchTerm: string, handlePress : (profile : Profile) => void}){
     const { highlightText } = useAuth();
     return (

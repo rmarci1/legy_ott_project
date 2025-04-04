@@ -7,6 +7,14 @@ import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { GoDatabase } from "react-icons/go";
 import { MdOutlineAddBusiness } from "react-icons/md";
+
+/**
+ * Adminisztrátori navigációs sáv komponens, amely az adminisztrátor számára elérhető menüpontokat tartalmazza.
+ * A navigációs sáv a felhasználók és lehetőségek kezelése, hibák és üzenetek nyomon követése céljából van kialakítva.
+ * A felhasználói adatok kezelése lenyíló menüben található.
+ *
+ * @returns {JSX.Element} Az adminisztrátori navigációs sávot tartalmazó komponens.
+ */
 export default function AdminNavbar(){
     const [isUsersOpen,setIsUsersOpen] = useState(false);
     return (
@@ -14,6 +22,7 @@ export default function AdminNavbar(){
             background: 'linear-gradient(to bottom, #1e1b4b 30%, #851fc4 )'
         }}>
           <nav className="space-y-2">
+              {/* Főoldal navigáció */}
             <NavLink
               to="/admin/dashboard"
               className={({ isActive }) =>
@@ -55,6 +64,7 @@ export default function AdminNavbar(){
               </NavLink>
             </div>
           )}
+              {/* Hibák menüpont */}
             <NavLink
               to="/admin/issues"
               className={({ isActive }) =>
@@ -66,6 +76,7 @@ export default function AdminNavbar(){
               <AiOutlineIssuesClose />
               Hibák
             </NavLink>
+              {/* Üzenetek menüpont */}
             <NavLink
               to="/admin/messages"
               className="flex items-center gap-2 p-3 rounded-lg hover:bg-gray-700 relative"

@@ -6,7 +6,15 @@ interface NavItemProps{
     icon: IconType,
     label: string
 }
-
+/**
+ * A navigációs menü eleme, amely tartalmaz egy linket és egy ikont.
+ * A felhasználók a linkre kattintva navigálhatnak az alkalmazás különböző részeire.
+ *
+ * @component
+ * @param {string} to - A link cél URL-je, ahová a felhasználót irányítja.
+ * @param {IconType} icon - Az ikon típus, amelyet a link mellé jelenít meg.
+ * @param {string} label - A linkhez tartozó szöveges címke, amely a felhasználónak a navigációs elem funkcióját írja le.
+ */
 export default function NavItem({ to, icon : Icon, label }: NavItemProps) {
     return (
         <Link to={to} className="flex flex-col md:flex-row items-center">

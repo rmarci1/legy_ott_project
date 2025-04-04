@@ -2,6 +2,12 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * A kártya komponens, amely tartalmazza a kártya külső konténerét.
+ * @param {React.HTMLAttributes<HTMLDivElement>} props - A div elemhez tartozó tulajdonságok.
+ * @param {string} [className] - További CSS osztályok, amelyek a kártya stílusát módosítják.
+ * @returns {JSX.Element} A kártyát tartalmazó elem.
+ */
 const Card = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -17,6 +23,13 @@ const Card = React.forwardRef<
 ))
 Card.displayName = "Card"
 
+
+/**
+ * A kártya fejlécét tartalmazó komponens.
+ * @param {React.HTMLAttributes<HTMLDivElement>} props - A div elemhez tartozó tulajdonságok.
+ * @param {string} [className] - További CSS osztályok a kártya fejlécének stílusához.
+ * @returns {JSX.Element} A kártya fejléce.
+ */
 const CardHeader = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -29,6 +42,12 @@ const CardHeader = React.forwardRef<
 ))
 CardHeader.displayName = "CardHeader"
 
+/**
+ * A kártya címét tartalmazó komponens.
+ * @param {React.HTMLAttributes<HTMLDivElement>} props - A div elemhez tartozó tulajdonságok.
+ * @param {string} [className] - További CSS osztályok a kártya címének stílusához.
+ * @returns {JSX.Element} A kártya címe.
+ */
 const CardTitle = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -41,6 +60,12 @@ const CardTitle = React.forwardRef<
 ))
 CardTitle.displayName = "CardTitle"
 
+/**
+ * A kártya leírását tartalmazó komponens.
+ * @param {React.HTMLAttributes<HTMLDivElement>} props - A div elemhez tartozó tulajdonságok.
+ * @param {string} [className] - További CSS osztályok a kártya leírásának stílusához.
+ * @returns {JSX.Element} A kártya leírása.
+ */
 const CardDescription = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -53,6 +78,12 @@ const CardDescription = React.forwardRef<
 ))
 CardDescription.displayName = "CardDescription"
 
+/**
+ * A kártya tartalmát tartalmazó komponens.
+ * @param {React.HTMLAttributes<HTMLDivElement>} props - A div elemhez tartozó tulajdonságok.
+ * @param {string} [className] - További CSS osztályok a kártya tartalmának stílusához.
+ * @returns {JSX.Element} A kártya tartalma.
+ */
 const CardContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -61,6 +92,12 @@ const CardContent = React.forwardRef<
 ))
 CardContent.displayName = "CardContent"
 
+/**
+ * A kártya láblécét tartalmazó komponens.
+ * @param {React.HTMLAttributes<HTMLDivElement>} props - A div elemhez tartozó tulajdonságok.
+ * @param {string} [className] - További CSS osztályok a kártya láblécének stílusához.
+ * @returns {JSX.Element} A kártya lábléce.
+ */
 const CardFooter = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -73,4 +110,8 @@ const CardFooter = React.forwardRef<
 ))
 CardFooter.displayName = "CardFooter"
 
+/**
+ * A kártya komponensek exportálása.
+ * Tartalmazza a kártya, a fejléc, a cím, a leírás, a tartalom és a lábléc komponenseket.
+ */
 export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }

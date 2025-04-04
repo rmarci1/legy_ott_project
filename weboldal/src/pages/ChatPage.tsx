@@ -15,8 +15,14 @@ import { ReceivedMessage } from "@/Types/ReceivedMessage";
 import Loading from "@/components/Loading";
 import { Profile } from "@/Types/Profile";
 import SearchProfile from "@/components/cards/SearchProfile";
+/**
+ * A `ChatPage` komponens a csevegőoldalt jeleníti meg, ahol a felhasználó cseveghet a különböző profilokkal.
+ * Az oldalon különböző profilok kereshetők, és az üzenetek valós időben frissülnek a WebSocket segítségével.
+ *
+ * @returns {JSX.Element} A chat oldal, ahol a felhasználók üzeneteket küldhetnek és fogadhatnak.
+ */
 export default function ChatPage(){
-    const {user, isLoading, formatDate} = useAuth();
+    const {user, isLoading} = useAuth();
     const [differentProfiles,setDifferentProfiles] = useState<ChatProfiles[]>([]);
     const [profileForMessage,setProfileForMessage] = useState<Profile | null>(null);
     const [isDifferentProfilesLoading,setIsDifferentProfilesLoading] = useState<boolean>(true);
@@ -28,7 +34,11 @@ export default function ChatPage(){
     const [isSearchFocused, setIsSearchFocused] = useState(false);
     const [allProfiles, setAllProfiles] = useState<Profile[]>([]);
     const [allFilteredProfiles, setAllFilteredProfiles] = useState<Profile[]>([]);
-    const [isAllProfilesLoading,setIsAllProfilesLoading] = useState(true);
+
+    /**
+     * Az `useEffect` betölti a felhasználó profiljait és üzeneteit, amint a komponens renderelődik.
+     * A profilok és üzenetek aszinkron lekérése után a megfelelő állapotok frissítésre kerülnek.
+     */
     useEffect(() => {
         if(!isLoading){
           const fetchDifferentProfiles = async () => {
@@ -51,7 +61,6 @@ export default function ChatPage(){
             })
           }
           const fetchAllProfiles = () => {
-            setIsAllProfilesLoading(true);
             getAllProfiles()
             .then((res) => {
               if(res){
@@ -63,13 +72,17 @@ export default function ChatPage(){
               toast.error(error.message);
             })
             .finally(() => {
-              setIsAllProfilesLoading(false);
             })
           }
           fetchDifferentProfiles();
           fetchAllProfiles();
         }    
     }, [isLoading])
+
+    /**
+     * A WebSocket inicializálása és az üzenetek kezelése.
+     * Az üzenetek valós időben történő fogadása és a megfelelő állapot frissítése.
+     */
     useEffect(() => {
       if (!isLoading && user?.id) {
         if (!socket.connected) {
@@ -93,6 +106,12 @@ export default function ChatPage(){
         };
       }
     }, [user?.id, isLoading]);
+
+    /**
+     * Az üzenet küldése a szerver felé, valamint a helyi állapot frissítése.
+     *
+     * @throws {Error} Ha hiba történik az üzenet küldésekor.
+     */
     const handleSendMessage = async () => {
       if (!message.trim()) {
         toast.error("Írj be valamit...");
@@ -129,6 +148,11 @@ export default function ChatPage(){
         }
       }
     }
+    /**
+     * Üzenetek betöltése az adott profilhoz.
+     *
+     * @param {Profile} profile Az adott profil, amelyhez az üzeneteket betöltjük.
+     */
     const loadMessages = async (profile : Profile) => {
       setIsMessageLoading(true);
       setProfileForMessage(profile);
@@ -145,6 +169,11 @@ export default function ChatPage(){
         setIsMessageLoading(false);
       })
     }
+    /**
+     * A keresési kifejezés alapján profilok szűrése.
+     *
+     * @param {string} term A keresési kifejezés, amely alapján a profilokat szűrjük.
+     */
     const handleSearch = (term : string) => {
       const search = term.toLowerCase();
       const result = allProfiles.filter((curr) => (
@@ -154,6 +183,10 @@ export default function ChatPage(){
       setAllFilteredProfiles(result);
       setSearchTerm(term);
     }
+
+    /**
+     * Az üzenetpanel automatikus görgetése az új üzenetekhez.
+     */
     useEffect(() => {
       if (chatContainerRef.current) {
         chatContainerRef.current.scrollTo({

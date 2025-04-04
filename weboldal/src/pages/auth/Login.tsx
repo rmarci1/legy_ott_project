@@ -4,21 +4,44 @@ import { useNavigate } from "react-router"
 import {getUser, pflogin} from '../../lib/api.ts'
 import {useAuth} from "../../context/AuthContext.tsx";
 import {User} from "@/Types/User.ts";
+import {toast, ToastContainer} from "react-toastify";
 
-
+/**
+ * Bejelentkezési komponens, amely lehetővé teszi a felhasználók számára, hogy belépjenek az alkalmazásba.
+ * A felhasználók a felhasználónevüket vagy e-mail címüket és jelszavukat használhatják a bejelentkezéshez.
+ *
+ * @component
+ * @returns {JSX.Element} Bejelentkezéshez készített modállal tér vissza
+ */
 export default function Login(){
+    /** A felhasználó által megadott felhasználónév vagy email cím. */
     const [emailUsername, setEmailUsername] = useState("");
+    /** A felhasználó által megadott jelszó. */
     const [password, setPassword] = useState("");
+    /** Flag, amely jelzi, hogy a jelszó láthatósága bekapcsolva van-e. */
     const [showPassword, setShowPassword] = useState(false);
+    /** A bejelentkezés módja (email vagy felhasználónév). */
     let loginMode = "";
+    /** Navigálás az alkalmazás különböző oldalai között. */
     const navigate = useNavigate();
+    /** Bejelentkezési funkció a kontextusból. */
     const {bejelentkezes} = useAuth();
 
-
+    /**
+     * A jelszó láthatóságának átváltása.
+     * A `showPassword` állapot értéke alapján változtatja meg a jelszó típusát.
+     */
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
-    
+
+    /**
+     * Bejelentkezési esemény kezelő, amely eldönti, hogy email cím vagy felhasználónév alapján történjen a bejelentkezés.
+     * A megfelelő bejelentkezési mód kiválasztása után elküldi a felhasználói adatokat a backendnek.
+     * Ha sikeres a bejelentkezés, a felhasználói profil információk alapján navigál a megfelelő oldalra.
+     *
+     * @param e Az esemény objektum, amely a form beküldését jelzi.
+     */
     const handleLogin = async(e: { preventDefault: () => void; })=>{
         e.preventDefault();
         try{
@@ -40,8 +63,8 @@ export default function Login(){
                 navigate("/admin/dashboard");
             }
         }
-        catch(error){
-            alert(error);
+        catch(error:any){
+            toast.error(error.message);
         }
     }
 
@@ -81,6 +104,7 @@ export default function Login(){
                 </div>
             </form>
         </div>
+            <ToastContainer/>
         </div>
     </>
 }

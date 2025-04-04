@@ -7,11 +7,17 @@ import {User} from "@/Types/User.ts";
 import {IoClose} from "react-icons/io5";
 import ConvertType from "../ConvertType";
 import ConvertText from "../ConvertText";
-
 interface UpdateProfileModalProps{
     setModal: (value: boolean) => void,
 }
 
+/**
+ * Profil frissítő modális ablak, amely lehetővé teszi a felhasználó számára, hogy frissítse személyes adatait, mint például a nevét, felhasználónevét, e-mail címét és leírását.
+ * Az ablak tartalmazza a változtatások mentésére, leírás szerkesztésére, és egyéb szerkesztési lehetőségekre szolgáló funkciókat.
+ *
+ * @param {UpdateProfileModalProps} props - A modal megjelenését és eltüntetését irányító funkció.
+ * @returns {JSX.Element} A profil frissítő modális ablak.
+ */
 export default function UpdateProfileModal({setModal} : UpdateProfileModalProps){
     const {user, bejelentkezes} = useAuth();
     const [form, setForm] = useState<User>(user ?? {} as User);
@@ -23,6 +29,7 @@ export default function UpdateProfileModal({setModal} : UpdateProfileModalProps)
     const [isDescShowVisible,setIsDescShowVisible] = useState<boolean>(false);
     const scrollRef = useRef<HTMLDivElement>(null);
 
+    /** Beállítja, hogy a modál zárható legyen ESC billentyűvel és a kikattintással */
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key === "Escape") {
@@ -43,6 +50,14 @@ export default function UpdateProfileModal({setModal} : UpdateProfileModalProps)
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }
     }, [form.description]);
+
+
+    /**
+     * A felhasználói adatok mentése, ha azok változtak.
+     * Ha nincsenek változtatások, figyelmeztető üzenet jelenik meg.
+     *
+     * @param {React.FormEvent} e - A form elküldésekor meghívott esemény.
+     */
     const handleSave = async (e: any) =>{
         e.preventDefault();
         if(user){
@@ -72,6 +87,9 @@ export default function UpdateProfileModal({setModal} : UpdateProfileModalProps)
             }
         }
     }
+    /**
+     * A változtatásokat észleli, és beállítja a változtatások állapotát.
+     */
     const handleChanges = () =>{
         if(!unsavedChanges){
           setUnsavedChanges(true);

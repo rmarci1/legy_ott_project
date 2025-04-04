@@ -12,6 +12,17 @@ interface jobProps{
     canSaveForLater: boolean
 }
 
+/**
+ * `JobCard` komponens, amely egy adott munkát jelenít meg.
+ * A felhasználó interakciókat hajthat végre, például elmentheti a munkát későbbre, megtekintheti a munkával kapcsolatos részletes információkat,
+ * vagy a munkát végző hirdető profilját.
+ *
+ * @component
+ *
+ * @param {Object} props - A komponens paraméterei
+ * @param {Job} props.Job - A megjelenítendő munkát tartalmazó objektum
+ * @param {boolean} props.canSaveForLater - Meghatározza, hogy a felhasználó elmentheti-e a munkát későbbre
+ */
 export default function JobCard({Job, canSaveForLater}: jobProps){
     const [jobModal, setJobModal] = useState(false);
     const [profileModal, setProfileModal] = useState(false);
@@ -20,6 +31,13 @@ export default function JobCard({Job, canSaveForLater}: jobProps){
     const {user, setSave, attendJob} = useAuth();
     const date = new Date(Job.date);
 
+    /**
+     * A szöveg rövidítése, hogy csak az első 3 sor vagy 150 karakter jelenjen meg.
+     * Ha a szöveg hosszabb, "..." jelet adunk hozzá.
+     *
+     * @param {string} text - A megjelenítendő szöveg
+     * @returns {string} - A rövidített szöveg
+     */
     const trimmedText = (text: string) => {
         const lines = text.split('\n');
         const limitedText = lines.slice(0, 3).join('\n');

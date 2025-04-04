@@ -8,10 +8,31 @@ import { useEffect, useState } from "react";
 import { getDashBoardDatas } from "@/lib/api";
 import { DashBoardData } from "@/Types/DashBoardData";
 import AdminStaticticsCard from "@/components/cards/AdminStaticticsCard";
+
+/**
+ * Az adminisztrátori irányítópultot megjelenítő komponens.
+ * Az irányítópult különböző statisztikákat és adatokat mutat a felhasználók és munkák számáról,
+ * valamint a felhasználó aktivitásáról.
+ *
+ * Az alábbi elemeket tartalmazza:
+ * - Összesítő kártyák a felhasználók és munkák számával.
+ * - Eltöltött idő a felhasználó számára.
+ * - Statisztikák a hónapok közötti különbségekről, például profilok és munkák számáról.
+ * - Napi grafikonok a heti adatokat megjelenítve.
+ *
+ * Az irányítópult adatait a `getDashBoardDatas` API hívás segítségével szerzi be,
+ * és a megjelenítéshez a `Graph` és `AdminPanelCard` komponensek kerülnek felhasználásra.
+ *
+ * @component
+ */
 export default function DashBoard(){
     const {user,isLoading} = useAuth();
     const [data,setData] = useState<DashBoardData | null>(null);
     const [isDashBoardLoading,setIsDashBoardLoading] = useState(false);
+
+    /** A komponens betöltésekor betölti az adatokat
+     * és ha hiba történik akkor visszaküldi
+     */
     useEffect(() => {
         setIsDashBoardLoading(true);
         getDashBoardDatas()
@@ -27,6 +48,12 @@ export default function DashBoard(){
             setIsDashBoardLoading(false);
         })
     },[])
+
+    /**
+     * A felhasználó regisztrációjának időpontjától eltelt napok számának meghatározása.
+     *
+     * @returns {number} A regisztráció óta eltelt napok száma.
+     */
     const getDayDifference = () =>{
         const d1 = new Date();
         const d2 = new Date(user?.created!);

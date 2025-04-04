@@ -10,10 +10,26 @@ interface UpdateJobModalProps{
     setJobModal: (value: boolean) => void;
     job: Job
 }
-
+/**
+* `UpdateJobModal` komponens a munka frissítésére szolgál.
+*
+* Ez a komponens biztosítja a felhasználónak a munka adatainak módosítását, beleértve a nevet, dátumot, címet és leírást.
+* Az `Escape` billentyű lenyomásával bezárható, és visszatérhetünk az alapértelmezett nézethez.
+*
+* @component
+*
+* @param {Object} props - A komponens paraméterei
+* @param {Function} props.setModal - Funkció a modal bezárásához
+* @param {Function} props.setJobModal - Funkció a munka modal állapotának kezeléséhez
+* @param {Job} props.job - A frissíteni kívánt munka adatai
+*/
 export default function UpdateJobModal({setModal, job, setJobModal}: UpdateJobModalProps){
     const [form, setForm] = useState<Job>(job ?? {} as Job);
 
+    /**
+     * Hatással van a billentyűzet eseményekre, különösen az "Escape" billentyűre.
+     * A "Escape" lenyomásakor bezárja a modal-t és visszavált az alapértelmezett nézethez.
+     */
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key === "Escape") {
@@ -31,6 +47,13 @@ export default function UpdateJobModal({setModal, job, setJobModal}: UpdateJobMo
         };
     }, []);
 
+    /**
+     * A munka adatainak mentését végzi el.
+     * Ha nincs változtatás, figyelmeztetést jelenít meg.
+     * Sikeres mentés esetén értesítést küld.
+     *
+     * @param {React.FormEvent} e - Az űrlap beküldésére tett esemény
+     */
     const handleSave = async (e: any) => {
         e.preventDefault();
         const updatedField = Object.fromEntries(

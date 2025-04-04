@@ -1,3 +1,10 @@
+
+/**
+ * A betöltési animációs komponens, amely egy forgó pörgettyűt jelenít meg.
+ * A `div` elem középre van igazítva, és az animáció folyamatos forgást biztosít a pörgettyű számára.
+ *
+ * @returns {JSX.Element} A betöltési animációval rendelkező JSX elem.
+ */
 export default function Loading(){
     return (
         <div className="flex justify-center items-center h-full">

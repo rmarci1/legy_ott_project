@@ -9,16 +9,41 @@ interface ChangeProfilePicModalProps{
     setIsLoading: (value: boolean) => void
 }
 
+/**
+ * `ChangeProfilePicModal` komponens, amely lehetővé teszi a felhasználó számára a profilkép módosítását.
+ * A felhasználó képet tölthet fel, amelyet a rendszer feltölt és frissíti a felhasználó profilját.
+ *
+ * @component
+ * @example
+ * return <ChangeProfilePicModal setModal={setModal} setIsLoading={setIsLoading} />;
+ *
+ * @param {Object} props - A komponens paraméterei
+ * @param {Function} props.setModal - Funkció a modal bezárásához
+ * @param {Function} props.setIsLoading - Funkció a betöltési állapot kezeléséhez
+ */
 export default function ChangeProfilePicModal({setModal, setIsLoading}: ChangeProfilePicModalProps) {
     const {user, checkUser} = useAuth();
     const [file, setFile] = useState<string | Blob>("");
 
+    /**
+     * A fájlváltoztatás eseménykezelője.
+     * Beállítja a kiválasztott fájlt a komponens állapotában.
+     *
+     * @param {ChangeEvent<HTMLInputElement>} e - A fájl kiválasztásához kapcsolódó esemény
+     */
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
             setFile(e.target.files![0]);
         }
     };
 
+    /**
+     * A profilkép feltöltésére szolgáló funkció.
+     * A kiválasztott képet a backend rendszerhez küldi.
+     * Hibakezelés és visszajelzés a felhasználónak.
+     *
+     * @param {any} e - A form elküldéséhez kapcsolódó esemény
+     */
     async function handleSendPic(e: any) {
         e.preventDefault();
         if (!file) {
@@ -43,24 +68,24 @@ export default function ChangeProfilePicModal({setModal, setIsLoading}: ChangePr
             setIsLoading(false);
         }
 
-        checkUser()
+        checkUser(); // Frissíti a felhasználói adatokat
 
-        setModal(false)
+        setModal(false); // Bezárja a modalt a sikeres feltöltés után
     }
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key === "Escape") {
-                setModal(false);
+                setModal(false); // Esc gombbal bezárja a modalt
             }
         };
 
-        document.addEventListener("keydown", handleKeyDown);
+        document.addEventListener("keydown", handleKeyDown); // Billentyűzet figyelése
 
-        document.body.style.overflow = "hidden";
+        document.body.style.overflow = "hidden"; // Tiltja a görgetést
         return () => {
-            document.body.style.overflow = "auto";
-            document.addEventListener("keydown", handleKeyDown);
+            document.body.style.overflow = "auto"; // Törli a görgetési tiltást a komponens eltávolítása után
+            document.removeEventListener("keydown", handleKeyDown); // Billentyűzet esemény eltávolítása
         };
     }, []);
     return <>

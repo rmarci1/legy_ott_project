@@ -9,6 +9,17 @@ import { IoSearchOutline } from "react-icons/io5";
 import AdminDropDown from "./cards/AdminDropDown";
 import UserListCard from "./cards/UserListCard";
 
+/**
+ * Az `AdminListPage` komponens egy adminisztrátori felületet jelenít meg,
+ * amely lehetővé teszi a felhasználók vagy munkák listájának megjelenítését és kezelését.
+ * A komponens tartalmaz egy kereső- és szűrőfunkciót, valamint lehetőséget biztosít
+ * az oldalankénti megjelenítendő elemek számának beállítására és az oldal navigálására.
+ *
+ * @param {Object} props - A komponens bemeneti paraméterei.
+ * @param {boolean} props.listUsers - Meghatározza, hogy felhasználókat vagy munkákat listázunk-e.
+ *
+ * @returns {JSX.Element} A komponens egy adminisztrátori listát jelenít meg a felhasználókról vagy munkákról.
+ */
 export default function AdminListPage({listUsers} : {listUsers : boolean}){
     const {user,isLoading,isListUser} = useAuth();
     const [isListLoading,setIsListLoading] = useState(true);
@@ -26,12 +37,16 @@ export default function AdminListPage({listUsers} : {listUsers : boolean}){
     const [filterForm, setFilterForm] = useState<{admin : boolean | null}>({
       admin : null,
     });
+
+    // Adatok betöltése és szűrés az oldalszám változásakor
     useEffect(() => {
           if(!isLoading && !isListLoading){
             const users = allFilteredContent.slice(((currentPage? currentPage : 1) - 1) * (contentPerPage ? contentPerPage : 0), (currentPage ? currentPage : 1)*(contentPerPage ? contentPerPage : filteredContent.length))
             setFilteredContent(users);
           }
         }, [currentPage,totalPages]);
+
+    // Az adatok betöltése az API-ból
     useEffect(() => {
         setIsListLoading(true);
           const fetchData = listUsers ? getAllUsersForAdmin() : getAllJobsforAdmin();
@@ -51,6 +66,8 @@ export default function AdminListPage({listUsers} : {listUsers : boolean}){
             setIsListLoading(false);
           })
     },[refresh]);
+
+    // A szűrés alapú adatok frissítése
     useEffect(() => {
       if(!isLoading && !isListLoading){
         const timeoutId = setTimeout(() => {
@@ -63,6 +80,15 @@ export default function AdminListPage({listUsers} : {listUsers : boolean}){
         return () => clearTimeout(timeoutId);
       }
     }, [contentPerPage])
+
+    /**
+     * A kereső és szűrő logika megvalósítása, amely a felhasználói vagy munkaadatok alapján
+     * végzi el a szűrést, figyelembe véve a keresési kifejezést és dátumot.
+     *
+     * @param {string} event - A keresési kifejezés.
+     * @param {Array<User|Job>} allContent - Az összes tartalom (felhasználók vagy munkák).
+     * @param {string} [date] - Opcionálisan megadott dátum szűrés.
+     */
     const handleSearch = async (event: string, allContent : (User| Job)[], date? : string) => {
         const term = event.toLocaleLowerCase();
         setSearchTerm(term);
@@ -88,6 +114,12 @@ export default function AdminListPage({listUsers} : {listUsers : boolean}){
         setFilteredContent(filtered.slice(0,50));
         setTotalPages(Math.ceil(filtered.length/contentPerPage));
     }
+
+    /**
+     * A törlés logikája, amely a felhasználókat vagy munkákat törli és frissíti a listát.
+     *
+     * @param {string | number} id - A törölni kívánt elem azonosítója.
+     */
     const handleDeleteWithUpdate = async (id : string | number) => {
         let data : (User | Job)[] = []
         if (listUsers){

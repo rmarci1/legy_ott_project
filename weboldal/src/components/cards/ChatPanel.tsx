@@ -1,5 +1,17 @@
 import { Message } from "@/Types/Message";
 
+/**
+ * `ChatPanel` komponens, amely egy üzenetet jelenít meg a csevegőpanelen.
+ * Az üzenet a küldőtől (sender) vagy a másik féltől (receiver) függően különböző stílusokkal jelenik meg.
+ * A küldő üzenete más háttérszínnel, míg a fogadó üzenete más színnel jelenik meg.
+ *
+ * @component
+ *
+ * @param {Object} props - A komponens paraméterei
+ * @param {Message} props.message - Az üzenet objektum
+ * @param {string} props.profilePic - A profilkép URL-je
+ * @param {boolean} props.isSender - True, ha a felhasználó küldte az üzenetet, false, ha másik fél
+ */
 export default function ChatPanel({message, profilePic, isSender} : {message: Message, profilePic: string, isSender: boolean}){
     return (
         <div key={message.id} className={`flex flex-row my-2 ${isSender && "justify-end"}`}>

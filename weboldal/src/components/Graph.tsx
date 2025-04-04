@@ -1,9 +1,4 @@
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
-interface Props{
-  day?: string,
-  thisWeek?: number,
-  pastWeek?: number, 
-}
 import {
   Card,
   CardContent,
@@ -15,6 +10,19 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 
+interface Props{
+  day?: string,
+  thisWeek?: number,
+  pastWeek?: number, 
+}
+/**
+ * A `Graph` komponens egy területi diagramot jelenít meg két adatcsoportra vonatkozóan: az aktuális hétre és az előző hétre.
+ * A komponens a `recharts` könyvtár segítségével generálja a grafikus chart-ot.
+ *
+ * @param {Props[]} data - A grafikon megjelenítéséhez szükséges adatok, amely tartalmazza a napokat és a heti adatokat.
+ *
+ * @returns {JSX.Element} - A grafikon komponens, amely tartalmazza az adatokat és a megfelelő vizuális elemeket.
+ */
 export default function Graph({ data }: { data?: Props[] |any}) {  
   const chartConfig = {
     thisWeek: {

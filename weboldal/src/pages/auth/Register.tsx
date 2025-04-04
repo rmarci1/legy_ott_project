@@ -2,7 +2,15 @@ import { useEffect, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router";
 import {register} from '../../lib/api'
+import {toast, ToastContainer} from "react-toastify";
 
+/**
+ * Regisztrációs komponens, amely lehetővé teszi a felhasználók számára, hogy regisztráljanak az alkalmazásba.
+ * A felhasználók a nevüket, felhasználónevüket, e-mail címüket és jelszavukat adják meg.
+ *
+ * @component
+ * @returns {JSX.Element} Egy regisztráláshoz készített modált dob vissza
+ */
 export default function Register(){
 
     const [name, setName] = useState('');
@@ -13,12 +21,21 @@ export default function Register(){
     const [password2, setPassword2] = useState('');
     const [showPassword, setShowPassword] = useState(false);
 
+    /**
+     * A jelszó láthatóságának átváltása.
+     * A `showPassword` állapot értéke alapján változtatja meg a jelszó típusát.
+     */
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
     
     const navigate = useNavigate();
 
+    /**
+     * `useEffect` hook, amely figyeli a `name` változót.
+     * Ellenőrzi, hogy nem találhatóak-e két egymás melletti szóközök a névben.
+     * Ha ilyen szóközök találhatók, eltávolítja őket és hibát dob.
+     */
     useEffect(()=>{
         try{
             if(name[name.length-1]  == " " && name[name.length-2] == " "){
@@ -28,17 +45,27 @@ export default function Register(){
             if(!uniqueUserName){
                 setUserName(name.toLowerCase().replace(/ /g, '.'));
             }
-        } catch(error){
-            alert(error)
+        } catch(error:any){
+            toast.warn(error.message)
         }
     }, [name])
 
+    /**
+     * `useEffect` hook, amely figyeli a `userName` változót.
+     * Ha a felhasználónév üres, letiltja az egyedi felhasználónév ellenőrzését.
+     */
     useEffect(()=>{
         if(userName.length == 0){
             setUniqueUserName(false);
         }
     }, [userName])
 
+    /**
+     * Regisztrációs esemény kezelő, amely a felhasználói adatokat elküldi a backend API-nak.
+     * Ha sikeres a regisztráció, átirányítja a felhasználót a bejelentkezési oldalra.
+     *
+     * @param e Az esemény objektum, amely a form beküldését jelzi.
+     */
     const handleRegister = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
         try{
@@ -46,8 +73,8 @@ export default function Register(){
 
             navigate("/login")
         }
-        catch(error){
-            alert(error);
+        catch(error: any){
+            toast.error(error.message);
         }
     }
 
@@ -117,6 +144,7 @@ export default function Register(){
                 </div>
             </form>
         </div>
+            <ToastContainer/>
         </div>
     </>
 }

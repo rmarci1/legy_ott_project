@@ -18,11 +18,33 @@ interface JobModalProps {
     setAdvertiser : (value: Advertiser) => void;
 }
 
+/**
+ * `JobModal` komponens, amely megjeleníti egy adott munkához kapcsolódó információkat,
+ * beleértve a munkát, a hirdetőt és a résztvevőket. A felhasználók jelentkezhetnek a munkára,
+ * vagy lemondhatják a jelentkezésüket. A munkát a hirdető törölheti vagy szerkesztheti.
+ *
+ * @component
+ * @example
+ * return <JobModal job={job} user={user} setModal={setModal} setProfileModal={setProfileModal} setAdvertiser={setAdvertiser} />;
+ *
+ * @param {Object} props - A komponens paraméterei
+ * @param {Job} props.job - A munkához tartozó adatok
+ * @param {User} [props.user] - Az aktuálisan bejelentkezett felhasználó (opcionális)
+ * @param {Function} props.setModal - Funkció a modal bezárásához
+ * @param {Function} props.setProfileModal - Funkció a profil modal állapotának kezeléséhez
+ * @param {Function} props.setUpdateJobModal - Funkció a munka szerkesztési modal állapotának kezeléséhez
+ * @param {Function} props.attendJob - Funkció a munkára való jelentkezéshez vagy lemondásához
+ * @param {Function} props.setAdvertiser - Funkció a hirdető profil adatainak beállításához
+ */
 export default function JobModal({ job, user, setModal,setUpdateJobModal, attendJob, setProfileModal, setAdvertiser }: JobModalProps) {
-    const date = new Date(job.date);
-    const today = new Date();
-    const { deleteJobById } = useAuth();
+    const date = new Date(job.date); // A munka időpontja
+    const today = new Date(); // A mai dátum
+    const { deleteJobById } = useAuth(); // A munka törléséhez szükséges hook
 
+    /**
+     * Az adott hirdető profil adatainak betöltése.
+     * @param {string} username - A hirdető felhasználóneve
+     */
     const getAdvertiser = async(username: string) => {
         setAdvertiser( {
             ...(await getProfile(username)),
@@ -33,28 +55,32 @@ export default function JobModal({ job, user, setModal,setUpdateJobModal, attend
     }
 
     useEffect(() => {
-
+        // A hirdető adatainak betöltése
         getAdvertiser(job.from);
 
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key === "Escape") {
-                setModal(false);
+                setModal(false); // Esc gombbal bezárja a modalt
             }
         };
 
-        document.addEventListener("keydown", handleKeyDown);
+        document.addEventListener("keydown", handleKeyDown); // Billentyűzet figyelése
 
-        document.body.style.overflow = "hidden";
+        document.body.style.overflow = "hidden"; // Tiltja a görgetést
         return () => {
-            document.body.style.overflow = "auto";
-            document.addEventListener("keydown", handleKeyDown);
+            document.body.style.overflow = "auto"; // Törli a görgetési tiltást a komponens eltávolítása után
+            document.removeEventListener("keydown", handleKeyDown); // Billentyűzet esemény eltávolítása
         };
     }, []);
 
+    /**
+     * A munka törlésére szolgáló funkció.
+     * A törlés után értesítést jelenít meg a felhasználónak.
+     */
     const handleDelete = async () => {
-        deleteJobById(job.id)
-        toast('Sikeresen törölve lett!')
-        setModal(false);
+        deleteJobById(job.id); // A munka törlése
+        toast.success('Sikeresen törölve lett!'); // Értesítés megjelenítése
+        setModal(false); // Modal bezárása
     }
 
     return (

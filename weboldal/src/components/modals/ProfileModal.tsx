@@ -16,6 +16,21 @@ interface ProfileModalProps {
     advertiser: Advertiser;
 }
 
+/**
+ * `ProfileModal` komponens a felhasználói profil megjelenítésére és az értékelések kezelésére szolgál.
+ * A felhasználó profilképe, neve, felhasználóneve, leírása és értékelései láthatók.
+ * Az értékelés írására is lehetőség van, ha a felhasználónak joga van értékelni.
+ *
+ * @component
+ * @example
+ * return <ProfileModal setModal={setModal} setJobModal={setJobModal} advertiser={advertiser} />;
+ *
+ * @param {Object} props - A komponens paraméterei
+ * @param {User} [props.user] - Az aktuálisan bejelentkezett felhasználó (opcionális)
+ * @param {Function} props.setModal - Funkció a modal bezárásához
+ * @param {Function} props.setJobModal - Funkció a munka modal állapotának kezeléséhez
+ * @param {Advertiser} props.advertiser - Az adott hirdető (profil) adatai
+ */
 export default function ProfileModal({ setModal, setJobModal, advertiser }: ProfileModalProps) {
     const [canRev, setCanRev] = useState(false);
     const [reviewList, setReviewList] = useState<Review[]>([])
@@ -24,6 +39,11 @@ export default function ProfileModal({ setModal, setJobModal, advertiser }: Prof
     const manuallyAddedReview = useRef(false);
 
 
+
+    /**
+     * Az `Effect` hook kezeli a komponens inicializálását, a profil betöltését és az "Escape" billentyű figyelését.
+     * Ha nem létezik a hirdető profil, figyelmeztetést küld.
+     */
     useEffect(() => {
         setJobModal(false);
         if (!advertiser) {
@@ -52,6 +72,9 @@ export default function ProfileModal({ setModal, setJobModal, advertiser }: Prof
         };
     }, []);
 
+    /**
+     * A második `useEffect` hook biztosítja, hogy az új értékelések megjelenítésekor görgessen a nézet az új értékeléshez.
+     */
     useEffect(() => {
         if (isInitialRender.current) {
             isInitialRender.current = false;
@@ -66,8 +89,6 @@ export default function ProfileModal({ setModal, setJobModal, advertiser }: Prof
     }, [reviewList]);
 
     if (!advertiser) return null;
-
-
 
     return (
         <>

@@ -3,9 +3,22 @@ import * as RechartsPrimitive from "recharts"
 
 import { cn } from "@/lib/utils"
 
-// Format: { THEME_NAME: CSS_SELECTOR }
+/**
+ * A diagrammákhoz tartozó témák.
+ * @constant
+ */
 const THEMES = { light: "", dark: ".dark" } as const
 
+
+/**
+ * A diagram elemeinek konfigurációja.
+ * Tartalmazza a színt, a címkét, az ikont, valamint a téma-specifikus beállításokat.
+ * @typedef ChartConfig
+ * @property {React.ReactNode} [label] - A diagram elemhez tartozó címke.
+ * @property {React.ComponentType} [icon] - Az elemhez tartozó ikon, ha van.
+ * @property {string} [color] - Az elem színe, ha nincs téma beállítva.
+ * @property {Record<keyof typeof THEMES, string>} [theme] - A téma-specifikus színek.
+ */
 export type ChartConfig = {
   [k in string]: {
     label?: React.ReactNode
@@ -16,12 +29,26 @@ export type ChartConfig = {
   )
 }
 
+/**
+ * A ChartContext propjait tartalmazó típus.
+ * @typedef ChartContextProps
+ * @property {ChartConfig} config - A diagram konfigurációja.
+ */
 type ChartContextProps = {
   config: ChartConfig
 }
 
+/**
+ * ChartContext, amely lehetővé teszi a diagram konfigurációjának elérését a komponensek között.
+ * @constant
+ */
 const ChartContext = React.createContext<ChartContextProps | null>(null)
 
+/**
+ * Hook, amely lehetővé teszi a ChartContext elérését.
+ * @returns {ChartContextProps} A diagram konfigurációját tartalmazó objektum.
+ * @throws {Error} Ha a hook-ot nem a <ChartContainer /> komponensben használják.
+ */
 function useChart() {
   const context = React.useContext(ChartContext)
 
@@ -32,6 +59,13 @@ function useChart() {
   return context
 }
 
+/**
+ * A diagrammát tartalmazó konténer komponens.
+ * @param {React.ComponentProps<"div">} props - A div elemhez tartozó tulajdonságok.
+ * @param {ChartConfig} config - A diagram konfigurációja.
+ * @param {React.ReactNode} children - A diagram tartalmát alkotó gyermek elemek.
+ * @returns {JSX.Element} A diagramot megjelenítő elem.
+ */
 const ChartContainer = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> & {
@@ -65,6 +99,12 @@ const ChartContainer = React.forwardRef<
 })
 ChartContainer.displayName = "Chart"
 
+/**
+ * A diagrammákhoz tartozó stílusok dinamikus generálása.
+ * @param {string} id - A diagram azonosítója.
+ * @param {ChartConfig} config - A diagram konfigurációja.
+ * @returns {JSX.Element} A stílust tartalmazó <style> elem.
+ */
 const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
   const colorConfig = Object.entries(config).filter(
     ([, config]) => config.theme || config.color
@@ -98,8 +138,20 @@ ${colorConfig
   )
 }
 
+/**
+ * A diagram tooltip komponens.
+ * Az adatok megjelenítése és formázása a tooltip-ben.
+ */
 const ChartTooltip = RechartsPrimitive.Tooltip
 
+/**
+ * A diagram tooltip tartalmát megjelenítő komponens.
+ * @param {object} props - A tooltip paraméterei.
+ * @param {boolean} [hideLabel=false] - A címke elrejtése.
+ * @param {boolean} [hideIndicator=false] - Az indikátor elrejtése.
+ * @param {"line" | "dot" | "dashed"} [indicator="dot"] - Az indikátor típusa.
+ * @returns {JSX.Element} A tooltip tartalma.
+ */
 const ChartTooltipContent = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<typeof RechartsPrimitive.Tooltip> &

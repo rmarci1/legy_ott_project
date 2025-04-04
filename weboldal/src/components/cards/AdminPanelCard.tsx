@@ -7,6 +7,18 @@ interface Props{
     pastWeekCount: number,
 }
 
+/**
+ * `AdminPanelCard` komponens, amely egy admin panelen lévő statisztikai adatokat jelenít meg.
+ * A komponens tartalmaz egy ikont, egy címet, az aktuális számot és az előző héthez képest történt változást.
+ *
+ * @component
+ *
+ * @param {Object} props - A komponens paraméterei
+ * @param {IconType} props.logo - Az ikon, amely szimbolizálja a statisztikát
+ * @param {string} props.title - A statisztikai adat neve (pl. új regisztrációk)
+ * @param {number} props.count - Az aktuális statisztikai szám
+ * @param {number} props.pastWeekCount - A múlt héthez képest történt változás (pozitív vagy negatív szám)
+ */
 export default function AdminPanelCard({logo: Logo, title, count, pastWeekCount}: Props){
     const isPositive = pastWeekCount > 0;
     return (

@@ -8,7 +8,18 @@ interface ListingComponentProps {
     setShow: (value: boolean) => void,
     jobs: Job[]
 }
-
+/**
+ * A `ListingComponent` egy dinamikus komponens, amely egy cím és egy munkalista megjelenítésére szolgál.
+ * Az "összecsukható" funkcióval lehetőséget ad arra, hogy a felhasználó elrejtse vagy megjelenítse a munkákat.
+ * Az ikonok (GoTriangleDown és GoTriangleRight) segítségével irányítható az összecsukás vagy kibontás.
+ *
+ * @param {string} title - A lista címe (pl. "Elmentett munkák").
+ * @param {boolean} show - Ha igaz, a munkák láthatóak, ha hamis, akkor rejtve vannak.
+ * @param {function} setShow - A `show` érték frissítésére szolgáló függvény.
+ * @param {Job[]} jobs - A munkák listája, amelyeket meg szeretnénk jeleníteni.
+ *
+ * @returns {JSX.Element} - A dinamikusan összecsukható és bővíthető lista komponens.
+ */
 export default function ListingComponent({title, show, setShow, jobs}: ListingComponentProps){
     return <>
         <div className="flex flex-col">

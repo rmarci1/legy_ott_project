@@ -5,6 +5,15 @@ interface reviewCardProps{
     review: Review
 }
 
+/**
+ * `ReviewCard` komponens, amely egy felhasználói véleményt jelenít meg.
+ * A komponens megjeleníti a vélemény adatait, beleértve a felhasználó nevét, a véleményt és a hozzátartozó értékelést.
+ *
+ * @component
+ *
+ * @param {Object} props - A komponens paraméterei
+ * @param {Review} props.review - A felhasználói vélemény adatainak objektuma
+ */
 export default function ReviewCard({review} : reviewCardProps){
     return <>
         <div className="flex flex-col w-full bg-blue-600/25 rounded-3xl">

@@ -5,6 +5,18 @@ import {useNavigate} from "react-router";
 import {Job} from "@/Types/Job.ts";
 import {getArchivedAds, getArchivedJobs} from "@/lib/api.ts";
 
+/**
+ * Az `InteractedJobs` komponens a felhasználó által mentett és archivált állásokat, illetve hirdetéseket jeleníti meg.
+ *
+ * - Ha a felhasználó be van jelentkezve, akkor három különböző kategóriába sorolt álláshirdetéseket láthat:
+ *   1. Elmentett munkák
+ *   2. Archivált munkák
+ *   3. Archivált hirdetések
+ * - Ha a felhasználó nincs bejelentkezve, egy figyelmeztető üzenet jelenik meg, amely a bejelentkezésre ösztönöz.
+ *
+ * @component
+ * @returns {JSX.Element} Az interakciókat és hirdetéseket kezelő komponens.
+ */
 export default function InteractedJobs(){
     const [saved, setSaved] = useState(false)
     const [jobs, setJobs] = useState(true);
@@ -14,6 +26,13 @@ export default function InteractedJobs(){
     const navigate = useNavigate();
     const { user, savedJobs, checkUser } = useAuth();
 
+    /**
+     * A komponens betöltésekor ellenőrzi a felhasználó bejelentkezési státuszát,
+     * majd lekéri az archivált munkákat és hirdetéseket az API-ból.
+     *
+     * @async
+     * @function fetchData
+     */
     useEffect(() => {
         const fetchData = async () => {
             await checkUser();

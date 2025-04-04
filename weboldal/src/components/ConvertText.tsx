@@ -1,3 +1,21 @@
+/**
+ * A `ConvertText` komponens a bemeneti szöveget Markdown formátumban dolgozza fel
+ * és alakítja át HTML-ben megjeleníthető szöveggé. A komponens rekurzívan feldolgozza
+ * a szöveget, figyelembe véve a Markdown szintaxis elemeit, mint például címek, félkövér,
+ * dőlt betűk, és megfelelően alkalmazza a HTML formázást.
+ *
+ * @param {Object} props - A komponens bemeneti paraméterei.
+ * @param {string | string[]} props.text - A bemeneti szöveg, amelyet formázni kell.
+ *  Lehet egy egyszerű string vagy stringekből álló tömb.
+ * @param {boolean} [props.isHeader=false] - Meghatározza, hogy a szöveg egy fejléc (cím)
+ *  legyen-e. Ha igaz, a szöveg külön stílust kap.
+ * @param {number} [props.value] - A címek szintje, amely meghatározza a cím stílusát.
+ *  A Markdown-ban használt `#` szintaktikához hasonlóan.
+ * @param {number} [props.currentIndex] - Az aktuális index, amely nem aktív a komponensben,
+ *  de később bővítésre kerülhet.
+ *
+ * @returns {JSX.Element} A formázott szöveget tartalmazó HTML elemeket.
+ */
 export default function ConvertText({ text, isHeader, value }: {text: string  | string[], isHeader?: boolean, value?: number, currentIndex?: number}) {
     let add = false;
     let sections : string[] = [];
