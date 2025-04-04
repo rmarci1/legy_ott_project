@@ -9,7 +9,7 @@ import { Feather } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
 
 const showProfiles = () => {
-    const { setProfileForMessage, showToast, toastConfig, } = useGlobalContext();
+    const { setProfileForMessage, showToast, toastConfig, user} = useGlobalContext();
     const [profiles,setProfiles] = useState([]);
     const [filterProfiles,setFilterProfiles] = useState([]);
     const [isProfilesLoading,setIsProfilesLoading] = useState(false);
@@ -42,7 +42,7 @@ const showProfiles = () => {
         const searchProfiles = profiles.filter((curr) => curr.username.toLowerCase().includes(searchTerm) || curr.name.toLowerCase().includes(searchTerm));
         setFilterProfiles(searchProfiles);
     }
-    const renderProfiles = ({item}) => {
+    const renderProfiles = (item) => {
         return (
             <TouchableOpacity 
                   className="p-3 border-b border-gray-300 flex-row"
@@ -79,7 +79,11 @@ const showProfiles = () => {
             <View className='flex-1'>                  
                 <FlashList
                     data={filterProfiles}
-                    renderItem={renderProfiles}
+                    renderItem={({item}) => {
+                        if(item.id !== user.id){
+                            return renderProfiles(item)
+                        }}
+                    }
                     estimatedItemSize={50}
                 />
             </View>

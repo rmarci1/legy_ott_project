@@ -46,7 +46,6 @@ const settings = () => {
     try{
       const res = await updateProfile(updatedField);
       setUser((prev) => res);
-      console.log("Változtatva");
       showToast("success","Sikeres szerkesztés");
     }
     catch(error){

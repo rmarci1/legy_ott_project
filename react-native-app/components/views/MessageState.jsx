@@ -6,7 +6,6 @@ const MessageState = ({ isSender, containerStyles, item }) => {
     const { formatDate, user } = useGlobalContext();
     return (
       <TouchableOpacity 
-        onLongPress={() => console.log("You held it for long enough")}
         activeOpacity={1}
         className={`w-full flex-row ${containerStyles} ${isSender && "justify-end"}`}
       >

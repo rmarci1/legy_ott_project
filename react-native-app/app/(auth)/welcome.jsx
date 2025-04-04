@@ -44,7 +44,6 @@ const welcome = () => {
       router.navigate('/login');
     }
     catch(error){
-      console.log("hiba");
       showToast("error","Hiba",error.message);
     }
     finally{

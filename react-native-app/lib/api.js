@@ -17,7 +17,6 @@ export const register = async (name,username, password, email)=> {
         return data;
     } 
     catch (error) {
-        console.log(error);
         throw new Error(error.message);
     }
 };
@@ -94,7 +93,7 @@ export const UpdateJobPic = async (jobId,img) => {
               xhr.setRequestHeader('Content-Type', 'multipart/form-data');
               xhr.send(formData);  
         }).catch((error) => {
-            console.log(error);
+            throw new Error(error);
         })
     }
     catch(error){
@@ -122,7 +121,7 @@ export const UpdateProfilePic = async (img) => {
               xhr.setRequestHeader('Content-Type', 'multipart/form-data');
               xhr.send(formData);  
         }).catch((error) => {
-            console.log(error);
+            throw new Error(error);
         })
     }
     catch(error){
@@ -154,7 +153,6 @@ export const getAdvertisement = async (endpoint) => {
             credentials : 'include'
         })
         const data = await response.json();
-        console.log(data);
         if(!response.ok){
             throw new Error(data.message);
         }
@@ -311,7 +309,6 @@ export const attending = async (jobId, update) => {
             credentials: 'include'
         })
         const data = await response.json();
-        console.log(response.ok);
         if(!response.ok){
             throw new Error(data.message);
         }
