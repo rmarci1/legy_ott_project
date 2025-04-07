@@ -13,27 +13,8 @@ async function bootstrap() {
   app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe());
 
-  const allowedOrigins = [
-    'http://localhost:5173',
-    'http://localhost:3000',
-    'http://192.168.11.82:3000',
-    'http://192.168.11.142:8081',
-    'http://192.168.11.171:5173',
-    'http://192.168.1.35:5173',
-    'http://192.168.11.40:5173',
-    'http://192.168.56.1:5173',
-    'http://192.168.1.53:5173',
-  ];
-
-
   app.enableCors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
+    origin: true,
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     preflightContinue: false,
