@@ -1,6 +1,7 @@
 {
-  "entryPoints": ["src"],
+  "entryPoints": ["components", "app", "lib", "context", "constants"],
   "out": "docs",
+  "entryPointStrategy": "expand",
   "exclude": ["**/__tests__/**", "**/*.spec.ts", "**/*.test.ts"],
   "includeVersion": true,
   "tsconfig": "./tsconfig.json"

@@ -79,7 +79,6 @@ const welcome = () => {
     <View className="min-h-[100vh] items-center justify-center">
       <View className='h-[30%]'>
       <Swiper
-        className=""
         autoplay={false}
         loop={false}
         showsButtons={true}
