@@ -1,24 +1,30 @@
-import { Image, RefreshControl, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, RefreshControl, Text, TouchableOpacity, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useGlobalContext } from '@/context/GlobalProvider';
 import Toast from 'react-native-toast-message';
-import { io } from 'socket.io-client';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FlashList } from '@shopify/flash-list';
-import CustomButton from '@/components/CustomButton';
-import { createMessage, getDifferentProfiles, getMessages } from '@/lib/api';
+import { getDifferentProfiles } from '@/lib/api';
 import { router } from 'expo-router';
-import images from '@/constants/images';
 import { AntDesign } from '@expo/vector-icons';
 
-const AnotherOne = () => {
+/**
+ * A képernyő, amely megjeleníti az utóbbi üzeneteket tartalmazó profilokat, és lehetővé teszi az üzenetek megtekintését.
+ * 
+ * @returns {JSX.Element} A profilok listáját és üzenetnézegetőt tartalmazó képernyő.
+ */
+const message = () => {
   const { toastConfig, showToast, user, setProfileForMessage,formatDate } = useGlobalContext();
 
   const [differentProfiles,setDifferentProfiles] = useState(null);
   const [isDifferentProfilesLoading,setIsDifferentProfilesLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
+  // Effektus, ami betölti a különböző profilokat, amikor a komponens betöltődik
   useEffect(() => {
+    /**
+     * Az egyedi profilok lekérése az API-ból.
+     */
     const fetchDifferentProfiles = async () => {
       setIsDifferentProfilesLoading(true);
       getDifferentProfiles(user.id)
@@ -36,14 +42,27 @@ const AnotherOne = () => {
     }
     fetchDifferentProfiles();
   }, [])
+
+  // Frissítés kezelése
   const onRefresh = () => {
     setRefreshing(true);
     setTimeout(() => setRefreshing(false), 1000);
   };
+  /**
+   * A profilra kattintva beállítja a profil üzenet megjelenítésére.
+   * 
+   * @param profile Az aktuális profil adatai
+   */
   const handlePress = (profile) => {
     setProfileForMessage(profile);
     router.push("/additions/messageView");
   }
+  /**
+   * A profilok renderelése a FlashList segítségével.
+   * 
+   * @param {Object} item A listából származó egyedi profil elem
+   * @returns {JSX.Element} A profil megjelenítésére szolgáló komponens
+   */
   const renderProfiles = ({ item }) => (
     <TouchableOpacity 
       className="p-3 border-b border-gray-300 flex-row"
@@ -87,4 +106,4 @@ const AnotherOne = () => {
   );
 };
 
-export default AnotherOne;
+export default message;

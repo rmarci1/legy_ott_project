@@ -9,15 +9,33 @@ import EmptyView from '@/components/views/EmptyView';
 import { useGlobalContext } from '@/context/GlobalProvider';
 import Toast from 'react-native-toast-message';
 
+/**
+ * A keresett profil megjelenítése és értékelések kezelése.
+ * A komponens lekéri a keresett felhasználói profilt, és ha nem található, egy üzenetet jelenít meg.
+ * 
+ * - A profil adatokat egy `ProfileView` komponens jeleníti meg.
+ * - Ha a profil nem található, akkor az `EmptyView` jelenik meg.
+ * - A felhasználók értékelhetik a profilt egy modál ablakban.
+ * 
+ * @returns {JSX.Element} A profil keresési és megjelenítési képernyője.
+ */
 const profileSearch = () => {
   const {showToast,toastConfig} = useGlobalContext();
   const [profile,setProfile] = useState(null);
   const [isModalVisible,setIsModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const query = useLocalSearchParams();
+
+   /**
+   * A modál ablak megjelenítését és eltüntetését váltja.
+   */
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible)
   }
+   /**
+   * A keresett profil adatainak lekérése az API-ból.
+   * Ha hiba történik, akkor egy hibát jelenít meg.
+   */
   useEffect(() => {
     getProfile();
   }, []);

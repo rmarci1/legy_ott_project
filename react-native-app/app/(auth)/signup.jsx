@@ -7,6 +7,15 @@ import { router } from 'expo-router';
 import { useGlobalContext } from '@/context/GlobalProvider';
 import Toast from 'react-native-toast-message';
 
+/**
+  * A regisztrációs képernyő funkciója.
+  * 
+  * A regisztrációs oldal, ahol a felhasználó megadhatja az emailt és jelszót,
+  * majd a rendszer az erősség alapján vizsgálja a jelszót. Ha minden megfelelő,
+  * az adatokat elküldi.
+  * 
+  * @returns {JSX.Element} A regisztrációs képernyő.
+  */
 const signup = () => {
   const {setFormPart,showToast,toastConfig} = useGlobalContext();
 
@@ -19,11 +28,24 @@ const signup = () => {
   const [isSubmitting,setIsSubmitting] = useState(false);
   const [message,setMessage] = useState('');
   const [progress,setProgress] = useState(0);
+
+  /**
+    * A jelszó erőssége alapján színkódot ad vissza.
+    *
+    * @param {string} type - A jelszó erősségi kategóriája ("Erős", "Közepes", "Gyenge").
+    * @returns {string} A megfelelő színkód.
+    */
   const getActiveColor = (type) => {
     if (type === "Erős") return "#3FBB60"
     else if (type === "Közepes") return "#FE804D"
     else return "#FF0054";
   }
+
+  /**
+    * A jelszó erősségét ellenőrzi és visszaadja a megfelelő státuszt.
+    *
+    * @param {string} passwordValue - A felhasználó által megadott jelszó.
+    */
   const handlePassword = (passwordValue) => {
     let strengthChecks = {
       length : 0,
@@ -50,6 +72,12 @@ const signup = () => {
     setMessage(strength);
     setForm({...form, password : passwordValue})
   }
+  /**
+    * A regisztrációs adatokat elküldi, ha minden megfelelő.
+    * 
+    * Az email, jelszó és megerősített jelszó ellenőrzése után a felhasználó
+    * adatainak beküldése és a következő oldalra navigálás történik.
+    */
   const submit = async () => {
     try{
       if(!form.email || !form.password || !form.confirmPassword){
@@ -80,6 +108,8 @@ const signup = () => {
     }
   }
   const animatedValue = useRef(new Animated.Value(0)).current;
+
+  // Animáció indítása, amikor a jelszó erősségét frissítjük
   useEffect(() => {
     Animated.timing(animatedValue, {
       toValue: progress / 5,

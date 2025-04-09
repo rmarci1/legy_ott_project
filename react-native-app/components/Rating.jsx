@@ -1,15 +1,24 @@
 import { View, Text, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { AntDesign, FontAwesome } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 import { useGlobalContext } from '@/context/GlobalProvider';
 
+/**
+ * Az értékelések megjelenítésére szolgáló komponens.
+ * 
+ * @param {Object} item - Az értékelés adatai (pl. reviewer_un, review, desc).
+ * @param {function} handleProfile - Függvény, amely a felhasználói profilra navigál.
+ * @returns {JSX.Element} - Az értékelést tartalmazó UI komponens.
+ */
 const Rating = ({item,handleProfile}) => {
   const {user} = useGlobalContext();
   const [showMoreRating,setShowMoreRating] = useState(false);
   const [readMoreRating,setReadMoreRating] = useState(false);
+
+  // Ellenőrizzük, hogy a leírás hosszú-e, és beállítjuk a 'readMoreRating' értékét.
   useEffect(() => {
     if(item.desc?.length > 100){
-        setReadMoreRating(true);
+        setReadMoreRating(true);  // Ha a leírás hosszabb, mint 100 karakter, akkor engedélyezzük a bővítést
     }
   })
   return (

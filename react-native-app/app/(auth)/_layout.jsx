@@ -1,7 +1,11 @@
-import {StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { Stack } from 'expo-router'
-import {StatusBar} from 'expo-status-bar'
+import { StatusBar } from 'expo-status-bar'
+/**
+ * Az alkalmazás navigációs layoutja, amely a képernyők közötti navigációt kezeli.
+ * 
+ * @returns {JSX.Element} A navigációs stack és a státusz sáv renderelése.
+ */
 const _layout = () => {
   return (
     <>

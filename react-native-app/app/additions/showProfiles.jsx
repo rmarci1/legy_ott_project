@@ -8,6 +8,14 @@ import { router } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
 
+/**
+ * A `showProfiles` komponens, amely a felhasználói profilok listáját jeleníti meg.
+ * Lehetővé teszi a felhasználók keresését és egyes profilok megtekintését.
+ * 
+ * @component
+ * @example
+ * @returns {JSX.Element} Felhaszálói profilok listájának képernyője
+ */
 const showProfiles = () => {
     const { setProfileForMessage, showToast, toastConfig, user} = useGlobalContext();
     const [profiles,setProfiles] = useState([]);

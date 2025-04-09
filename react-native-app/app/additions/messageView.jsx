@@ -9,6 +9,13 @@ import { AntDesign, Entypo, Feather, FontAwesome, MaterialIcons } from '@expo/ve
 import Toast from 'react-native-toast-message';
 import MessageState from '@/components/views/MessageState';
 
+/**
+ * Üzenet nézet komponens.
+ * Ez a komponens felelős a felhasználók közötti üzenetek kezeléséért, azok megjelenítéséért és az új üzenetek küldéséért.
+ * Websocket kapcsolatot használ az üzenetek valós idejű frissítéséhez.
+ * 
+ * @returns {JSX.Element} A komponens renderelt felületét adja vissza.
+ */
 const messageView = () => {
   const {user,isLoading, showToast, toastConfig, profileForMessage, handleProfile} = useGlobalContext();
   const [messages, setMessages] = useState([]);
@@ -17,6 +24,11 @@ const messageView = () => {
   const socket = io('http://192.168.0.179:3000', { transports: ['websocket'] });
   const [refreshing,setRefreshing] = useState(false);
   const flashListRef = useRef(null);
+
+    /**
+   * Az üzenetek betöltését végző effektus. 
+   * Az üzenetek lekérésére szolgál a backendről.
+   */
   useEffect(() => {
     const fetchMessage = async () => {
         await getMessages(user.id, profileForMessage.id)
@@ -35,6 +47,9 @@ const messageView = () => {
   setIsMessage(true);
   fetchMessage()
   }, []);
+   /**
+   * Az eseménykezelő, amely a billentyűzet megjelenésekor automatikusan az üzenetlista végére görgeti az elemeket.
+   */
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener("keyboardDidShow", () => {
       if (flashListRef?.current && messages.length > 0) {
@@ -47,6 +62,9 @@ const messageView = () => {
       keyboardDidShowListener.remove();
     };
   }, []);
+  /**
+   * A websocket kapcsolat inicializálása és az üzenetek figyelése.
+   */
   useEffect(() => {
     if(!isLoading && user.id){
       socket.emit('join', user.id);
@@ -59,7 +77,11 @@ const messageView = () => {
         socket.off('message', handleMessage);
       };
     }
-}, [isLoading,user.id]);
+  }, [isLoading,user.id]);
+  
+  /**
+   * Az üzenetek listájának frissítésekor az üzenetek végére görgetés.
+   */
   useEffect(() => {
     if(flashListRef.current && messages.length > 0){
       setTimeout(() => {
@@ -69,10 +91,17 @@ const messageView = () => {
       }, 100);
     }
   }, [messages]);
+    /**
+   * Az üzenetek frissítésekor történő kezelő függvény.
+   */
   const onRefresh = () => {
     setRefreshing(true);
     setTimeout(() => setRefreshing(false), 1000);
   };
+  /**
+   * Az üzenet elküldésére szolgáló függvény.
+   * Az üzenet csak akkor kerül elküldésre, ha a felhasználó nem hagyja üresen a szövegdobozt.
+   */
   const sendMessage = async () => {
     if(!formMessage){
       showToast("error","Hiba","Írj be valamit...");
@@ -88,6 +117,12 @@ const messageView = () => {
       showToast("error","Hiba",error.message);
     }
   };
+   /**
+   * A FlashList elemeinek renderelésére szolgáló függvény.
+   * 
+   * @param {object} param0 A lista elemét tartalmazó objektum.
+   * @returns {JSX.Element} Az egyes üzenetek megjelenítése.
+   */
   const renderItem = ({item}) => {
     return (
       <MessageState

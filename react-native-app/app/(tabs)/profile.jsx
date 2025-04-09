@@ -1,4 +1,4 @@
-import { View,ScrollView, Modal, TouchableOpacity, Text, Alert} from 'react-native'
+import { View,ScrollView, Modal, TouchableOpacity, Text} from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useGlobalContext } from '@/context/GlobalProvider'
 import ProfileView from '@/components/views/ProfileView';
@@ -9,34 +9,52 @@ import { getReviews } from '@/lib/api';
 import Rating from '@/components/Rating';
 import Toast from 'react-native-toast-message';
 
+/**
+ * A felhasználó profilja, amely az értékeléseket és más fontos információkat jelenít meg.
+ * 
+ * @returns {JSX.Element} A profil megjelenítése és az értékelések modál megjelenítése.
+ */
 const profile = () => {
   const {user,setUser,showToast,toastConfig} = useGlobalContext();
   const [isModalVisible,setIsModalVisible] = useState(false);
   const [ratings, setRatings] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Az értékelések lekérése, amikor a komponens betöltődik
   useEffect(() => {
     getRatings();
   }, [])
-   const getRatings = async () => {
-      try{
-        setIsLoading(true);
-        const res = await getReviews(user.username);
-        setRatings(res);
-      }
-      catch(error){
-        showToast("error","Hiba",error.message);
-      }
-      finally{
-        setIsLoading(false);
-      }
+  /**
+    * Az értékelések lekérése a háttérben.
+    */
+  const getRatings = async () => {
+    try{
+      setIsLoading(true);
+      const res = await getReviews(user.username);
+      setRatings(res);
     }
+    catch(error){
+      showToast("error","Hiba",error.message);
+    }
+    finally{
+      setIsLoading(false);
+    }
+  }
+  /**
+   * A listából egy egyedi értékelés renderelése.
+   * 
+   * @param {Object} item Az egyes értékelés adatai
+   * @returns {JSX.Element} A Renderelt értékelés komponens
+   */
   const renderItem = ({item}) => (
     <Rating
       handleProfile={(username) => handleProfile(username)}
       item={item}
     />
   )
+  /**
+   * A modális ablak megjelenítésének és elrejtésének vezérlése.
+   */
   const toggleModal = () => {
     setIsModalVisible((prev) => !prev);
   }

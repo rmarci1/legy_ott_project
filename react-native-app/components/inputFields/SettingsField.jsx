@@ -1,7 +1,32 @@
 import { View, Text, TextInput, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import { AntDesign, Ionicons } from '@expo/vector-icons'
+/**
+ * @typedef {Object} SelectionRange
+ * @property {number} start - A kijelölés kezdete
+ * @property {number} end - A kijelölés vége
+*/
 
+/**
+ * @typedef {Object} SettingsFieldProps
+ * @property {string} title - A mező címe.
+ * @property {string} value - A TextInput aktuális értéke.
+ * @property {(value: string) => void} handleChangeText - Callback a szöveg változására.
+ * @property {string} containerStyles - Tailwind osztályok a külső konténerhez.
+ * @property {boolean} multiline - Többsoros legyen-e az input.
+ * @property {() => void} handleUpdate - Callback frissítés ikonra nyomáskor.
+ * @property {boolean} editable - Engedélyezett-e a szerkesztés.
+ * @property {boolean} showArrow - Megjelenjen-e a nyíl gomb.
+ * @property {() => void} handleArrowPress - Callback nyíl gomb nyomására.
+ * @property {(selection: SelectionRange) => void} handleSelection - Callback, ha a kurzor/kijelölés pozíciója változik.
+ */
+
+/**
+ * Beállításokhoz tartozó újrafelhasználható beviteli mező.
+ * @component
+*
+ * @param {SettingsFieldProps} props - A komponens propjai.
+ */
 const SettingsField = ({title, value, handleChangeText, containerStyles, multiline, handleUpdate, editable, showArrow, handleArrowPress, handleSelection}) => {
   const [arrowState,setArrowState] = useState(editable);
   return (

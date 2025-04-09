@@ -1,0 +1,7 @@
+{
+  "entryPoints": ["src"],
+  "out": "docs",
+  "exclude": ["**/__tests__/**", "**/*.spec.ts", "**/*.test.ts"],
+  "includeVersion": true,
+  "tsconfig": "./tsconfig.json"
+}

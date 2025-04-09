@@ -3,12 +3,24 @@ import React, { useEffect, useState } from 'react'
 import { LinearGradient } from 'expo-linear-gradient'
 import JobDisplay from './JobDisplay'
 import { AntDesign } from '@expo/vector-icons'
-import images from '@/constants/images'
 import ConvertText from '../inputFields/ConvertText'
 import { FlashList } from '@shopify/flash-list'
 import { getReviews } from '@/lib/api'
 import Rating from '../Rating'
 import { useGlobalContext } from '@/context/GlobalProvider'
+/**
+ * A `ShowJob` komponens, amely a munkával kapcsolatos részleteket, leírást és értékeléseket jelenít meg.
+ * 
+ * @component
+ * @param {Object} props - A komponenshez tartozó propok.
+ * @param {Object} props.currentJob - A jelenlegi munka részleteit tartalmazó objektum.
+ * @param {boolean} props.readMore - Jelző, amely megmondja, hogy a teljes leírás megjeleníthető-e.
+ * @param {function} props.toggleModal - Funkció a modal ablakok ki- és bekapcsolására.
+ * @param {function} props.handlingProfile - Funkció, amely a felhasználói profilok kezelésére szolgál.
+ * @param {boolean} props.create - Jelző, hogy a munka létrehozási módban van-e.
+ * @param {boolean} props.created - Jelző, hogy a munka már létre lett-e hozva.
+ * @returns {JSX.Element} A `ShowJob` komponens.
+ */
 const ShowJob = ({currentJob,readMore,toggleModal, handlingProfile,create,created}) => {
   const {handleProfile} = useGlobalContext();
   const [whichButton,setWhichButton] = useState("description");
@@ -21,12 +33,24 @@ const ShowJob = ({currentJob,readMore,toggleModal, handlingProfile,create,create
       getRatings();
     }
   }, [])
+  /**
+   * Az egyes értékelések renderelésére szolgáló függvény.
+   * 
+   * @param {Object} param - Az értékelés elemét tartalmazó paraméter.
+   * @param {any} param.item - Az értékelés elemét tartalmazó objektum.
+   * @returns {JSX.Element} A `Rating` komponens az értékeléshez.
+   */
   const renderItem = ({item}) => (
     <Rating
       handleProfile={(username) => handleProfile(username, () => toggleModal())}
       item={item}
     />
   )
+   /**
+   * Az értékelések lekérésére szolgáló aszinkron függvény.
+   * 
+   * @returns {Promise<void>} Egy ígéret, amely akkor teljesül, amikor az értékelések lekérése befejeződik.
+   */
   const getRatings = async () => {
     try{
       setIsLoading(true);

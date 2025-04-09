@@ -1,3 +1,9 @@
+/**
+ * Globális kontextus a React Native Expo alkalmazáshoz.
+ * Általános állapotokat és utility függvényeket biztosít, mint pl. bejelentkezési állapot, munkák, képfeltöltés, toast üzenetek, stb.
+ * 
+ * @module GlobalProvider
+ */
 import { attending, getJobs, getSaved, getUser} from "@/lib/api";
 import { router } from "expo-router";
 import { createContext, useContext, useEffect, useState} from "react"
@@ -5,9 +11,23 @@ import { Alert } from "react-native";
 import * as ImagePicker from 'expo-image-picker';
 import Toast, { BaseToast } from "react-native-toast-message";
 import { io } from "socket.io-client";
+/**
+ * A globális kontextus létrehozása.
+ */
 const GlobalContext = createContext()
+/**
+ * Hook a globális kontextus elérésére.
+ * @returns {any} A globális kontextus értékei
+ */
 export const useGlobalContext = () => useContext(GlobalContext)
 
+/**
+ * A GlobalProvider egy Context Provider komponens, ami a teljes appra kiterjeszthető állapotot és segédfüggvényeket biztosít.
+ *
+ * @component
+ * @param {React.ReactNode} children - A gyerek komponensek, amik hozzáférhetnek a kontextushoz
+ * @returns {JSX.Element} Provider komponens
+ */
 const GlobalProvider = ({children}) => {
     
     const [formPart,setFormPart] = useState(null);  
@@ -54,6 +74,12 @@ const GlobalProvider = ({children}) => {
         })
     }, [])
 
+    /**
+     * Beküldéskezelő, ami frissíti a jelentkezéseket
+     * 
+     * @param {any} update - A jelentkezésnek a státusza
+     * @param {string} jobId - A munkához tartozó egyedi azonosító
+     */
     const handleSubmit = async (update,jobId) => {
         try{    
             await attending(jobId,update);
@@ -63,10 +89,21 @@ const GlobalProvider = ({children}) => {
             Alert.alert(error.message);
         }
     }
+     /**
+     * Profil oldalra navigál.
+     * 
+     * @param {string} username - A megtekintendő felhasználó felhasználóneve
+     * @param {Function} toggleModal - Egy opcionális függvény, ami bezárja a modált
+     */
     const handleProfile = (username, toggleModal) => {
         if(toggleModal) toggleModal();
         router.push(`/profileSearch/${username}`);
     }
+     /**
+     * Képválasztó megnyitása az eszköz galériájából.
+     * 
+     * @param {Function} handleChange - Callback függvény, ami a kiválasztott kép URI-ját kezeli
+     */
     const openPicker = async (handleChange) => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: 'images',
@@ -78,6 +115,13 @@ const GlobalProvider = ({children}) => {
         handleChange(result.assets[0].uri);
         }
     } 
+    /**
+     * Egyedi toast üzenet megjelenítése.
+     * 
+     * @param {string} type - Üzenet típusa (pl. 'error', 'success')
+     * @param {string} text - Fő szöveg
+     * @param {string} text2 - Alsó szöveg (részletesebb leírás)
+     */
     const showToast = (type,text,text2) => {
         Toast.show({
             type: "custom_toast",   
@@ -86,6 +130,9 @@ const GlobalProvider = ({children}) => {
             props: { type },         
         })
     }
+      /**
+     * A toast konfiguráció komponens.
+     */
     const toastConfig = {
         custom_toast: ({text1,text2, props}) => (
             <BaseToast
@@ -110,6 +157,12 @@ const GlobalProvider = ({children}) => {
             />
         )
     }
+     /**
+     * Dátum formázása – ha a dátum friss (1 napon belüli), akkor csak az idő jelenik meg, különben a dátum.
+     * 
+     * @param {string} date - A formázandó dátum ISO formátumban
+     * @returns {string} Formázott dátum/idő
+     */
     const formatDate = (date) => {
         const currDate = new Date();
         currDate.setDate(currDate.getDate() - 1)

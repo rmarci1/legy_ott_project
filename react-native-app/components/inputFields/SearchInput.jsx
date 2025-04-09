@@ -4,7 +4,13 @@ import { router, usePathname } from 'expo-router'
 import { AntDesign } from '@expo/vector-icons';
 import { FilterJobsByName } from '@/lib/api';
 import { useGlobalContext } from '@/context/GlobalProvider';
-
+/**
+ * Egy újrahasznosítható keresőmező, amely lehetővé teszi lehetőségek szűrését név alapján.
+ * @component
+ * @property {string} [initialQuery] - Opcionálisan megadható kezdeti keresési kifejezés.
+ * 
+ * @returns {JSX.Element} A keresőmező JSX komponensként.
+ */
 const SearchInput = ({initialQuery}) => {
   const {user,setQueryReturn, showToast} = useGlobalContext();
   const [query,setQuery] = useState(initialQuery || "")
@@ -25,6 +31,10 @@ const SearchInput = ({initialQuery}) => {
         />
         <TouchableOpacity
             onPress={async () => {
+                 /**
+                     * A keresési folyamatot kezelő függvény. Validálja a bevitelt,
+                     * meghívja az API-t, és navigál az eredményekhez.
+                */
                 if (query === ""){
                     return showToast("error","Nincs keresés","Valamit Írj be hogy megtaláljuk neked a legjobb lehetőségeket!")
                 }

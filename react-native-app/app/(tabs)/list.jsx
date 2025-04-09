@@ -12,6 +12,12 @@ import RenderJob from '@/components/RenderJob'
 import { router } from 'expo-router'
 import Toast from 'react-native-toast-message'
 
+/**
+ * Az álláskeresési oldal, ahol a felhasználók különböző kategóriákban böngészhetnek és jelentkezhetnek hirdetésekre.
+ * Az oldal lehetőséget biztosít elmentett, választott, archívált, vagy saját hirdetések megtekintésére.
+ *
+ * @returns {JSX.Element} Az álláskeresési oldal tartalmát megjelenítő komponens.
+ */
 const list = () => {
   const {handleSubmit,handleProfile,user,setQuery,showToast,toastConfig} = useGlobalContext();
   const [filterJobs,setFilterJobs] = useState([]);
@@ -20,15 +26,29 @@ const list = () => {
   const [currentPage,setCurrentPage] = useState("savedForLater");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [refreshing,setRefreshing] = useState(false);
+
+  // Ha nincs bejelentkezett felhasználó, átirányítja a főoldalra.
   if(!user){
     router.replace('/home');
   }
   useEffect(() => {
     handleClick(currentPage);
   },[])
+
+    /**
+   * Oldal státusza alapján lekéri a megfelelő hirdetéseket.
+   * 
+   * @param {string} title Az oldal neve, amelyet meg kell jeleníteni (pl. 'savedForLater', 'ads', stb.).
+   * @returns {Promise} A lekért hirdetések.
+   */
   const pageStatus = async (title) => {
       return await getAdvertisement(title);
   }
+   /**
+   * A kattintás hatására betölti a megfelelő hirdetéseket a kiválasztott oldalon.
+   * 
+   * @param {string} title Az oldal neve, amelyet betölteni kell (pl. 'savedForLater', 'ads', stb.).
+   */
   const handleClick = async (title) => {
     try{
       const response = await pageStatus(title);
@@ -39,14 +59,27 @@ const list = () => {
       showToast("error","Hiba",error.message);
     }
   }
+   /**
+   * A modal ablak megjelenítésének váltása.
+   */
   const toggleModal = () => {
     setIsModalVisible((prev) => !prev);
   }
+   /**
+   * Az oldalon található lista frissítése.
+   */
   const onRefresh = async () => {
     setRefreshing(true);
     await handleClick(currentPage);
     setRefreshing(false);
   }
+   /**
+   * Tab ikont megjelenítő komponens, amely a kattintáskor váltja az aktuális oldalt.
+   * 
+   * @param {function} handlePress A kattintáskor végrehajtandó függvény.
+   * @param {JSX.Element} icon Az ikon, amelyet megjelenít.
+   * @returns {JSX.Element} A tab ikont tartalmazó komponens.
+   */
   const TabIcon = ({handlePress, icon}) => (
     <TouchableOpacity
       onPress={handlePress}

@@ -8,15 +8,37 @@ import { Entypo } from '@expo/vector-icons';
 import ShowJob from '@/components/views/ShowJob';
 import { FlashList } from '@shopify/flash-list';
 import RenderJob from '@/components/RenderJob';
+
+/**
+ * A keresési találatok képernyője, amely megjeleníti a felhasználó által keresett munkahelyeket.
+ * A találatok listáját egy `FlashList` komponens rendereli, amely lehetővé teszi a gyors listázást.
+ * 
+ * - A `SearchInput` komponens segítségével új keresést indíthatunk.
+ * - Minden találat egy-egy `RenderJob` komponenssel kerül megjelenítésre.
+ * - A felhasználók rákattinthatnak egy találatra, hogy többet tudjanak meg róla.
+ * - A `ShowJob` komponens egy modálban jeleníti meg a részletes információkat.
+ * 
+ * @returns {JSX.Element} A keresési találatok képernyője.
+ */
 const query = () => {
-  const {user, queryReturn} = useGlobalContext();
+  const { queryReturn } = useGlobalContext();
   const [isModalVisible,setIsModalVisible] = useState(false);
   const [readMore,setReadMore] = useState(false);
   const [currentJob,setCurrentJob] = useState(null);
   const query = useLocalSearchParams();
+
+  /**
+   * A modál ablak megjelenítését és eltüntetését váltja.
+   */
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
   }
+  /**
+   * A `RenderJob` komponens használatával jeleníti meg a találatok listáját.
+   * 
+   * @param {Object} item - A munkahelyet reprezentáló objektum.
+   * @returns {JSX.Element} A találat renderelése.
+   */
   const renderItem = ({item}) => (
     <RenderJob
       item={item}

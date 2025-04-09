@@ -8,8 +8,17 @@ import { getJobs, getUser, pflogin } from '@/lib/api';
 import { useGlobalContext } from '@/context/GlobalProvider';
 import Toast from 'react-native-toast-message';
 
+/**
+ * Bejelentkezési képernyő, amely lehetővé teszi a felhasználó számára, hogy belépjen a rendszerbe a fiókjába.
+ * 
+ * A felhasználói adatokat tartalmazó űrlap elküldésére szolgál, valamint beállítja a felhasználó állapotát és lekéri a munkákat, ha szükséges.
+ * 
+ * @returns {JSX.Element} A bejelentkezési képernyő renderelése.
+ */
 const login = () => {
   const {setIsLoading,setIsloggedIn,setUser,isLoggedIn,user,isLoading,isJobsIn,setIsJobsIn,setJobs,showToast,toastConfig} = useGlobalContext();
+
+  // Effektus, amely navigál a főoldalra, ha a felhasználó be van jelentkezve.
   useEffect(() => {
     if(isLoggedIn && !isLoading && isJobsIn && user) router.push('/(tabs)/home');
   },[isLoggedIn,user,isJobsIn,isLoading])
@@ -17,6 +26,8 @@ const login = () => {
     email : '', 
     password : ''
   });
+  
+  // Bejelentkezés és a felhasználói adatok lekérése
   const submit = async () => {
       await pflogin(form.email,form.password).then(() => {
           setIsLoading(true);

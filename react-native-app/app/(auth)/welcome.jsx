@@ -5,11 +5,19 @@ import Swiper from 'react-native-swiper'
 import CustomButton from '@/components/CustomButton'
 import { useGlobalContext } from '@/context/GlobalProvider'
 import AntDesign from '@expo/vector-icons/AntDesign';
-import {register} from '@/lib/api'
+import { register } from '@/lib/api'
 import { router } from 'expo-router'
 import Toast from 'react-native-toast-message'
+
+/**
+ * Regisztrációs üdvözlő képernyő, amely tartalmaz egy swiper-t a felhasználó nevét
+ * és felhasználónevét gyűjtve, valamint egy modált a megerősítéshez a végleges 
+ * regisztráció előtt.
+ * 
+ * @returns {JSX.Element} A Welcome képernyő JSX komponens.
+ */
 const welcome = () => {
-  const {setUser,formPart,showToast,toastConfig} = useGlobalContext();
+  const { formPart,showToast,toastConfig } = useGlobalContext();
   const [isSubmitting,setIsSubmitting] = useState(false);
   const [changed,setChanged] = useState(false);
   const [form,setForm] = useState({
@@ -19,9 +27,18 @@ const welcome = () => {
   const [finalName,setFinalName] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
   const [isModalVisible,setIsModalVisible] = useState(false);
+
+  // A modal láthatóságának váltogatása
   const toggleModal = () => {
     setIsModalVisible((prev) => !prev);
   }
+
+   /**
+   * A form adatok ellenőrzése, ha bármi hiányzik, hibaüzenetet jelenít meg,
+   * és a név mezőben a felesleges szóközöket eltávolítja.
+   * 
+   * @returns {void}
+   */
   const checking = () => {
     if(!form.name || !form.username){
       showToast("error","Hiba","Nem töltötted ki az összes mezőt");
@@ -36,6 +53,13 @@ const welcome = () => {
     setFinalName(s);
     setIsModalVisible(true);
   }
+
+  /**
+   * A form beküldése, amely regisztrálja a felhasználót az API-n keresztül.
+   * Ha sikeres, a felhasználó a bejelentkezési képernyőre navigál.
+   * 
+   * @returns {Promise<void>}
+   */
   const submit = async () => {
     try{
       setIsSubmitting(true);

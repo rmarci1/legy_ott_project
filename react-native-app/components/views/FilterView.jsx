@@ -8,6 +8,17 @@ import Formfield from '../inputFields/Formfield';
 import CustomButton from '../CustomButton';
 import { router, usePathname } from 'expo-router';
 
+/**
+ * A szűrő beállításait és keresési lehetőségeket tartalmazó komponens.
+ * A felhasználó választhat helyet, dátumot és időintervallumot.
+ * 
+ * A `FilterView` komponenshez tartozó tulajdonságok.
+ * @component
+ * @property {Function} toggleFilterModal - A szűrő modal ablak megnyitásáért és bezárásáért felelős függvény.
+ * @property {object} currPreferences - A kezdeti preferenciák, amelyeket a szűrőablak használ.
+ * @property {Function} handleReload - A szűrés után újratöltést végző függvény.
+ * @returns {JSX.Element} A szűrő beállító felületet megjelenítő komponens.
+ */
 const FilterView = ({toggleFilterModal, currPreferences, handleReload}) => {
     const [preferences, setPreferences] = useState(currPreferences || {
         location : "",
@@ -17,6 +28,9 @@ const FilterView = ({toggleFilterModal, currPreferences, handleReload}) => {
     })
     const [focused, setFocused] = useState("");
     const pathname = usePathname();
+    /**
+     * A szűrő beállítások érvényesítése és a megfelelő oldalra való navigálás.
+     */
     const handlePreference = () => {
         if(!preferences.location && !preferences.date && !preferences.datebetween.start){
             Alert.alert("Hiba","Kérjük válassz egy feltételt!");

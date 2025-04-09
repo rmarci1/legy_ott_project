@@ -2,6 +2,18 @@ import { View, Text, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { useGlobalContext } from '@/context/GlobalProvider'
 
+/**
+ * Az üzenet megjelenítését és formázását végző komponens.
+ * Az üzenetek formázásához és a feladó/címzett képek megjelenítéséhez használható.
+ * 
+ * A `MessageState` komponenshez tartozó tulajdonságok.
+ * @component
+ * @property {boolean} isSender - Meghatározza, hogy az üzenet a feladótól (true) vagy a címzettől (false) származik.
+ * @property {string} containerStyles - A konténer stílusai.
+ * @property {object} item - Az üzenet adatai, beleértve a tartalmat és a dátumot.
+ * 
+ * @returns {JSX.Element} A MessageState komponens.
+ */
 const MessageState = ({ isSender, containerStyles, item }) => { 
     const { formatDate, user } = useGlobalContext();
     return (

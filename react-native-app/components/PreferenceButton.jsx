@@ -1,7 +1,13 @@
 import { View, Text, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { AntDesign } from '@expo/vector-icons'
-import { FlashList } from '@shopify/flash-list'
+
+/**
+ * Az időintervallumokhoz kapcsolódó napok számának visszaadása.
+ * 
+ * @param {string} title - Az intervallum neve (pl. "3 nap", "1 hét", stb.)
+ * @returns {number | null} - A napok száma, vagy `null`, ha nem található.
+ */
 const getDays = (title) => {
     if(title === "3 nap"){
       return 3;
@@ -19,6 +25,17 @@ const getDays = (title) => {
       return null;
     }
 }
+/**
+ * Az egyes gombok renderelését végző függvény.
+ * 
+ * @param {string} item - Az adott gomb címkéje.
+ * @param {number} index - Az elem indexe.
+ * @param {boolean} isFocused - A gomb kiemelése (ha kiválasztott).
+ * @param {function} handlePress - A gombra kattintás eseménye.
+ * @param {string} type - A típus, hogy helyet (location) vagy napokat (days) kezelünk.
+ * @returns {JSX.Element} - A renderelt gomb.
+ */
+
 const renderItem = (item,index,isFocused,handlePress,type) => {
   return (
   <TouchableOpacity
@@ -30,6 +47,17 @@ const renderItem = (item,index,isFocused,handlePress,type) => {
   </TouchableOpacity>
   )
 }
+
+/**
+ * A preferenciák gombjait megjelenítő komponens.
+ * 
+ * @param {Array<string>} titles - A megjelenítendő gombok címkéi.
+ * @param {function} handlePress - A gombra kattintás eseménye.
+ * @param {string} givenDay - A kiválasztott nap intervallum.
+ * @param {string} type - A típus, amely meghatározza, hogy helyet vagy napokat kezelünk.
+ * @returns {JSX.Element} - A preferenciák gombjait tartalmazó komponens.
+ */
+
 const PreferenceButton = ({titles,handlePress, givenDay, type}) => {
   return (
     <View className='flex-row flex-wrap w-[85%] mt-5 self-center gap-2 gap-y-4'>

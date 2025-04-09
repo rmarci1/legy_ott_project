@@ -8,6 +8,15 @@ import { useGlobalContext } from '@/context/GlobalProvider'
 import ConvertText from '../inputFields/ConvertText'
 import Toast from 'react-native-toast-message'
 
+/**
+ * ProfileView komponens, amely megjeleníti a felhasználó profilját, az értékelési lehetőségeket és kezelni a modal ablakokat.
+ * @component
+ * @param {boolean} isView - A paraméter meghatározza, hogy a profil megtekintés módban van-e.
+ * @param {Object} viewed_user - A megtekintett felhasználó adatai, mint például név, felhasználónév, leírás és profilkép.
+ * @param {Function} handleModal - A függvény, amely kezeli a modal megjelenítését.
+ * 
+ * @returns {React.Component} A profilnézet komponens.
+ */
 const ProfileView = ({isView, viewed_user, handleModal}) => {
   const {user,showToast,toastConfig} = useGlobalContext();
   const [reviewForm,setReviewForm] = useState({
@@ -44,6 +53,9 @@ const ProfileView = ({isView, viewed_user, handleModal}) => {
   },[])
   const slideAnim = useState(new Animated.Value(400))[0];
   const imageSlide = useRef(new Animated.Value(0.3)).current;
+   /**
+   * Kezeli az animációt, amely a profilkép zoomolását irányítja.
+   */
   const toggleImage = () =>{
     if(isExpand){
       Animated.timing(imageSlide, {
@@ -60,7 +72,12 @@ const ProfileView = ({isView, viewed_user, handleModal}) => {
       }).start();
     }
     setIsExpand(!isExpand);
-  }
+  }  
+  /**
+  * Kezeli a különböző szegmensek megjelenítését az animációk segítségével.
+  * 
+  * @param {string} curr - Az aktuális szegmens azonosítója.
+  */
   const toggleSlide = (curr) => {
     setAnimating(true);
     if (!pressed) {
@@ -98,9 +115,15 @@ const ProfileView = ({isView, viewed_user, handleModal}) => {
       }
     }
   }
+  /**
+    * Kezeli a modal ablak megjelenítését vagy eltüntetését.
+    */
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
   }
+  /**
+   * Ellenőrzi, hogy a felhasználó tud-e értékelést írni.
+    */
   const canReview = async () => {
     try{
       const res = await getCanReview(viewed_user.username);

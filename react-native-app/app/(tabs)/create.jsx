@@ -10,6 +10,13 @@ import CustomButton from '@/components/CustomButton'
 import ShowJob from '@/components/views/ShowJob'
 import ConvertType from '@/components/ConvertType'
 import Toast from "react-native-toast-message";
+
+/**
+ * A hirdetés létrehozásáért felelős komponens.
+ * Itt a felhasználók létrehozhatnak új hirdetéseket, szerkeszthetnek vagy törölhetnek meglévőeket.
+ * 
+ * @returns {JSX.Element} A hirdetés létrehozásához szükséges űrlap
+ */
 const create = () => {
   const {user, query, setQuery, openPicker, showToast,toastConfig} = useGlobalContext();
   const [readMore,setReadMore] = useState(false);
@@ -65,21 +72,40 @@ const create = () => {
       setUnsavedChanges(true);
     }
   }, [query])
+  /**
+   * Visszaállítja a formot alapállapotra.
+   */
   const defaultSet = () => {
     setForm({name: "", max_attending: "1", date : new Date(), address : "",
       description : "", img : null, from : user.username, current_attending: 0});
     setQuery(null);
   }
+    /**
+   * A modalablak láthatóságát váltja.
+   */
   const toggleModal = () => {
     setIsModalVisible((prev) => !prev);
   }
+  /**
+   * A dátum kiválasztásakor frissíti a formot.
+   * 
+   * @param selectedDate A kiválasztott dátum
+   */
   const handleConfirm = (selectedDate) => {
     handleChanges();
     setForm({...form,date : selectedDate});
   }
+   /**
+   * Kezeli a képfeltöltést.
+   * 
+   * @param image A kiválasztott kép URL-je
+   */
   const handleImage = async (image) => {
     setForm({...form, img : image});
   }
+  /**
+ * A hirdetés elküldése és létrehozása.
+ */
   const submit = async () => {
     try{
       await createJob(form);
@@ -91,6 +117,9 @@ const create = () => {
       showToast("error","Hiba",error.message)
     }
   }
+   /**
+   * A hirdetés törlését kezeli.
+   */
   const handleDelete = async () => {
     try{
       Alert.alert("Törlés","Biztos vagy benne?", [
@@ -107,6 +136,9 @@ const create = () => {
       showToast("error","Hiba", error.message);
     }
   }
+  /**
+   * A hirdetés frissítését kezeli.
+   */
   const handleUpdate = async () => {
     try{
       const updatedFields = Object.fromEntries(
@@ -130,6 +162,9 @@ const create = () => {
       showToast("error","Hiba", error.message);
     }
   }
+  /**
+   * A form változásait kezeli, és beállítja, hogy nem mentett változtatások vannak.
+   */
   const handleChanges = () =>{
     if(!unsavedChanges){
       setUnsavedChanges(true);

@@ -1,16 +1,23 @@
 import {Image, ImageBackground, SafeAreaView, StatusBar, Text, TouchableOpacity, View } from 'react-native'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useRef } from 'react'
 import "../global.css"
 import images from "@/constants/images"
 import CustomButton from '@/components/CustomButton'
 import Swiper from "react-native-swiper"
 import { Redirect, router } from 'expo-router'
 import { useGlobalContext } from '@/context/GlobalProvider'
+
+// A kezdőképernyőn megjelenítendő információk és képek
 const list = [
   {id: 1, title: "Itt megtalálhatod a kívánt munkádat és nagyszerű élményekkel gazdagodhatsz közben", mainPicture: "growing"},
   {id: 2, title: "Bővítsd meg az önkénteseid számát egyszerűen, átlátható módon", mainPicture: "expand"},
   {id: 3, title: "Szerezz új akár életre szóló kapcsolatokat, és válj egy közösség részévé", mainPicture: "communication"}
 ];
+/**
+ * A képekhez tartozó logók visszaadása.
+ * @param {string} item - Az elem típusát meghatározó érték.
+ * @returns {ImageSourcePropType} - A megfelelő logó képe.
+ */
 const logos = (item) => {
   switch(item){
     case "communication" :
@@ -21,6 +28,11 @@ const logos = (item) => {
       return images.expand
   }
 }
+/**
+ * Az egyes elemek renderelésére szolgáló függvény.
+ * @param {Object} item - Az egyes elemek adatainak objektuma.
+ * @returns {JSX.Element} - A megjelenített elem.
+ */
 const renderItem = (item) => {
   return (
     <View key={item.id} className='items-center justify-center mt-12'>
@@ -33,8 +45,15 @@ const renderItem = (item) => {
     </View>
   )
 }
+/**
+ * A kezdőképernyő komponens, amely a regisztrációs és bejelentkezési lehetőségeket biztosít.
+ * Megjeleníti a bevezető információkat és képeket, és lehetőséget ad a felhasználó számára a regisztrációra vagy bejelentkezésre.
+ * @returns {JSX.Element} - A kezdőképernyő komponenst.
+ */
 const index = () => {
   const {isLoggedIn,user,isLoading,isJobsIn} = useGlobalContext();
+
+  // Ha a felhasználó be van jelentkezve és az adatok betöltődtek, átirányítjuk a kezdőlapra.
   if(!isLoading && isLoggedIn && user && isJobsIn) return <Redirect href="/(tabs)/home"/>
   const swiperRef = useRef(null);
   return (

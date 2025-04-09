@@ -1,8 +1,24 @@
-import { View, TouchableOpacity} from 'react-native'
+import { View } from 'react-native'
 import React from 'react'
 import { AntDesign, Entypo, Feather, FontAwesome5, FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons'
-import { router, Tabs } from 'expo-router'
+import { Tabs } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
+/**
+ * Tab ikonok komponensének props típusai
+ * @typedef {Object} TabIconProps
+ * @property {string} color Az ikon színe
+ * @property {string} name Az ikon neve (tab neve alapján)
+ * @property {boolean} focused Meghatározza, hogy a tab aktív-e
+ * @property {string} [containerStyles] Opcionális stílusok, amelyeket hozzáadhatunk az ikonhoz
+ */
+
+/**
+ * Tab ikon komponens.
+ * Az ikonokat a tab neve alapján jeleníti meg, és a színük az aktív tab színéhez igazodik.
+ * 
+ * @param {TabIconProps} props A komponens bemeneti paraméterei
+ * @returns {JSX.Element} Az ikonokat tartalmazó JSX elem
+ */
 const TabIcon = ({color,name,focused,containerStyles}) =>{
     return (
         <View className="items-center justify-center gap-2 w-12 h-12 relative top-1/3">
@@ -31,10 +47,15 @@ const TabIcon = ({color,name,focused,containerStyles}) =>{
                     <MaterialCommunityIcons name="chat" size={30} color={color} />               
                 )
             }
-
         </View>
     )
-  }
+}
+/**
+ * A fő layout, amely tartalmazza a tab bar-t és az egyes képernyőket.
+ * A tab bar egyedi ikonjai és stílusa van.
+ * 
+ * @returns {JSX.Element} Az alkalmazás fő layout-ja
+ */
 const _layout = () => {
   return (
     <>  

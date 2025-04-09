@@ -3,8 +3,20 @@ import { SplashScreen, Stack } from 'expo-router'
 import { useFonts } from 'expo-font';
 import GlobalProvider from '@/context/GlobalProvider'
 
+// A SplashScreen automatikus eltüntetése a betöltés után
 SplashScreen.preventAutoHideAsync();
+
+/**
+ * A gyökér komponens, amely betölti a betűtípusokat és biztosítja a globális állapot kezelőt.
+ * A képernyők kezelése a navigációs struktúrában történik.
+ * 
+ * - A betűtípusok betöltése után a SplashScreen elrejtésre kerül.
+ * - A navigáció a `Stack` komponenssel történik, ahol különböző képernyők és azok beállításai találhatóak.
+ * 
+ * @returns {JSX.Element} - A gyökér komponenst tartalmazó JSX.
+ */
 const Rootlayout = () => {
+   // Betűtípusok betöltése az Expo Font könyvtárból
   const [fontsLoaded,error] = useFonts({
     "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
@@ -22,11 +34,14 @@ const Rootlayout = () => {
     "Roboto-Regular" : require("../assets/fonts/Roboto-Regular.ttf"),
     "Roboto-Thin" : require("../assets/fonts/Roboto-Thin.ttf"),
   })
+  // Betűtípusok betöltése után a SplashScreen eltűnik
   useEffect(() => {
-    if(error) throw error
-    if(fontsLoaded) SplashScreen.hideAsync();
-  }), [fontsLoaded,error]
-  if(!fontsLoaded && !error) return null;
+    if (error) throw error
+    if (fontsLoaded) SplashScreen.hideAsync();
+  }, [fontsLoaded, error])
+
+  // Ha a betűtípusok nem töltődtek be vagy hiba történt, nem jelenítjük meg a komponenst
+  if (!fontsLoaded && !error) return null;
   return (
     <GlobalProvider>
       <Stack>

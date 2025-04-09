@@ -3,7 +3,15 @@ import React from 'react'
 import { Entypo } from '@expo/vector-icons';
 import images from '@/constants/images';
 import { router } from 'expo-router';
-
+/**
+ * Egy újrahasznosítható üres állapotot megjelenítő komponens.
+ * Akkor használatos, ha nincs elérhető adat vagy keresési eredmény.
+ * @component
+ * @property {string} title - A megjelenítendő cím szöveg.
+ * @property {boolean} [close] - Opcionálisan megjeleníti a visszalépés (balra nyíl) gombot.
+ *
+ * @returns {JSX.Element} A megjelenített komponens.
+ */
 const EmptyView = ({title, close}) => {
   return (
     <View className='min-h-full items-center justify-center'>

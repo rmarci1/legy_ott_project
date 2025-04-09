@@ -1,12 +1,37 @@
 import { View, Text, TouchableOpacity, Image, TouchableWithoutFeedback, Animated, Easing } from 'react-native'
-import React, { useCallback, useMemo, useRef, useState } from 'react'
+import React, { useRef } from 'react'
 import { Heart } from "lucide-react-native";
 import { updateSaved } from '@/lib/api';
 import { useGlobalContext } from '@/context/GlobalProvider';
+/**
+ * A munkalehetőség adatainak megjelenítése és a kedvenc mentésére szolgáló komponens.
+ * Lehetővé teszi a felhasználók számára, hogy megnézzenek egy munkalehetőséget, megmentsék, és a profiljára navigáljanak.
+ * 
+ */
+
+/**
+ * A `JobDisplay` komponenshez tartozó tulajdonságok.
+ * @component
+ * @property {string} containerStyles - A külső konténer stílusa.
+ * @property {object} item - A megjelenítendő munkalehetőség adatai.
+ * @property {string} imageStyles - A képre vonatkozó stílusok.
+ * @property {string} nameStyle - A név megjelenítésének stílusa.
+ * @property {string} titleStyle - A cím stílusa.
+ * @property {string} dateStyle - A dátum stílusa.
+ * @property {Function} handleJobProfile - A munkalehetőség profiljára való navigálás kezelése.
+ * @property {boolean} createing - Ha a komponens éppen létrehozás alatt van.
+ * @property {Function} handleSave - A mentés kezelése.
+ * @property {Function} handleModal - A modal ablak kezelése.
+ * @property {boolean} showJob - A munkalehetőség megjelenítésének engedélyezése.
+ * @property {boolean} created - Ha a munkalehetőség már létrejött.
+ * 
+ * @returns {JSX.Element} A munkalehetőség megjelenítő komponens.
+ */
 const JobDisplay = ({containerStyles,item,imageStyles,nameStyle,titleStyle,dateStyle,handleJobProfile, createing, handleSave, handleModal, showJob, created}) => {
   const {setJobs,user}= useGlobalContext();
   const animatedValue = useRef(new Animated.Value(0.5)).current;
   const handleClick = async () => {
+    // Animáció: szív megnyomása
      Animated.sequence([
        Animated.timing(animatedValue, {
          toValue: 1,
@@ -24,6 +49,7 @@ const JobDisplay = ({containerStyles,item,imageStyles,nameStyle,titleStyle,dateS
      await update(item.profiles? !item.profiles[0]?.saveForLater : true);
     }
     const update = async (isLiked) => {
+        // A mentett állapot frissítése
         await updateSaved(isLiked,item.id);
         setJobs((prevJobs) => prevJobs.map((job) => job.id !== item.id ? job : {...job, profiles: [{isApplied: false, saveForLater: isLiked}]}));
         if(handleSave) handleSave(isLiked);

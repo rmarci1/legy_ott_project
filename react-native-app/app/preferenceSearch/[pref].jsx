@@ -12,6 +12,17 @@ import FilterView from '@/components/views/FilterView';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import RenderJob from '@/components/RenderJob';
 
+/**
+ * A képernyő, amely a keresési találatok és a szűrt munkák megjelenítésére szolgál.
+ * A felhasználó szűrheti a munkákat a kiválasztott preferenciák alapján.
+ * 
+ * - A `FlashList` a munkák listáját jeleníti meg.
+ * - A felhasználó frissítheti az adatokat a `RefreshControl` segítségével.
+ * - A munkák részletes nézete a `ShowJob` komponenssel jelenik meg a modál ablakban.
+ * - A szűrési beállításokat egy külön modál ablak jeleníti meg a `FilterView` komponenssel.
+ * 
+ * @returns {JSX.Element} A keresési találatok és a szűrt munkák képernyője.
+ */
 const pref = () => {
   const {jobs,handleProfile} = useGlobalContext();
   const [filterJobs, setFilterJobs] = useState(null);
@@ -25,10 +36,21 @@ const pref = () => {
   const [preferences, setPreferences] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [refreshed, setRefreshed] = useState(false);
+
+  /**
+   * Az adatok betöltéséért felelős hatás, ami csak egyszer fut le.
+   * Az adatok beolvasása és a szűrés elvégzése után az adatokat beállítja a komponensben.
+   */
   useEffect(() => {
     if(!refreshed) loadingData();
     setRefreshed(true);
   }, [refreshed])
+
+   /**
+   * Az adatok betöltése a keresett paraméterek alapján.
+   * 
+   * - A `query` paraméterekből szűri a munkákat, és beállítja a preferenciákat.
+   */
   const loadingData = () =>{
     setIsLoading(true);
     let parsedData = query ? JSON.parse(query.data) : null;
@@ -38,6 +60,12 @@ const pref = () => {
     filteringJobs(parsedData);
     setIsLoading(false);
   }
+
+   /**
+   * A munkák szűrése a megadott preferenciák alapján.
+   * 
+   * @param {Object} query A keresési paraméterek objektuma.
+   */
   const filteringJobs = (query) => {
     const date = query?.date? new Date(query.date) : null;
     setFilterJobs(jobs.filter((curr) => {
@@ -48,6 +76,11 @@ const pref = () => {
     }
     ));
   }
+
+  /**
+   * A lista frissítésekor végrehajtandó művelet.
+   * Újra betölti az adatokat a legfrissebb állapot szerint.
+   */
   const onRefresh = async () => {
     try{
       setRefreshing(true);
@@ -58,12 +91,26 @@ const pref = () => {
       throw new Error("Hiba",error.message);
     }
   }
+  /**
+   * A modál ablak megjelenítését és eltüntetését váltja.
+   */
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
   }
+  
+  /**
+   * A szűrő modál ablak megjelenítését és eltüntetését váltja.
+   */
   const toggleFilterModal = () => {
     setIsFilterModalVisible(!isFilterModalVisible);
   }
+  /**
+   * Az egyes elemek renderelése a FlashList-ben.
+   * A munkák részletes nézetét a `RenderJob` komponens jeleníti meg.
+   * 
+   * @param {Object} item A lista egy eleme.
+   * @returns {JSX.Element} A munkát megjelenítő komponens.
+   */
   const renderItem = ({item}) => (
     <RenderJob
       item={item}

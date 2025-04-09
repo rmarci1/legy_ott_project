@@ -2,7 +2,30 @@ import { StyleSheet, Text, TextInput, TouchableOpacity,View } from 'react-native
 import React, { useRef, useState } from 'react';
 import { AntDesign, Entypo, Feather } from '@expo/vector-icons';
 import DateTimePicker from 'react-native-modal-datetime-picker';
+/**
+ * @typedef {Object} FormfieldProps
+ * @property {string} title - A mező címe (jelenleg nincs használatban a UI-ban, de propként átadható).
+ * @property {string} [otherStyles] - Egyedi tailwind stílusok a mezőhöz.
+ * @property {string | Date} value - Az input aktuális értéke vagy kiválasztott dátum.
+ * @property {string} placeholder - A placeholder szöveg.
+ * @property {(val: string | Date) => void} handleChangeText - Callback az érték változására.
+ * @property {boolean} [date] - Ha igaz, a mező egy dátumválasztó lesz.
+ * @property {boolean} [keyboardType] - Ha igaz, numerikus billentyűzetet használ.
+ * @property {boolean} [inputType] - Ha igaz, numerikus input módot használ.
+ * @property {boolean} [multiline] - Többsoros input legyen-e.
+ * @property {string} [bgcolor] - Tailwind színosztály a háttérszínhez.
+ * @property {string} [bordercolor] - Tailwind színosztály a szegélyszínhez.
+ * @property {string} [dateTextStyles] - Tailwind szövegstílusok a dátum szövegéhez.
+ * @property {string} [dateColor] - A naptár ikon színe.
+ */
 
+/**
+ * Újrafelhasználható bemeneti mező komponens.
+ * Lehet hagyományos `TextInput`, jelszómező vagy dátumválasztó is.
+ *
+ * @component
+ * @param {FormfieldProps} props - A `Formfield` komponens propjai.
+ */
 const Formfield = ({ title, otherStyles, value, placeholder, handleChangeText, date, keyboardType, inputType, multiline, bgcolor,bordercolor, dateTextStyles, dateColor}) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isFocused, setIsFocused] = useState(false);

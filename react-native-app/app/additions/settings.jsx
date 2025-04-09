@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, Image, TouchableOpacity, ActivityIndicator, TouchableWithoutFeedback, Keyboard } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useGlobalContext } from '@/context/GlobalProvider'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -10,6 +10,10 @@ import { logout, updateProfile, UpdateProfilePic } from '@/lib/api';
 import Toast from 'react-native-toast-message';
 import ConvertType from '@/components/ConvertType';
 
+/**
+ * A `settings` komponens, amely a felhasználói beállítások oldalát kezeli.
+ * @returns {JSX.Element} a settings oldal ahol a beállítások jellenek meg
+ */
 const settings = () => {
   const {user,setUser,openPicker,setJobs,setIsJobsIn,setIsloggedIn,showToast,toastConfig} = useGlobalContext();
   const [form,setForm] = useState(user);
@@ -22,6 +26,12 @@ const settings = () => {
   const [stashed, setStashed] = useState("");
   const [undoStates,setUndoStates] = useState([]);
   const [typingTimeout,setTypingTimeout] = useState(null);
+
+   /**
+   * A profilkép frissítése.
+   * 
+   * @param image - Az új profilkép URL-je.
+   */
   const handleImageUpdate = async (image) => {
     try{
       setUpdate(true);
@@ -33,6 +43,10 @@ const settings = () => {
       throw new Error("error","Hiba",error.message)
     }
   }
+
+  /**
+   * A felhasználói profil frissítése.
+   */
   const handleUpdate = async () => {
     const updatedField = Object.fromEntries(
       Object.entries(form).filter(([key,value]) => {
@@ -52,6 +66,9 @@ const settings = () => {
       showToast("error","Hiba",error.message);
     }
   }
+   /**
+   * A felhasználó kijelentkezése.
+   */
   const handleLogout = async () => {
     try{
       await logout();

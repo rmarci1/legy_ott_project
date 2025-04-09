@@ -14,6 +14,12 @@ import { getJobs } from '@/lib/api';
 import RenderJob from '@/components/RenderJob';
 import Toast from 'react-native-toast-message';
 
+/**
+ * A főoldalt megjelenítő komponens, ahol a felhasználók különböző álláslehetőségeket kereshetnek.
+ * A felhasználó képes szűrni a találatokat, illetve a választott állásra jelentkezni.
+ * 
+ * @returns {JSX.Element} A főoldal tartalmát megjelenítő komponens.
+ */
 const home = () => {
   const {user,jobs,setJobs,handleSubmit,handleProfile,toastConfig,showToast} = useGlobalContext();
   const query = "";
@@ -23,12 +29,24 @@ const home = () => {
   const [readMore,setReadMore] = useState(false);
   const [refreshing,setRefreshing] = useState(false);
 
+  /**
+   * A modal ablak megjelenítésének váltása.
+   */
   const toggleModal = () => {
     setIsModalVisible((prev) => !prev);
   }
+  /**
+   * A szűrő modal ablak megjelenítésének váltása.
+   */
   const toggleFilterModal = () => {
     setIsFilterModalVisible(!isFilterModalVisible);
   } 
+  /**
+   * A lista elemeinek renderelése.
+   * 
+   * @param {object} param0 A FlashList adatát tartalmazó objektum.
+   * @returns {JSX.Element} Az egyes állások renderelése.
+   */
   const renderItem = ({item}) => (
     <RenderJob
       item={item}
@@ -37,6 +55,9 @@ const home = () => {
       handleReadMore={(readMore) => setReadMore(readMore)}
     />
   )
+  /**
+   * A lista frissítése, új állások lekérése.
+   */
   const onRefresh = async () => {
     try{
       setRefreshing(true);
