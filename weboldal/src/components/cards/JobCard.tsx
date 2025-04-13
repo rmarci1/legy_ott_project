@@ -6,6 +6,7 @@ import JobModal from "../modals/JobModal.tsx";
 import ProfileModal from "../modals/ProfileModal.tsx";
 import {Advertiser} from "@/Types/Advertiser.ts";
 import UpdateJobModal from "@/components/modals/UpdateJobModal.tsx";
+import ConvertText from "../ConvertText.tsx";
 
 interface jobProps{
     Job: Job,
@@ -59,11 +60,7 @@ export default function JobCard({Job, canSaveForLater}: jobProps){
                     />
                 </div>
                 <span className="mb-4  text-base flex-grow font-light whitespace-pre-wrap break-words">
-                    <p className="line-clamp-3">
-                        {
-                            trimmedText(Job.description)
-                        }
-                    </p>
+                    <ConvertText text={trimmedText(Job.description)} textColor="text-black"/>
                 </span>
                 <div className="flex flex-row justify-between ">
                     {user && canSaveForLater && (

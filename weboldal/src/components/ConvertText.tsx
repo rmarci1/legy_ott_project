@@ -13,10 +13,10 @@
  *  A Markdown-ban használt `#` szintaktikához hasonlóan.
  * @param {number} [props.currentIndex] - Az aktuális index, amely nem aktív a komponensben,
  *  de később bővítésre kerülhet.
- *
+ * @param {string | undefined} props.textColor - A szöveg színét opcionálisan meglehet adni
  * @returns {JSX.Element} A formázott szöveget tartalmazó HTML elemeket.
  */
-export default function ConvertText({ text, isHeader, value }: {text: string  | string[], isHeader?: boolean, value?: number, currentIndex?: number}) {
+export default function ConvertText({ text, isHeader, value, textColor }: {text: string  | string[], isHeader?: boolean, value?: number, currentIndex?: number, textColor? : string}) {
     let add = false;
     let sections : string[] = [];
     if (typeof text == 'string') {
@@ -46,8 +46,9 @@ export default function ConvertText({ text, isHeader, value }: {text: string  | 
         }
         return [next,curr];
     }
+    
     return (
-        <pre className="text-white break-all whitespace-pre-wrap font-poppins">
+        <pre className={`${textColor? textColor : "text-white"} break-all whitespace-pre-wrap font-poppins`}>
         {sections?.map((section, index) => {
             if(!add){
                 if (/^\*\*\*.*\*\*\*$/s.test(section)) {

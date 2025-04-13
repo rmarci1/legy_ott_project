@@ -70,7 +70,7 @@ const login = () => {
         <Text className='font-pbold color-primary text-3xl'>Bejelentkezés</Text>
         <Text className='font-psemibold text-xl mt-10'>Üdvözlünk jelentkezz be!</Text>
         <Formfield
-          placeholder="Email/Felhasználónév"
+          placeholder="Email"
           value={form.email}
           handleChangeText={(e) => setForm({...form, email : e})}
           otherStyles="w-[85%] mt-20" 

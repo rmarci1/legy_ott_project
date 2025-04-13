@@ -1,7 +1,7 @@
-//const API_URL = 'http://192.168.11.40:3000' // webváltó host nete;
-//const API_URL = 'http://192.168.10.89:3000' // webváltó ethernet;
-//const API_URL = 'http://192.168.11.21:3000' // webváltó alap wifi;
-const API_URL = 'http://192.168.0.179:3000' // temp
+import Constants from 'expo-constants'
+
+const debuggerHost = Constants.expoConfig?.hostUri?.split(':')[0];
+const API_URL = `http://${debuggerHost}:3000`;
 
 /**
  * Felhasználó regisztrálása
@@ -43,6 +43,7 @@ export const register = async (name,username, password, email)=> {
  */
 export const pflogin = async (email,password) => {  
     try{
+        console.log("happeb");
         const response = await fetch(`${API_URL}/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
