@@ -33,6 +33,7 @@ export default function CreateAd(){
     const [isDescShowVisible,setIsDescShowVisible] = useState<boolean>(false);
     const scrollRef = useRef<HTMLDivElement>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [formKey, setFormKey] = useState(0);
 
     /**
      * Ellenőrzi a felhasználó bejelentkezési állapotát a komponens betöltésekor.
@@ -99,7 +100,7 @@ export default function CreateAd(){
             return;
         }
 
-        if(date < tomorrow){
+        if(date.getDate() != tomorrow.getDate() && date.getDate() < tomorrow.getDate()){
             toast.warn('Leghamarabb holnapra hírdethet meg munkát!', {
                 className: "bg-yellow-300 text-white"
             })
@@ -107,20 +108,13 @@ export default function CreateAd(){
             return;
         }
 
-        console.log("kezdodik")
         const createdAd = await createAdv(name, date, desc, "temp", maxPart, address);
-        console.log("csinalodik")
         const formData = new FormData();
         formData.append('file', file);
-        console.log("kepkesz")
         await jobPicChange(formData, createdAd.id);
-        console.log("megcsinalt")
-        setName("");
-        setDesc("");
-        setAddress("")
-        setFile("")
-        setMaxPart(1)
-        setDate(new Date());
+
+        setFormKey(prev => prev + 1);
+        toast.success("Sikeresen létrejött!")
         setIsLoading(false);
     }
 
@@ -129,7 +123,7 @@ export default function CreateAd(){
      */
     const handleChanges = () =>{
         if(!unsavedChanges){
-          setUnsavedChanges(true);
+          setUnsavedChanges(true );
         }
     }
     return (
@@ -146,7 +140,7 @@ export default function CreateAd(){
                         </div>
                     </div>
                     }
-                    <form className="space-y-6" onSubmit={handleSubmit}>
+                    <form key={formKey} className="space-y-6" onSubmit={handleSubmit}>
                         <h5 className="text-xl font-medium text-gray-900 dark:text-white">Hírdetés létrehozása</h5>
                         <div>
                             <label htmlFor="name"
@@ -155,7 +149,6 @@ export default function CreateAd(){
                                 disabled={isLoading}
                                 name="name"
                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                value={name}
                                 onChange={(e) => {
                                     if(e.target.value.length > 30){
                                         toast.warn('Maximum 30 karakter lehet a neve!', {
@@ -205,7 +198,6 @@ export default function CreateAd(){
                                 name="desc"
                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                 placeholder="pl.: 14:00-kor várok mindenkit a Blaha Lújza téren egy közös virág ültetésre"
-                                value={desc}
                                 onChange={(e) => {
                                 handleChanges();
                                 setDesc(e.target.value);
@@ -240,7 +232,6 @@ export default function CreateAd(){
                                 disabled={isLoading}
                                 name="maxPart"
                                 min={1}
-                                value={maxPart}
                                 onChange={(e) => {
                                     setMaxPart(+e.target.value)
                                 }}
@@ -254,7 +245,6 @@ export default function CreateAd(){
                                 disabled={isLoading}
                                 name="address"
                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                value={address}
                                 onChange={(e) => {
                                     setAddress(e.target.value)
                                 }}

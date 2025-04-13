@@ -9,7 +9,8 @@ import UpdateJobModal from "@/components/modals/UpdateJobModal.tsx";
 
 interface jobProps{
     Job: Job,
-    canSaveForLater: boolean
+    canSaveForLater: boolean,
+    setAds: (value: Job[]) => void;
 }
 
 /**
@@ -23,7 +24,7 @@ interface jobProps{
  * @param {Job} props.Job - A megjelenítendő munkát tartalmazó objektum
  * @param {boolean} props.canSaveForLater - Meghatározza, hogy a felhasználó elmentheti-e a munkát későbbre
  */
-export default function JobCard({Job, canSaveForLater}: jobProps){
+export default function JobCard({Job, canSaveForLater, setAds}: jobProps){
     const [jobModal, setJobModal] = useState(false);
     const [profileModal, setProfileModal] = useState(false);
     const [updateJobModal, setUpdateJobModal] = useState(false);
@@ -94,10 +95,10 @@ export default function JobCard({Job, canSaveForLater}: jobProps){
 
             {jobModal && (
                 user ? (
-                        <JobModal job={Job} user={user} setUpdateJobModal={setUpdateJobModal} setAdvertiser={setAdvertiser} setModal={setJobModal} attendJob={attendJob} setProfileModal={setProfileModal}/>
+                        <JobModal job={Job} user={user} setAds={setAds}  setUpdateJobModal={setUpdateJobModal} setAdvertiser={setAdvertiser} setModal={setJobModal} attendJob={attendJob} setProfileModal={setProfileModal}/>
                     ):
                     (
-                        <JobModal job={Job} setModal={setJobModal} setUpdateJobModal={setUpdateJobModal} setAdvertiser={setAdvertiser} attendJob={attendJob} setProfileModal={setProfileModal}/>
+                        <JobModal job={Job} setModal={setJobModal} setAds={setAds} setUpdateJobModal={setUpdateJobModal} setAdvertiser={setAdvertiser} attendJob={attendJob} setProfileModal={setProfileModal}/>
                     )
             )}
 

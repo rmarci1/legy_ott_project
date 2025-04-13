@@ -128,7 +128,7 @@ export default function ProfilePage(){
                             (<div className="flex flex-wrap justify-center">
                                 {
                                     (selectedJobs.map((item: Job) => (
-                                        <JobCard key={item.id} canSaveForLater={true} Job={item}/>
+                                        <JobCard setAds={setAds} key={item.id} canSaveForLater={true} Job={item}/>
                                     )))
                                 }
                             </div>)
@@ -136,7 +136,7 @@ export default function ProfilePage(){
                             (<div className="flex flex-wrap justify-center">
                                 {
                                     (ads.map((item: Job) => (
-                                        <JobCard key={item.id} canSaveForLater={false} Job={item}/>
+                                        <JobCard setAds={setAds} key={item.id} canSaveForLater={false} Job={item}/>
                                     )))
                                 }
                             </div>)
