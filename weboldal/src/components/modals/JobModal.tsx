@@ -16,6 +16,7 @@ interface JobModalProps {
     setUpdateJobModal: (value: boolean) => void;
     attendJob: (id: number, value: boolean) => void;
     setAdvertiser : (value: Advertiser) => void;
+    setAds:  React.Dispatch<React.SetStateAction<Job[]>>;
 }
 
 /**
@@ -36,7 +37,7 @@ interface JobModalProps {
  * @param {Function} props.attendJob - Funkció a munkára való jelentkezéshez vagy lemondásához
  * @param {Function} props.setAdvertiser - Funkció a hirdető profil adatainak beállításához
  */
-export default function JobModal({ job, user, setModal,setUpdateJobModal, attendJob, setProfileModal, setAdvertiser }: JobModalProps) {
+export default function JobModal({ job, user, setModal,setUpdateJobModal, attendJob, setProfileModal, setAdvertiser, setAds }: JobModalProps) {
     const date = new Date(job.date); // A munka időpontja
     const today = new Date(); // A mai dátum
     const { deleteJobById } = useAuth(); // A munka törléséhez szükséges hook
@@ -79,6 +80,7 @@ export default function JobModal({ job, user, setModal,setUpdateJobModal, attend
      */
     const handleDelete = async () => {
         deleteJobById(job.id); // A munka törlése
+        setAds(prevAds => prevAds.filter(j => j.id !== job.id));
         toast.success('Sikeresen törölve lett!'); // Értesítés megjelenítése
         setModal(false); // Modal bezárása
     }
