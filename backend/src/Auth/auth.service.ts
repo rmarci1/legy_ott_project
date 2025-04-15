@@ -52,7 +52,6 @@ export class AuthService {
     if (profileWithEmail) {profileWithEmail.password = null}
 
     const profile = loginMode == "email"?  profileWithEmail : profileWithUsername
-    console.log(profile);
 
     return {
       access_token: await this.jwtService.signAsync(profile, {
