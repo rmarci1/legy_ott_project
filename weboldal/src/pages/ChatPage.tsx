@@ -196,11 +196,11 @@ export default function ChatPage(){
       }
     }, [messages]);    
     return (
-        <div className="h-screen w-screen flex flex-row">
-            <div className="w-[30%] ml-4 border-r pr-4">
+        <div className="h-screen w-screen flex flex-col md:flex-row overflow-hidden">
+            <div className="w-full md:w-[30%] border-r md:ml-4 md:pr-4 p-4 overflow-y-auto max-h-[40vh] md:max-h-full">
               {!isDifferentProfilesLoading ?
                 <div>
-                  <div className="w-full flex flex-row border border-gray-200 rounded-full p-2 mt-4 bg-gray-100">
+                  <div className="w-full flex items-center border border-gray-200 rounded-full p-2 bg-gray-100">
                     <IoIosSearch size={24} className="ml-1 mr-4"/>
                     <input
                       className="flex flex-1 bg-gray-100"
@@ -239,7 +239,7 @@ export default function ChatPage(){
             </div>
             {!isDifferentProfilesLoading && !isMessageLoading ?
              profileForMessage? 
-            <div className="w-[70%] h-full flex flex-col mx-auto">
+            <div className="w-full md:w-[70%] h-full flex flex-col">
               <div className="flex flex-row items-center justify-between border-b pb-4 px-3 mt-4 max-h-[10%]">
                   <div className="flex items-center gap-4">
                     <img
@@ -262,7 +262,7 @@ export default function ChatPage(){
                 ref={chatContainerRef} 
                 className="flex-1 overflow-y-auto bg-gray-200 px-4 py-2 flex flex-col items-center"
               >
-                <div className="w-[80%] flex flex-col">
+                <div className="w-full md:w-[80%] flex flex-col">
                   {messages.length > 0? messages.map((message, index) => (
                     <ChatPanel 
                       key={index} 
@@ -278,7 +278,7 @@ export default function ChatPage(){
                 </div>
               </div>
               <div className="w-full bg-gray-200">
-                <div className="p-1 bg-white rounded-2xl border-t flex items-center w-[70%] mx-auto mb-4">
+                <div className="p-2 bg-white rounded-2xl border-t flex items-center max-w-full md:w-[70%] mx-auto mb-4">
                   <input
                     type="text"
                     placeholder="Írj egy üzenetet..."
@@ -307,7 +307,7 @@ export default function ChatPage(){
               </div>
             </div> 
             : 
-            <div className="w-[70%] h-full flex flex-col mx-auto">
+            <div className="w-full md:w-[70%] h-full flex flex-col">
 
             </div> : <Loading/>
             }
