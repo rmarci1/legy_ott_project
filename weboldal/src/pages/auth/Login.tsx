@@ -53,10 +53,8 @@ export default function Login(){
             }
             await pflogin(emailUsername, password, loginMode)
             const user: User = await getUser().then((res) => res.profile);
-            console.log("User fetched:", user);
 
             bejelentkezes(user);
-            console.log(user.isAdmin);
             if (!user.isAdmin) {
                 navigate("/");
             } else {

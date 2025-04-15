@@ -173,14 +173,10 @@ export class JobsService {
             {
               profiles: {
                 none: {
-                  AND: [
-                    { isApplied: true },
-                    {
-                      profile: {
-                        username
-                      }
-                    }
-                  ],
+                  isApplied: true,
+                  profile: {
+                    username,
+                  },
                 },
               },
             },

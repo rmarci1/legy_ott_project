@@ -33,6 +33,7 @@ export default function JobCard({Job, canSaveForLater, setJobs}: jobProps){
     const {user, setSave, attendJob} = useAuth();
     const date = new Date(Job.date);
 
+
     /**
      * A szöveg rövidítése, hogy csak az első 3 sor vagy 150 karakter jelenjen meg.
      * Ha a szöveg hosszabb, "..." jelet adunk hozzá.
@@ -77,7 +78,9 @@ export default function JobCard({Job, canSaveForLater, setJobs}: jobProps){
                                                                  ...j,
                                                                  profiles: [
                                                                      {
-                                                                         ...j.profiles[0],
+                                                                         ...(j.profiles?.[0] ?? {
+                                                                             isApplied: false
+                                                                         }),
                                                                          saveForLater: false
                                                                      }
                                                                  ]
