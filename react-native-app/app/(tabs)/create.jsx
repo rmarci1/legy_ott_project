@@ -107,6 +107,18 @@ const create = () => {
  * A hirdetés elküldése és létrehozása.
  */
   const submit = async () => {
+    const now = new Date();
+    const startOfTheDay = now - (now % 86400000);
+    if(parseInt(form.max_attending) < 1){
+      showToast("error","Hiba","Minimum 1 résztvevőnek lennie kell");
+      toggleModal();
+      return;
+    }
+    if(form.date < (startOfTheDay + 86400000)){
+      showToast("error","Hiba","A dátum nem lehet holnapnál előrébb");
+      toggleModal();
+      return;
+    }
     try{
       await createJob(form);
       await defaultSet();
@@ -114,7 +126,8 @@ const create = () => {
       showToast("success","Sikeres Létrehozás");
     }
     catch(error){
-      showToast("error","Hiba",error.message)
+      toggleModal();
+      showToast("error","Hiba",error.message);
     }
   }
    /**
