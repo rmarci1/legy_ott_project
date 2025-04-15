@@ -30,13 +30,11 @@ export default function MainPage() {
     }, []);
 
     useEffect(() => {
-        if (user !== null) {
             fetchJobs();
-        }
     }, [user]);
 
     const fetchJobs = async () => {
-        if(user){
+        if(user != null){
             setJobs(await getAvailableJobs());
         }
         else{
