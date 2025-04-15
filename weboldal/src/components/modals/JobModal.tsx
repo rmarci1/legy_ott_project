@@ -132,7 +132,10 @@ export default function JobModal({ job, user, setModal,setUpdateJobModal, attend
                     <p className="text-gray-300 mt-2 break-words">Helyszín: {job.address}</p>
                     {user && (!job.profiles || job.profiles.length <= 0 || (job.profiles[0] && !job.profiles[0].isApplied)) && (job.from != user.username) && (
                         <div className=" flex mt-4 justify-center w-full">
-                            <button type="button" onClick={() => attendJob(job.id, true)}
+                            <button type="button" onClick={() => {
+                                attendJob(job.id, true);
+                                setAds(prevState => prevState.filter(value => value.id != job.id));
+                            }}
                                     className="bg-green-700 rounded p-2 w-2/3 text-white">
                                 Jelentkezés
                             </button>
@@ -141,7 +144,10 @@ export default function JobModal({ job, user, setModal,setUpdateJobModal, attend
 
                     {user && (job.profiles && job.profiles[0] && job.profiles[0].isApplied) && (
                         <div className=" flex mt-4 justify-center w-full">
-                            <button type="button" onClick={() => attendJob(job.id, false)}
+                            <button type="button" onClick={() => {
+                                attendJob(job.id, false)
+                                setAds(prevState => prevState.filter(value => value.id != job.id));
+                            }}
                                     className="bg-red-700 rounded p-2 w-2/3 text-white">
                                 Jelentkezés lemondása
                             </button>
