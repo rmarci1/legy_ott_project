@@ -179,7 +179,6 @@ export default function CreateAd(){
                             selection={selection}
                             description={desc}
                             handleForm={(e) => {
-                                console.log(e);
                                 setDesc(e);
                                 handleChanges();
                             }}

@@ -90,12 +90,10 @@ export default function ChatPage(){
         }
   
         socket.on("connect", () => {
-          console.log("Socket connected!");
           socket.emit("join", user.id);
         });
   
         const handleMessage = (message: ReceivedMessage) => {
-          console.log("Received message:", message);
           setMessages((prev) => [...prev, {...message, id: prev.length + 1}]);
         };
   
@@ -128,7 +126,6 @@ export default function ChatPage(){
           const messageDate = new Date();
           if (socket.connected) {
             socket.emit('message', messageData, (ack: any) => {
-              console.log("Server ACK:", ack);
             });
           } else {
             console.error("Socket is not connected!");
