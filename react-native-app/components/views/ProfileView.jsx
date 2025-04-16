@@ -230,18 +230,14 @@ const ProfileView = ({isView, viewed_user, handleModal}) => {
                     <Text className='text-white font-pregular'>Hirdető</Text>
                   </TouchableOpacity>
               </View>
-              {
+
+              { 
                 true && <Animated.View
-                  className={`${pressed == "onkentes" ? "bg-primary" : "bg-orange-400"} rounded-xl mt-4`}
+                  className={`${pressed == "onkentes" ? "bg-primary" : "bg-orange-400"} rounded-xl mt-4 h-[200px]`}
                   style={{
                     transform: [{ translateY : slideAnim}]
                   }}
                 >
-                  <Text className='text-3xl'>asdasdasd</Text>
-                  <Text className='text-3xl'>asdasdasd</Text>
-                  <Text className='text-3xl'>asdasdasd</Text>
-                  <Text className='text-3xl'>asdasdasd</Text>
-                  <Text className='text-3xl'>asdasdasd</Text>
                 </Animated.View>
               }
             </View>
