@@ -20,7 +20,7 @@ export default function ChatProfile({profile, handlePress} : {profile : ChatProf
             onClick={() => {
                 handlePress({id: profile.id,name:profile.name,username: profile.username,profileImg: profile.profileImg});
             }}>
-            <img src={profile.profileImg} className="h-14 w-14 rounded-full"/>
+            <img src={profile.profileImg} className="h-14 w-14 object-cover aspect-square rounded-full"/>
             <div className="ml-2 py-1 w-full">
                 <div className="flex flex-row justify-between w-full">
                     <p className="font-bold">{profile.name}</p>

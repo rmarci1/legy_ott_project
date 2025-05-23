@@ -244,7 +244,7 @@ export default function ChatPage(){
                   <div className="flex items-center gap-4">
                     <img
                       src={profileForMessage?.profileImg}
-                      className="h-10 w-10 rounded-full"
+                      className="h-10 w-10 object-cover rounded-full"
                     />
                     <div>
                       <p className="font-light">{profileForMessage?.name}</p>
