@@ -54,7 +54,7 @@ const signup = () => {
       hasDigit: false,
       hasSpecialChar: false
     }
-    strengthChecks.length = passwordValue.length >= 8 ? true : false;
+    strengthChecks.length = passwordValue.length >= 7 ? true : false;
     strengthChecks.hasUpperCase = /[A-Z]+/.test(passwordValue);
     strengthChecks.hasLowerCase = /[a-z]+/.test(passwordValue);
     strengthChecks.hasDigit = /[0-9]+/.test(passwordValue);

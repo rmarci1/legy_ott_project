@@ -44,3 +44,6 @@ npm install
 ```bash
   npm run start
 ```
+### 5. Alapértelmezett Jelszó
+
+- Asd1234@

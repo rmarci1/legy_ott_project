@@ -72,7 +72,6 @@ export default function ConvertText({ text, isHeader, value, textColor }: {text:
                     );         
                 } 
                 else if (/^\*.*\*$/s.test(section)) {
-                    console.log(section);
                     let data = [];
                     data = getNext(section, [1, -1]);
                     add = false;

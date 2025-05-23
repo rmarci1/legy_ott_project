@@ -18,6 +18,10 @@
 ## 🟢 Elindítás
 
 1. npx expo start
-2. Megjelenik egy QR kód és be kell szkennelni a telefonnal (Fontos hogy ugyanazon neten legyen a telefon és ahol az alkalmazás fut)
+
+2. Az applikáción belül rá kell nyomni a Scan QR code gombra 
+   ![](assets/qrcode.jpg)
+   
+3. Megjelenik egy QR kód és be kell szkennelni a telefonnal (Fontos hogy ugyanazon neten legyen a telefon és ahol az alkalmazás fut)
 
    ![](assets/20250413_173026_image.png)
